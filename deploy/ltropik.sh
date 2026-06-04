@@ -92,8 +92,8 @@ build_frontend() {
     local src="$REPO_DIR/$FRONTEND_SRC"
     [[ -f "$src/package.json" ]] || err "Frontend source not found: $src/package.json"
     cd "$src"
-    log "npm ci…"
-    npm ci --prefer-offline --no-audit
+    log "npm install…"
+    npm install --no-audit
     log "npm run build…"
     npm run build
     ok "Frontend built → $src/dist/"
