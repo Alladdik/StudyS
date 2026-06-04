@@ -1,0 +1,35 @@
+[Unit]
+Description=LTropik Backend (.NET 8)
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=notify
+WorkingDirectory=/opt/ltropik/backend
+ExecStart=/usr/bin/dotnet /opt/ltropik/backend/LTropik.WebAPI.dll
+Restart=on-failure
+RestartSec=10s
+StartLimitInterval=120s
+StartLimitBurst=5
+
+User=www-data
+Group=www-data
+
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=ASPNETCORE_URLS=http://0.0.0.0:5090
+Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+
+# Runtime dirs (writable paths)
+ReadWritePaths=/opt/ltropik/media /opt/ltropik/backend /opt/ltropik/dp-keys /tmp
+
+# Hardening
+PrivateTmp=yes
+NoNewPrivileges=yes
+ProtectSystem=full
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ltropik-backend
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,23 @@
+{
+  "name": "LTropik — Онлайн-школа",
+  "short_name": "LTropik",
+  "description": "Платформа для навчання онлайн",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#6535f6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education"],
+  "shortcuts": [
+    { "name": "Мої курси", "url": "/student/courses", "description": "Переглянути курси" },
+    { "name": "Розклад", "url": "/calendar", "description": "Переглянути розклад" }
+  ]
+}

@@ -1,0 +1,287 @@
+@import "tailwindcss";
+
+/* Class-based dark mode: add .dark to <html> */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ============================================================
+   LTropik — Design System v2
+   ============================================================ */
+
+@theme {
+  --color-brand-50:  #f1f0ff;
+  --color-brand-100: #e6e3ff;
+  --color-brand-200: #d0c9ff;
+  --color-brand-300: #b0a1ff;
+  --color-brand-400: #8d72ff;
+  --color-brand-500: #7350ff;
+  --color-brand-600: #6535f6;
+  --color-brand-700: #5526db;
+  --color-brand-800: #4621b0;
+  --color-brand-900: #3b1f8c;
+
+  --color-ink-50:  #f7f8fb;
+  --color-ink-100: #eef0f6;
+  --color-ink-200: #e1e4ee;
+  --color-ink-300: #cbd0e0;
+  --color-ink-400: #9aa2bd;
+  --color-ink-500: #6b7394;
+  --color-ink-600: #4d5470;
+  --color-ink-700: #383d54;
+  --color-ink-800: #262a3d;
+  --color-ink-900: #181b29;
+
+  --font-sans: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* ---------- Reset — must be inside @layer base so components/utilities win ---------- */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+  * { margin: 0; padding: 0; }
+
+  html { -webkit-text-size-adjust: 100%; font-family: var(--font-sans); }
+
+  body {
+    font-family: var(--font-sans);
+    background:
+      radial-gradient(1100px 550px at 100% 0%, #ece9ff 0%, transparent 55%),
+      radial-gradient(900px 450px at -5% 15%, #eef5ff 0%, transparent 50%),
+      #f7f8fb;
+    background-attachment: fixed;
+    color: #262a3d;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection { background: #d0c9ff; color: #3b1f8c; }
+
+  /* Scrollbar */
+  * { scrollbar-width: thin; scrollbar-color: #e1e4ee transparent; }
+  *::-webkit-scrollbar { width: 8px; height: 8px; }
+  *::-webkit-scrollbar-track { background: transparent; }
+  *::-webkit-scrollbar-thumb {
+    background: #e1e4ee;
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background-clip: padding-box;
+  }
+  *::-webkit-scrollbar-thumb:hover { background: #cbd0e0; background-clip: padding-box; }
+}
+
+/* ---------- Component classes ---------- */
+@layer components {
+
+  /* ---- Card ---- */
+  .card {
+    background: #ffffff;
+    border: 1px solid #e1e4ee;
+    border-radius: 1.25rem;
+    box-shadow: 0 1px 2px rgba(24,27,41,.04), 0 4px 16px rgba(24,27,41,.05);
+  }
+  .card-hover {
+    transition: box-shadow .25s ease, transform .25s ease, border-color .25s ease;
+  }
+  .card-hover:hover {
+    box-shadow: 0 4px 12px rgba(24,27,41,.06), 0 16px 40px rgba(24,27,41,.08);
+    transform: translateY(-2px);
+    border-color: #d0c9ff;
+  }
+
+  /* ---- Buttons ---- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    font-weight: 700;
+    font-size: .875rem;
+    line-height: 1.25;
+    border-radius: .875rem;
+    padding: .65rem 1.1rem;
+    transition: all .18s ease;
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+    border: none;
+    outline: none;
+    font-family: inherit;
+  }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .btn:focus-visible { outline: 3px solid #b0a1ff; outline-offset: 2px; }
+
+  .btn-primary {
+    color: #fff;
+    background: linear-gradient(135deg, #7350ff 0%, #5526db 100%);
+    box-shadow: 0 4px 16px rgba(101,53,246,.35);
+  }
+  .btn-primary:not(:disabled):hover {
+    background: linear-gradient(135deg, #8d72ff 0%, #6535f6 100%);
+    box-shadow: 0 6px 20px rgba(101,53,246,.45);
+    transform: translateY(-1px);
+  }
+  .btn-primary:not(:disabled):active { transform: translateY(0) scale(.99); }
+
+  .btn-soft {
+    color: #5526db;
+    background: #f1f0ff;
+    border: 1px solid #e6e3ff;
+  }
+  .btn-soft:not(:disabled):hover { background: #e6e3ff; }
+
+  .btn-ghost {
+    color: #4d5470;
+    background: transparent;
+    border: 1px solid #e1e4ee;
+  }
+  .btn-ghost:not(:disabled):hover { background: #f7f8fb; border-color: #cbd0e0; }
+
+  /* ---- Input field ---- */
+  .input {
+    display: block;
+    width: 100%;
+    background: #ffffff;
+    border: 1.5px solid #e1e4ee;
+    border-radius: .875rem;
+    padding: .875rem 1rem;
+    font-size: .9375rem;
+    font-family: inherit;
+    font-weight: 500;
+    color: #262a3d;
+    line-height: 1.5;
+    transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+    box-shadow: 0 1px 2px rgba(24,27,41,.04);
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .input::placeholder {
+    color: #9aa2bd;
+    font-weight: 400;
+  }
+  .input:hover:not(:disabled) {
+    border-color: #b0a1ff;
+    background: #fafafa;
+  }
+  .input:focus {
+    outline: none;
+    border-color: #7350ff;
+    box-shadow: 0 0 0 4px rgba(115,80,255,.12), 0 1px 2px rgba(24,27,41,.04);
+    background: #ffffff;
+  }
+  .input:disabled {
+    background: #f7f8fb;
+    color: #9aa2bd;
+    cursor: not-allowed;
+  }
+
+  /* ---- Label ---- */
+  .label {
+    display: block;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: #9aa2bd;
+    margin-bottom: .5rem;
+  }
+
+  /* ---- Chip / pill ---- */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    padding: .35rem .75rem;
+    border-radius: 999px;
+    font-size: .78rem;
+    font-weight: 700;
+    transition: all .15s ease;
+    cursor: pointer;
+    font-family: inherit;
+    border: none;
+  }
+
+  /* ---- Skeleton shimmer ---- */
+  .skeleton {
+    background: linear-gradient(90deg, #eef0f6 25%, #f7f8fb 37%, #eef0f6 63%);
+    background-size: 400% 100%;
+    animation: shimmer 1.4s ease infinite;
+    border-radius: .75rem;
+  }
+}
+
+/* ---------- Animations ---------- */
+@keyframes shimmer {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+@keyframes float-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in {
+  animation: float-up .35s ease both;
+}
+
+/* ============================================================
+   Dark Mode overrides
+   ============================================================ */
+
+.dark body {
+  background:
+    radial-gradient(1100px 550px at 100% 0%, #2a1f4a 0%, transparent 55%),
+    radial-gradient(900px 450px at -5% 15%, #1a2040 0%, transparent 50%),
+    #0f1018;
+  color: #e8eaf0;
+}
+
+.dark ::selection { background: #3d2e6b; color: #e8eaf0; }
+
+.dark * { scrollbar-color: #2d3148 transparent; }
+.dark *::-webkit-scrollbar-thumb { background: #2d3148; }
+
+.dark .card {
+  background: #1a1c2e;
+  border-color: #282c44;
+  box-shadow: 0 1px 2px rgba(0,0,0,.2), 0 4px 16px rgba(0,0,0,.25);
+}
+.dark .card-hover:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,.3), 0 16px 40px rgba(0,0,0,.35);
+  border-color: #4d3ea0;
+}
+
+.dark .input {
+  background: #1e2033;
+  border-color: #2d3148;
+  color: #e8eaf0;
+  box-shadow: 0 1px 2px rgba(0,0,0,.2);
+}
+.dark .input::placeholder { color: #4d5470; }
+.dark .input:hover:not(:disabled) {
+  border-color: #6535f6;
+  background: #1e2033;
+}
+.dark .input:focus {
+  border-color: #7350ff;
+  background: #1e2033;
+  box-shadow: 0 0 0 4px rgba(115,80,255,.18);
+}
+.dark .input:disabled { background: #151722; color: #4d5470; }
+
+.dark .label { color: #4d5470; }
+
+.dark .btn-ghost {
+  color: #9aa2bd;
+  border-color: #2d3148;
+}
+.dark .btn-ghost:not(:disabled):hover { background: #1e2033; border-color: #4d5470; }
+
+.dark .btn-soft {
+  background: #2a1f4a;
+  border-color: #3d2e6b;
+  color: #b0a1ff;
+}
+.dark .btn-soft:not(:disabled):hover { background: #3d2e6b; }
+
+.dark .skeleton { background: linear-gradient(90deg, #1e2033 25%, #252840 37%, #1e2033 63%); }
+
+.dark .chip { background: #1e2033; color: #9aa2bd; }

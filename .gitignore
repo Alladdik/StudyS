@@ -1,0 +1,57 @@
+# ── Тимчасові логи збірки (run_out.txt, v3_err.txt тощо) ──────────────────────
+*.txt
+!README.txt
+
+# ── .NET / C# ─────────────────────────────────────────────────────────────────
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+*.DotSettings.user
+TestResults/
+publish/
+artifacts/
+
+# appsettings з секретами — НІКОЛИ не пушити
+**/appsettings.Production.json
+**/appsettings.Local.json
+**/appsettings.Development.json
+# (appsettings.json без секретів — можна пушити)
+
+# Data Protection keys
+**/dp-keys/
+
+# ── Node.js / Frontend ────────────────────────────────────────────────────────
+node_modules/
+ltropik-client/dist/
+ltropik-client/.vite/
+ltropik-client/.env
+ltropik-client/.env.local
+ltropik-client/.env.production
+
+# ── Riders / VS Code / Visual Studio / Claude ────────────────────────────────
+.idea/
+.vscode/
+.claude/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Docker (якщо додаш) ───────────────────────────────────────────────────────
+.env
+docker-compose.override.yml
+
+# ── Медіа файли (зберігаються на сервері, не в git) ──────────────────────────
+**/wwwroot/uploads/
+**/wwwroot/avatars/
+**/media/
+
+# ── Сертифікати і ключі ───────────────────────────────────────────────────────
+*.pem
+*.key
+*.pfx
+*.p12
