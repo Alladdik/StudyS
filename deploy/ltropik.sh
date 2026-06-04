@@ -14,7 +14,7 @@
 set -euo pipefail
 
 # ── Configuration ─────────────────────────────────────────────────────────────
-REPO_URL="https://github.com/YOUR_USERNAME/YOUR_REPO.git"   # ← insert your repo
+REPO_URL="https://github.com/Alladdik/StudyS.git"
 BASE_DIR="/opt/ltropik"
 REPO_DIR="$BASE_DIR/repo"
 BACKEND_DIR="$BASE_DIR/backend"
@@ -103,7 +103,7 @@ build_frontend() {
 build_backend() {
     section "Backend build"
     local src="$REPO_DIR/$BACKEND_SRC"
-    [[ -f "$src"/*.csproj ]] || err "Backend .csproj not found in: $src"
+    ls "$src"/*.csproj > /dev/null 2>&1 || err "Backend .csproj not found in: $src"
     local tmp_dir
     tmp_dir="/tmp/ltropik_build_$$"
     mkdir -p "$tmp_dir"
