@@ -100,18 +100,18 @@ build_frontend() {
 }
 
 # ── Build backend ─────────────────────────────────────────────────────────────
+# Result path stored in global BACKEND_TMP (avoids $() capturing log output)
+BACKEND_TMP=""
 build_backend() {
     section "Backend build"
     local src="$REPO_DIR/$BACKEND_SRC"
     ls "$src"/*.csproj > /dev/null 2>&1 || err "Backend .csproj not found in: $src"
-    local tmp_dir
-    tmp_dir="/tmp/ltropik_build_$$"
-    mkdir -p "$tmp_dir"
+    BACKEND_TMP="/tmp/ltropik_build_$$"
+    mkdir -p "$BACKEND_TMP"
     log "dotnet publish…"
     cd "$src"
-    dotnet publish -c Release -o "$tmp_dir" --nologo -v quiet
-    ok "Backend compiled → $tmp_dir"
-    echo "$tmp_dir"
+    dotnet publish -c Release -o "$BACKEND_TMP" --nologo -v quiet
+    ok "Backend compiled → $BACKEND_TMP"
 }
 
 # ── Deploy artifacts ──────────────────────────────────────────────────────────
@@ -160,10 +160,9 @@ action_update() {
     log "══════════ DEPLOY START $(date '+%Y-%m-%d %H:%M:%S') ══════════"
 
     git_pull
-    local backend_tmp
-    backend_tmp=$(build_backend)
+    build_backend
     build_frontend
-    deploy_artifacts "$backend_tmp"
+    deploy_artifacts "$BACKEND_TMP"
     run_migrations
 
     section "Restarting service"
@@ -361,10 +360,9 @@ action_rollback() {
     [[ -z "$commit" ]] && err "No commit specified"
     git checkout "$commit" -- .
     ok "Checked out $commit"
-    local backend_tmp
-    backend_tmp=$(build_backend)
+    build_backend
     build_frontend
-    deploy_artifacts "$backend_tmp"
+    deploy_artifacts "$BACKEND_TMP"
     systemctl restart "$SERVICE_NAME"
     wait_for_port "$BACKEND_PORT" 30
     ok "Rolled back to $commit"
