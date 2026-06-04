@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { getAttendanceHeatmap, type HeatmapDay } from '../api/analytics.ext';
 import { cx } from './ui';
