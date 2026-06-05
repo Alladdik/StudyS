@@ -362,7 +362,7 @@ export function Whiteboard({ strokes, clearSignal, onStroke, onClear, fullscreen
     </div>
   );
 
-  const cursor = tool === 'eraser' ? 'cell' : (tool === 'text' || tool === 'sticky') ? 'text' : 'crosshair';
+  const cursor = (tool === 'text' || tool === 'sticky') ? 'text' : 'crosshair';
 
   const content = (
     <div className="flex flex-col h-full" style={{ background: '#fff' }}>
