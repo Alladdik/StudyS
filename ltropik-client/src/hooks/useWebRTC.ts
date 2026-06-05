@@ -36,20 +36,16 @@ export type RoomEndReason = 'ended' | 'deleted' | null;
 const ICE_SERVERS: RTCIceServer[] = [
   { urls: 'stun:stun.l.google.com:19302' },
   { urls: 'stun:stun1.l.google.com:19302' },
-  { urls: 'stun:stun.relay.metered.ca:80' },
+  { urls: 'stun:stun2.l.google.com:19302' },
+  { urls: 'stun:stun3.l.google.com:19302' },
   // TURN relay — потрібен коли обидва користувачі за NAT
   {
-    urls: 'turn:global.relay.metered.ca:80',
-    username: 'openrelayproject',
-    credential: 'openrelayproject',
-  },
-  {
-    urls: 'turn:global.relay.metered.ca:443',
-    username: 'openrelayproject',
-    credential: 'openrelayproject',
-  },
-  {
-    urls: 'turn:global.relay.metered.ca:443?transport=tcp',
+    urls: [
+      'turn:openrelay.metered.ca:80',
+      'turn:openrelay.metered.ca:443',
+      'turn:openrelay.metered.ca:80?transport=tcp',
+      'turn:openrelay.metered.ca:443?transport=tcp',
+    ],
     username: 'openrelayproject',
     credential: 'openrelayproject',
   },
@@ -96,21 +92,46 @@ export function useWebRTC(roomId: string) {
       }
     };
 
-    pc.onconnectionstatechange = () => {
-      if (pc.connectionState === 'failed') pc.restartIce?.();
+    pc.onconnectionstatechange = async () => {
+      console.log(`[WebRTC] ${remoteConnId.slice(0,8)} connectionState=${pc.connectionState}`);
+      if (pc.connectionState === 'failed') {
+        // ICE restart: надсилаємо новий offer з iceRestart:true
+        try {
+          const offer = await pc.createOffer({ iceRestart: true });
+          await pc.setLocalDescription(offer);
+          hubRef.current?.invoke('SendOffer', roomId, remoteConnId, JSON.stringify(offer)).catch(() => {});
+        } catch { /* ignore if can't restart */ }
+      }
+    };
+
+    pc.oniceconnectionstatechange = () => {
+      console.log(`[WebRTC] ${remoteConnId.slice(0,8)} iceState=${pc.iceConnectionState}`);
     };
 
     pc.ontrack = (e) => {
+      // Always create/reuse a stream even if participant not yet in map
+      const track = e.track;
+      const remoteStream = e.streams[0] ?? null;
+
       setParticipants((prev) => {
         const map = new Map(prev);
         const p = map.get(remoteConnId);
+        const stream = p?.stream ?? new MediaStream();
+
+        // Add all tracks from the associated stream (dedup)
+        const incoming = remoteStream ? remoteStream.getTracks() : [track];
+        incoming.forEach((t) => {
+          if (t && !stream.getTracks().find((x) => x.id === t.id)) stream.addTrack(t);
+        });
+
         if (p) {
-          const stream = p.stream ?? new MediaStream();
-          const incoming = e.streams[0] ? e.streams[0].getTracks() : [e.track];
-          incoming.forEach((t) => {
-            if (t && !stream.getTracks().find((x) => x.id === t.id)) stream.addTrack(t);
-          });
           map.set(remoteConnId, { ...p, stream });
+        } else {
+          // Participant not yet in map — create placeholder so track isn't lost
+          map.set(remoteConnId, {
+            connectionId: remoteConnId, userId: '', displayName: '…',
+            stream, micOn: true, cameraOn: true, isScreenSharing: false,
+          });
         }
         return map;
       });
