@@ -81,13 +81,13 @@ export function ShopAdminPage() {
               <div className="flex items-start justify-between">
                 <span className="text-4xl">{item.icon}</span>
                 <button onClick={() => handleDelete(item.id, item.name)}
-                  className="text-ink-300 hover:text-rose-500 transition text-sm">✕</button>
+                  className="text-ink-300 dark:text-[#4d5470] hover:text-rose-500 transition text-sm">✕</button>
               </div>
               <div>
-                <p className="font-extrabold text-ink-900">{item.name}</p>
-                <p className="text-sm text-ink-500 mt-0.5">{item.description}</p>
+                <p className="font-extrabold text-ink-900 dark:text-white">{item.name}</p>
+                <p className="text-sm text-ink-500 dark:text-[#6b7394] mt-0.5">{item.description}</p>
               </div>
-              <div className="flex items-center justify-between mt-auto pt-2 border-t border-ink-100">
+              <div className="flex items-center justify-between mt-auto pt-2 border-t border-ink-100 dark:border-[#282c44]">
                 <span className="font-bold text-amber-600">🪙 {item.coinsPrice}</span>
                 <Badge tone="gray">{item.type}</Badge>
               </div>
@@ -98,7 +98,7 @@ export function ShopAdminPage() {
 
       <Modal open={showCreate} onClose={() => setShowCreate(false)} className="max-w-md">
         <form onSubmit={handleCreate} className="p-7">
-          <h3 className="font-extrabold text-xl text-ink-900 mb-5">Новий товар</h3>
+          <h3 className="font-extrabold text-xl text-ink-900 dark:text-white mb-5">Новий товар</h3>
           <div className="flex gap-3 mb-3">
             <div className="w-20">
               <label className="label">Емодзі</label>

@@ -62,10 +62,10 @@ export function AdminDashboardPage() {
   }
 
   const stats = summary ? [
-    { label: 'Студентів', value: summary.totalStudents, icon: '🎓', color: 'text-brand-600 bg-brand-50' },
-    { label: 'Викладачів', value: summary.totalTeachers, icon: '👩‍🏫', color: 'text-sky-600 bg-sky-50' },
-    { label: 'Курсів', value: summary.totalCourses, icon: '📚', color: 'text-emerald-600 bg-emerald-50' },
-    { label: 'ДЗ на перевірці', value: summary.pendingHw, icon: '📋', color: 'text-amber-600 bg-amber-50' },
+    { label: 'Студентів', value: summary.totalStudents, icon: '🎓', color: 'text-brand-600 bg-brand-50 dark:bg-brand-900/30 dark:text-brand-400' },
+    { label: 'Викладачів', value: summary.totalTeachers, icon: '👩‍🏫', color: 'text-sky-600 bg-sky-50 dark:bg-sky-900/30 dark:text-sky-400' },
+    { label: 'Курсів', value: summary.totalCourses, icon: '📚', color: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 dark:text-emerald-400' },
+    { label: 'ДЗ на перевірці', value: summary.pendingHw, icon: '📋', color: 'text-amber-600 bg-amber-50 dark:bg-amber-900/30 dark:text-amber-400' },
   ] : [];
 
   return (
@@ -78,7 +78,7 @@ export function AdminDashboardPage() {
               <Card className="p-5 flex items-center gap-4">
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 ${s.color}`}>{s.icon}</div>
                 <div>
-                  <p className="text-2xl font-extrabold text-ink-900">{s.value}</p>
+                  <p className="text-2xl font-extrabold text-ink-900 dark:text-white">{s.value}</p>
                   <p className="text-xs text-ink-400 font-medium">{s.label}</p>
                 </div>
               </Card>
@@ -88,7 +88,7 @@ export function AdminDashboardPage() {
       )}
 
       {/* Quick actions */}
-      <h2 className="font-bold text-ink-800 text-base mb-3">Швидкий доступ</h2>
+      <h2 className="font-bold text-ink-800 dark:text-white text-base mb-3">Швидкий доступ</h2>
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-8">
         {quickActions.map((a, i) => (
           <motion.div key={a.href} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 + i * 0.05 }}>
@@ -98,7 +98,7 @@ export function AdminDashboardPage() {
                   {a.icon}
                 </div>
                 <div className="min-w-0">
-                  <p className="font-bold text-ink-800 group-hover:text-brand-600 transition">{a.label}</p>
+                  <p className="font-bold text-ink-800 dark:text-[#e8eaf0] group-hover:text-brand-600 dark:group-hover:text-brand-400 transition">{a.label}</p>
                   <p className="text-xs text-ink-400 truncate">{a.desc}</p>
                 </div>
                 <svg className="w-4 h-4 text-ink-200 ml-auto flex-shrink-0 group-hover:text-brand-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,7 +113,7 @@ export function AdminDashboardPage() {
       {/* Parent–Student linking */}
       <div className="grid lg:grid-cols-2 gap-5">
         <Card className="p-5">
-          <h2 className="font-bold text-ink-800 mb-1">Прив'язати батьків до студента</h2>
+          <h2 className="font-bold text-ink-800 dark:text-white mb-1">Прив'язати батьків до студента</h2>
           <p className="text-sm text-ink-400 mb-4">Батьки зможуть бачити успіхи дитини у своєму кабінеті</p>
           <div className="flex flex-col gap-3">
             <div>
@@ -132,7 +132,7 @@ export function AdminDashboardPage() {
               </select>
             </div>
             {linkMsg && (
-              <p className={`text-sm font-medium ${linkMsg.startsWith('✅') ? 'text-emerald-600' : 'text-rose-600'}`}>{linkMsg}</p>
+              <p className={`text-sm font-medium ${linkMsg.startsWith('✅') ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>{linkMsg}</p>
             )}
             <button onClick={handleLink} disabled={!parentId || !studentId || linking} className="btn btn-primary">
               {linking ? 'Прив\'язую…' : '🔗 Прив\'язати'}
@@ -141,20 +141,20 @@ export function AdminDashboardPage() {
         </Card>
 
         <Card className="p-5">
-          <h2 className="font-bold text-ink-800 mb-1">Фінанси</h2>
+          <h2 className="font-bold text-ink-800 dark:text-white mb-1">Фінанси</h2>
           <p className="text-sm text-ink-400 mb-4">Зведення за поточний місяць</p>
           {summary ? (
             <div className="flex flex-col gap-3">
-              <div className="flex items-center justify-between py-3 border-b border-ink-50">
-                <span className="text-sm text-ink-500">Дохід цього місяця</span>
-                <span className="font-bold text-emerald-600 text-lg">{summary.thisMonthRevenue.toLocaleString()} ₴</span>
+              <div className="flex items-center justify-between py-3 border-b border-ink-50 dark:border-[#1e2033]">
+                <span className="text-sm text-ink-500 dark:text-[#6b7394]">Дохід цього місяця</span>
+                <span className="font-bold text-emerald-600 dark:text-emerald-400 text-lg">{summary.thisMonthRevenue.toLocaleString()} ₴</span>
               </div>
-              <div className="flex items-center justify-between py-3 border-b border-ink-50">
-                <span className="text-sm text-ink-500">Загальний дохід</span>
-                <span className="font-bold text-ink-800 text-lg">{summary.totalRevenue.toLocaleString()} ₴</span>
+              <div className="flex items-center justify-between py-3 border-b border-ink-50 dark:border-[#1e2033]">
+                <span className="text-sm text-ink-500 dark:text-[#6b7394]">Загальний дохід</span>
+                <span className="font-bold text-ink-800 dark:text-[#e8eaf0] text-lg">{summary.totalRevenue.toLocaleString()} ₴</span>
               </div>
               <div className="flex items-center justify-between py-3">
-                <span className="text-sm text-ink-500">ДЗ на перевірці</span>
+                <span className="text-sm text-ink-500 dark:text-[#6b7394]">ДЗ на перевірці</span>
                 <Badge tone={summary.pendingHw > 0 ? 'amber' : 'green'}>{summary.pendingHw}</Badge>
               </div>
               <Link to="/admin/analytics" className="btn btn-soft text-center mt-1">Детальна аналітика →</Link>
