@@ -239,6 +239,7 @@
 .dark * { scrollbar-color: #2d3148 transparent; }
 .dark *::-webkit-scrollbar-thumb { background: #2d3148; }
 
+/* ── Cards ── */
 .dark .card {
   background: #1a1c2e;
   border-color: #282c44;
@@ -249,7 +250,10 @@
   border-color: #4d3ea0;
 }
 
-.dark .input {
+/* ── Input / Select / Textarea ── */
+.dark .input,
+.dark select.input,
+.dark textarea.input {
   background: #1e2033;
   border-color: #2d3148;
   color: #e8eaf0;
@@ -267,8 +271,13 @@
 }
 .dark .input:disabled { background: #151722; color: #4d5470; }
 
+/* ── Native select option ── */
+.dark select option { background: #1e2033; color: #e8eaf0; }
+
+/* ── Label ── */
 .dark .label { color: #4d5470; }
 
+/* ── Buttons ── */
 .dark .btn-ghost {
   color: #9aa2bd;
   border-color: #2d3148;
@@ -282,6 +291,45 @@
 }
 .dark .btn-soft:not(:disabled):hover { background: #3d2e6b; }
 
-.dark .skeleton { background: linear-gradient(90deg, #1e2033 25%, #252840 37%, #1e2033 63%); }
+/* ── Skeleton shimmer ── */
+.dark .skeleton { background: linear-gradient(90deg, #1e2033 25%, #252840 37%, #1e2033 63%); background-size: 400% 100%; }
 
+/* ── Chip ── */
 .dark .chip { background: #1e2033; color: #9aa2bd; }
+
+/* ── Tables ── */
+.dark table { color: #e8eaf0; }
+.dark thead { background: #151722; }
+.dark thead th { color: #6b7394; border-color: #282c44; }
+.dark tbody tr { border-color: #1e2033; }
+.dark tbody tr:hover { background: #1a1c2e; }
+.dark td, .dark th { border-color: #282c44; }
+
+/* ── Dividers ── */
+.dark hr { border-color: #282c44; }
+.dark .divide-ink-100 > * + * { border-color: #282c44; }
+.dark .divide-ink-200 > * + * { border-color: #2d3148; }
+
+/* ── Panels / surfaces that use bg-white ── */
+.dark .panel-surface { background: #1a1c2e; }
+
+/* ── Error / Alert boxes ── */
+.dark .alert-error {
+  background: rgba(244,63,94,.12);
+  border-color: rgba(244,63,94,.3);
+  color: #fca5a5;
+}
+.dark .alert-success {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.3);
+  color: #6ee7b7;
+}
+.dark .alert-info {
+  background: rgba(115,80,255,.12);
+  border-color: rgba(115,80,255,.3);
+  color: #b0a1ff;
+}
+
+/* ── Code / pre ── */
+.dark code { background: #1e2033; color: #b0a1ff; border-radius: 4px; padding: 1px 5px; }
+.dark pre  { background: #151722; border: 1px solid #282c44; color: #e8eaf0; }

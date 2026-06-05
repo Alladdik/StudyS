@@ -70,7 +70,7 @@ export function ReviewPage() {
       <div className="flex gap-2 mb-5 flex-wrap">
         {courses.map((c) => (
           <button key={c.id} onClick={() => setSelectedCourse(c.id)}
-            className={cx('chip', selectedCourse === c.id ? 'bg-brand-600 text-white shadow-[var(--shadow-glow)]' : 'bg-white text-ink-500 ring-1 ring-ink-200 hover:ring-brand-200')}>
+            className={cx('chip', selectedCourse === c.id ? 'bg-brand-600 text-white shadow-[var(--shadow-glow)]' : 'bg-white dark:bg-[#1e2033] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#2d3148] hover:ring-brand-200 dark:hover:ring-brand-700')}>
             {c.title}
             {queue.length > 0 && selectedCourse === c.id && <span className="ml-1.5 bg-rose-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">{queue.length}</span>}
           </button>
@@ -89,7 +89,7 @@ export function ReviewPage() {
               </div>
               <Badge tone="amber" className="ml-auto">На перевірці</Badge>
             </div>
-            <div className="text-sm text-ink-700 whitespace-pre-wrap bg-ink-50 border border-ink-100 rounded-xl p-4 flex-1 leading-relaxed">
+            <div className="text-sm text-ink-700 dark:text-[#b0b8d0] whitespace-pre-wrap bg-ink-50 dark:bg-[#1e2033] border border-ink-100 dark:border-[#282c44] rounded-xl p-4 flex-1 leading-relaxed">
               {current.submissionData || <span className="text-ink-300 italic">Відповідь не надана</span>}
             </div>
           </Card>

@@ -79,13 +79,11 @@ public class CoursesController(IApplicationDbContext db) : ControllerBase
             Status = role == "Admin" ? "Published" : "Draft"
         };
         db.Courses.Add(course);
-        await db.SaveChangesAsync(ct);
 
         if (role == "Teacher")
-        {
             db.CourseTeachers.Add(new CourseTeacher { CourseId = course.Id, TeacherId = userId });
-            await db.SaveChangesAsync(ct);
-        }
+
+        await db.SaveChangesAsync(ct);
 
         var dto = new CourseDto(
             course.Id, course.Title, course.Description,
@@ -122,6 +120,17 @@ public class CoursesController(IApplicationDbContext db) : ControllerBase
     [Authorize(Roles = "Admin,Teacher")]
     public async Task<IActionResult> AddModule(Guid courseId, CreateModuleRequest req, CancellationToken ct)
     {
+        var role   = User.FindFirstValue(ClaimTypes.Role);
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        // Teachers can only modify their own courses
+        if (role == "Teacher")
+        {
+            var owns = await db.CourseTeachers
+                .AnyAsync(ct2 => ct2.CourseId == courseId && ct2.TeacherId == userId, ct);
+            if (!owns) return Forbid();
+        }
+
         var module = new Module { CourseId = courseId, Title = req.Title, SortOrder = req.SortOrder };
         db.Modules.Add(module);
         await db.SaveChangesAsync(ct);
@@ -133,6 +142,16 @@ public class CoursesController(IApplicationDbContext db) : ControllerBase
     public async Task<IActionResult> AddLesson(
         Guid courseId, Guid moduleId, CreateLessonRequest req, CancellationToken ct)
     {
+        var role   = User.FindFirstValue(ClaimTypes.Role);
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        if (role == "Teacher")
+        {
+            var owns = await db.CourseTeachers
+                .AnyAsync(ct2 => ct2.CourseId == courseId && ct2.TeacherId == userId, ct);
+            if (!owns) return Forbid();
+        }
+
         var module = await db.Modules.FindAsync([moduleId], ct);
         if (module == null || module.CourseId != courseId) return NotFound();
 

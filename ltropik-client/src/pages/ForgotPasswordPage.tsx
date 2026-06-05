@@ -72,7 +72,7 @@ export function ForgotPasswordPage() {
               <AnimatePresence>
                 {error && (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                    className="rounded-xl px-4 py-3 bg-rose-50 border border-rose-200 text-sm font-semibold text-rose-700">
+                    className="rounded-xl px-4 py-3 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800/50 text-sm font-semibold text-rose-700 dark:text-rose-400">
                     {error}
                   </motion.div>
                 )}

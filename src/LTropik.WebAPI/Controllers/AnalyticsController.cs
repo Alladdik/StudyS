@@ -175,23 +175,41 @@ public class AnalyticsController(IApplicationDbContext db) : ControllerBase
     [HttpGet("teachers")]
     public async Task<IActionResult> GetTeacherStats(CancellationToken ct = default)
     {
+        // Load aggregates in separate queries to avoid N+1 in Select()
+        var courseCountByTeacher = await db.CourseTeachers
+            .GroupBy(ct2 => ct2.TeacherId)
+            .Select(g => new { TeacherId = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.TeacherId, x => x.Count, ct);
+
+        var studentCountByTeacher = await db.CourseTeachers
+            .GroupBy(ct2 => ct2.TeacherId)
+            .Select(g => new
+            {
+                TeacherId    = g.Key,
+                StudentCount = db.CourseStudents
+                    .Where(cs => g.Select(x => x.CourseId).Contains(cs.CourseId))
+                    .Select(cs => cs.StudentId).Distinct().Count()
+            })
+            .ToDictionaryAsync(x => x.TeacherId, x => x.StudentCount, ct);
+
         var teachers = await db.Users
             .Where(u => u.Role == UserRole.Teacher && u.IsActive)
-            .Select(u => new
-            {
-                Id          = u.Id,
-                Name        = u.FirstName + " " + u.LastName,
-                u.Email,
-                CourseCount = db.CourseTeachers.Count(ct2 => ct2.TeacherId == u.Id),
-                StudentCount = db.CourseTeachers
-                    .Where(ct2 => ct2.TeacherId == u.Id)
-                    .SelectMany(ct2 => db.CourseStudents.Where(cs => cs.CourseId == ct2.CourseId))
-                    .Select(cs => cs.StudentId).Distinct().Count(),
-            })
-            .OrderByDescending(t => t.StudentCount)
+            .Select(u => new { u.Id, Name = u.FirstName + " " + u.LastName, u.Email })
             .ToListAsync(ct);
 
-        return Ok(teachers);
+        var result = teachers
+            .Select(u => new
+            {
+                u.Id,
+                u.Name,
+                u.Email,
+                CourseCount  = courseCountByTeacher.GetValueOrDefault(u.Id, 0),
+                StudentCount = studentCountByTeacher.GetValueOrDefault(u.Id, 0),
+            })
+            .OrderByDescending(t => t.StudentCount)
+            .ToList();
+
+        return Ok(result);
     }
 
     // ── Attendance heatmap ─────────────────────────────────────────────────────

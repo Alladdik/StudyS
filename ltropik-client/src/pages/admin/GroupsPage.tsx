@@ -39,28 +39,47 @@ export function GroupsPage() {
   }
 
   async function handleDelete(id: string) {
-    await deleteGroup(id);
-    setGroups((p) => p.filter((g) => g.id !== id));
-    if (selected?.id === id) setSelected(null);
+    try {
+      await deleteGroup(id);
+      setGroups((p) => p.filter((g) => g.id !== id));
+      if (selected?.id === id) setSelected(null);
+      toast('success', 'Групу видалено');
+    } catch {
+      toast('error', 'Не вдалося видалити групу');
+    }
   }
 
   async function selectGroup(g: StudentGroup) {
-    const r = await getGroup(g.id);
-    setSelected(r.data);
+    try {
+      const r = await getGroup(g.id);
+      setSelected(r.data);
+    } catch {
+      toast('error', 'Не вдалося завантажити групу');
+    }
   }
 
   async function handleAddMember(studentId: string) {
     if (!selected) return;
-    await addMember(selected.id, studentId);
-    const r = await getGroup(selected.id);
-    setSelected(r.data);
+    try {
+      await addMember(selected.id, studentId);
+      const r = await getGroup(selected.id);
+      setSelected(r.data);
+      toast('success', 'Студента додано');
+    } catch {
+      toast('error', 'Не вдалося додати студента');
+    }
   }
 
   async function handleRemoveMember(studentId: string) {
     if (!selected) return;
-    await removeMember(selected.id, studentId);
-    const r = await getGroup(selected.id);
-    setSelected(r.data);
+    try {
+      await removeMember(selected.id, studentId);
+      const r = await getGroup(selected.id);
+      setSelected(r.data);
+      toast('success', 'Студента видалено з групи');
+    } catch {
+      toast('error', 'Не вдалося видалити студента');
+    }
   }
 
   if (loading) return <Layout title="Групи"><Loader /></Layout>;

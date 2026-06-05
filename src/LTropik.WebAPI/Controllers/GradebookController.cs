@@ -93,9 +93,18 @@ public class GradebookController(IApplicationDbContext db) : ControllerBase
 
     // Grade trends for a student across all courses
     [HttpGet("trends/{studentId:guid}")]
-    [Authorize(Roles = "Teacher,Admin,Parent")]
     public async Task<IActionResult> GetTrends(Guid studentId, [FromQuery] int days = 90, CancellationToken ct = default)
     {
+        // Manager role (class-level auth) + Teacher/Admin also allowed
+        // Teachers can only see their own course students
+        if (User.IsInRole("Teacher"))
+        {
+            var isRelated = await db.CourseStudents
+                .AnyAsync(cs => cs.StudentId == studentId &&
+                    db.CourseTeachers.Any(ct2 => ct2.CourseId == cs.CourseId && ct2.TeacherId == CurrentUserId), ct);
+            if (!isRelated) return Forbid();
+        }
+
         var from = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-days));
 
         var grades = await db.AttendanceAndGrades

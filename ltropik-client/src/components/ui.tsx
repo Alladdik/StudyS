@@ -8,12 +8,12 @@ export function cx(...parts: (string | false | null | undefined)[]) {
 }
 
 const AVATAR_COLORS = [
-  'bg-brand-100 text-brand-700',
-  'bg-emerald-100 text-emerald-700',
-  'bg-amber-100 text-amber-700',
-  'bg-sky-100 text-sky-700',
-  'bg-rose-100 text-rose-700',
-  'bg-fuchsia-100 text-fuchsia-700',
+  'bg-brand-100 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300',
+  'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400',
+  'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400',
+  'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-400',
+  'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400',
+  'bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-900/40 dark:text-fuchsia-400',
 ];
 function colorFromString(s: string) {
   let h = 0;
@@ -53,12 +53,12 @@ export function Button({
 /* ---------- Badge ---------- */
 export type BadgeTone = 'brand' | 'green' | 'amber' | 'rose' | 'blue' | 'gray';
 const BADGE_TONES: Record<BadgeTone, string> = {
-  brand: 'bg-brand-50 text-brand-700 ring-brand-100',
-  green: 'bg-emerald-50 text-emerald-700 ring-emerald-100',
-  amber: 'bg-amber-50 text-amber-700 ring-amber-100',
-  rose: 'bg-rose-50 text-rose-700 ring-rose-100',
-  blue: 'bg-sky-50 text-sky-700 ring-sky-100',
-  gray: 'bg-ink-100 text-ink-600 ring-ink-200',
+  brand: 'bg-brand-50 text-brand-700 ring-brand-100 dark:bg-brand-900/30 dark:text-brand-300 dark:ring-brand-800/40',
+  green: 'bg-emerald-50 text-emerald-700 ring-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 dark:ring-emerald-800/40',
+  amber: 'bg-amber-50 text-amber-700 ring-amber-100 dark:bg-amber-900/30 dark:text-amber-400 dark:ring-amber-800/40',
+  rose:  'bg-rose-50 text-rose-700 ring-rose-100 dark:bg-rose-900/30 dark:text-rose-400 dark:ring-rose-800/40',
+  blue:  'bg-sky-50 text-sky-700 ring-sky-100 dark:bg-sky-900/30 dark:text-sky-400 dark:ring-sky-800/40',
+  gray:  'bg-ink-100 text-ink-600 ring-ink-200 dark:bg-[#1e2033] dark:text-[#9aa2bd] dark:ring-[#2d3148]',
 };
 export function Badge({ children, tone = 'gray', className }:
   { children: ReactNode; tone?: BadgeTone; className?: string }) {
@@ -86,8 +86,8 @@ export function PageHeader({ title, subtitle, actions }:
   return (
     <div className="flex items-start justify-between gap-4 mb-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-ink-900 tracking-tight">{title}</h1>
-        {subtitle && <p className="text-ink-500 text-sm mt-1">{subtitle}</p>}
+        <h1 className="text-2xl font-extrabold text-ink-900 dark:text-white tracking-tight">{title}</h1>
+        {subtitle && <p className="text-ink-500 dark:text-[#6b7394] text-sm mt-1">{subtitle}</p>}
       </div>
       {actions && <div className="flex items-center gap-2 flex-shrink-0">{actions}</div>}
     </div>
@@ -99,9 +99,9 @@ export function EmptyState({ icon = '📭', title, hint, action }:
   { icon?: string; title: string; hint?: string; action?: ReactNode }) {
   return (
     <div className="flex flex-col items-center justify-center text-center py-20">
-      <div className="w-20 h-20 rounded-3xl bg-ink-100 flex items-center justify-center text-4xl mb-4">{icon}</div>
-      <p className="text-ink-700 font-semibold text-lg">{title}</p>
-      {hint && <p className="text-ink-400 text-sm mt-1 max-w-xs">{hint}</p>}
+      <div className="w-20 h-20 rounded-3xl bg-ink-100 dark:bg-[#1e2033] flex items-center justify-center text-4xl mb-4">{icon}</div>
+      <p className="text-ink-700 dark:text-[#b0b8d0] font-semibold text-lg">{title}</p>
+      {hint && <p className="text-ink-400 dark:text-[#4d5470] text-sm mt-1 max-w-xs">{hint}</p>}
       {action && <div className="mt-5">{action}</div>}
     </div>
   );
@@ -130,20 +130,20 @@ export function Loader({ label = 'Завантаження…' }: { label?: stri
 export function StatCard({ icon, value, label, tone = 'brand', delay = 0 }:
   { icon: ReactNode; value: ReactNode; label: string; tone?: BadgeTone; delay?: number }) {
   const iconBg: Record<BadgeTone, string> = {
-    brand: 'bg-brand-100 text-brand-600',
-    green: 'bg-emerald-100 text-emerald-600',
-    amber: 'bg-amber-100 text-amber-600',
-    rose: 'bg-rose-100 text-rose-600',
-    blue: 'bg-sky-100 text-sky-600',
-    gray: 'bg-ink-100 text-ink-600',
+    brand: 'bg-brand-100 text-brand-600 dark:bg-brand-900/30 dark:text-brand-400',
+    green: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400',
+    amber: 'bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400',
+    rose:  'bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400',
+    blue:  'bg-sky-100 text-sky-600 dark:bg-sky-900/30 dark:text-sky-400',
+    gray:  'bg-ink-100 text-ink-600 dark:bg-[#1e2033] dark:text-[#9aa2bd]',
   };
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay }}
       className="card p-5">
       <div className={cx('w-11 h-11 rounded-2xl flex items-center justify-center text-xl mb-3', iconBg[tone])}>{icon}</div>
-      <div className="text-2xl font-extrabold text-ink-900">{value}</div>
-      <div className="text-xs text-ink-400 mt-0.5 font-medium">{label}</div>
+      <div className="text-2xl font-extrabold text-ink-900 dark:text-white">{value}</div>
+      <div className="text-xs text-ink-400 dark:text-[#6b7394] mt-0.5 font-medium">{label}</div>
     </motion.div>
   );
 }
@@ -155,13 +155,13 @@ export function Tabs<T extends string>({ tabs, value, onChange }:
   // FIX: Unique layoutId per Tabs instance — prevents framer-motion animation cross-contamination
   const [layoutId] = React.useState(() => `tab-pill-${++tabsInstanceCounter}`);
   return (
-    <div className="inline-flex p-1 bg-ink-100 rounded-2xl gap-1">
+    <div className="inline-flex p-1 bg-ink-100 dark:bg-[#1e2033] rounded-2xl gap-1">
       {tabs.map((t) => (
         <button key={t.value} onClick={() => onChange(t.value)}
           className={cx('relative px-4 py-2 rounded-xl text-sm font-semibold transition-colors',
-            value === t.value ? 'text-brand-700' : 'text-ink-500 hover:text-ink-700')}>
+            value === t.value ? 'text-brand-700 dark:text-brand-400' : 'text-ink-500 dark:text-[#6b7394] hover:text-ink-700 dark:hover:text-[#e8eaf0]')}>
           {value === t.value && (
-            <motion.span layoutId={layoutId} className="absolute inset-0 bg-white rounded-xl shadow-sm" transition={{ type: 'spring', stiffness: 400, damping: 32 }} />
+            <motion.span layoutId={layoutId} className="absolute inset-0 bg-white dark:bg-[#252840] rounded-xl shadow-sm dark:shadow-none" transition={{ type: 'spring', stiffness: 400, damping: 32 }} />
           )}
           <span className="relative z-10">{t.label}</span>
         </button>
@@ -183,7 +183,7 @@ export function Modal({ open, onClose, children, className }:
             initial={{ scale: 0.94, opacity: 0, y: 12 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.94, opacity: 0, y: 12 }}
             transition={{ type: 'spring', stiffness: 380, damping: 30 }}
             onClick={(e) => e.stopPropagation()}
-            className={cx('bg-white rounded-3xl shadow-2xl w-full', className ?? 'max-w-md')}>
+            className={cx('bg-white dark:bg-[#1a1c2e] dark:border dark:border-[#282c44] rounded-3xl shadow-2xl dark:shadow-black/50 w-full', className ?? 'max-w-md')}>
             {children}
           </motion.div>
         </motion.div>
@@ -205,9 +205,9 @@ export function toast(type: ToastType, text: string) {
 
 const TOAST_ICONS: Record<ToastType, string> = { success: '✅', error: '❌', info: 'ℹ️' };
 const TOAST_COLORS: Record<ToastType, string> = {
-  success: 'bg-emerald-50 border-emerald-200 text-emerald-800',
-  error: 'bg-rose-50 border-rose-200 text-rose-800',
-  info: 'bg-brand-50 border-brand-200 text-brand-800',
+  success: 'bg-emerald-50 border-emerald-200 text-emerald-800 dark:bg-emerald-900/30 dark:border-emerald-700/50 dark:text-emerald-300',
+  error:   'bg-rose-50 border-rose-200 text-rose-800 dark:bg-rose-900/30 dark:border-rose-700/50 dark:text-rose-300',
+  info:    'bg-brand-50 border-brand-200 text-brand-800 dark:bg-brand-900/30 dark:border-brand-700/50 dark:text-brand-300',
 };
 
 export function Toaster() {

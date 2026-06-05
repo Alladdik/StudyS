@@ -86,7 +86,7 @@ function PushNotificationsCard() {
           )}
         >
           <span className={cx(
-            'absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200',
+            'absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white dark:bg-[#e8eaf0] shadow-sm transition-transform duration-200',
             subscribed ? 'translate-x-6' : 'translate-x-0'
           )} />
         </button>
@@ -322,7 +322,7 @@ export function ProfilePage() {
               )}
             >
               <span className={cx(
-                'absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200',
+                'absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white dark:bg-[#e8eaf0] shadow-sm transition-transform duration-200',
                 dark ? 'translate-x-6' : 'translate-x-0'
               )} />
             </button>

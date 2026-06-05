@@ -59,6 +59,9 @@ public static class DependencyInjection
         services.AddHostedService<AuditLogWriter>();
         services.AddHostedService<DailyQuestResetWorker>();
         services.AddHostedService<HomeworkReminderWorker>();
+        services.AddHostedService<LessonReminderWorker>();
+        services.AddHostedService<StreakReminderWorker>();
+        services.AddHostedService<WeeklyLeaderboardWorker>();
 
         return services;
     }

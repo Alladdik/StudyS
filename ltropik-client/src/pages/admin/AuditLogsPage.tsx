@@ -19,19 +19,19 @@ interface LogsResponse {
 }
 
 const ACTION_COLORS: Record<string, string> = {
-  Login: 'bg-emerald-100 text-emerald-700',
-  Register: 'bg-sky-100 text-sky-700',
-  GradeChanged: 'bg-amber-100 text-amber-700',
-  UserBlocked: 'bg-rose-100 text-rose-700',
-  UserUnblocked: 'bg-emerald-100 text-emerald-700',
-  CourseCreated: 'bg-brand-100 text-brand-700',
-  CourseUpdated: 'bg-brand-100 text-brand-700',
-  CourseDeleted: 'bg-rose-100 text-rose-700',
-  HomeworkReviewed: 'bg-purple-100 text-purple-700',
+  Login:            'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+  Register:         'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400',
+  GradeChanged:     'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+  UserBlocked:      'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400',
+  UserUnblocked:    'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+  CourseCreated:    'bg-brand-100 text-brand-700 dark:bg-brand-900/30 dark:text-brand-400',
+  CourseUpdated:    'bg-brand-100 text-brand-700 dark:bg-brand-900/30 dark:text-brand-400',
+  CourseDeleted:    'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400',
+  HomeworkReviewed: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
 };
 
 function actionColor(a: string) {
-  return ACTION_COLORS[a] ?? 'bg-ink-100 text-ink-600';
+  return ACTION_COLORS[a] ?? 'bg-ink-100 text-ink-600 dark:bg-[#1e2033] dark:text-[#9aa2bd]';
 }
 
 function fmt(iso: string) {

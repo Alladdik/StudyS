@@ -4,7 +4,7 @@ After=network.target postgresql.service
 Wants=postgresql.service
 
 [Service]
-Type=notify
+Type=simple
 WorkingDirectory=/opt/ltropik/backend
 ExecStart=/usr/bin/dotnet /opt/ltropik/backend/LTropik.WebAPI.dll
 Restart=on-failure

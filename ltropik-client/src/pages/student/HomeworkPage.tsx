@@ -5,7 +5,7 @@ import { AiMentorChat } from '../../components/AiMentorChat';
 import { submitHomework } from '../../api/homeworks';
 import api from '../../api/client';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Card, Badge, Loader, EmptyState, Spinner } from '../../components/ui';
+import { Card, Badge, Loader, EmptyState, Spinner, toast } from '../../components/ui';
 import { Confetti } from '../../components/Confetti';
 
 interface HomeworkDetail {
@@ -69,7 +69,7 @@ export function HomeworkPage() {
       setAiTutorFeedback(r.data.response);
     } catch (err) {
       console.error(err);
-      alert('Не вдалося отримати підказку від AI-Асистента.');
+      toast('error', 'Не вдалося отримати підказку від AI-Асистента.');
     } finally {
       setFetchingTutorHint(false);
     }

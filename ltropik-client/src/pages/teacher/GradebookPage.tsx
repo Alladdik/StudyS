@@ -3,7 +3,7 @@ import { Layout } from '../../components/Layout';
 import { getCourses } from '../../api/courses';
 import api from '../../api/client';
 import type { Course } from '../../types';
-import { Card, Loader, EmptyState, cx } from '../../components/ui';
+import { Card, Loader, EmptyState, cx, toast } from '../../components/ui';
 
 interface GradebookData {
   courseId: string;
@@ -48,7 +48,7 @@ export function GradebookPage() {
       const a = document.createElement('a'); a.href = url;
       a.download = `gradebook_${selectedCourse}.xlsx`; a.click();
       URL.revokeObjectURL(url);
-    } catch { alert('Помилка при експорті'); }
+    } catch { toast('error', 'Помилка при експорті'); }
   }
 
   useEffect(() => {
@@ -77,7 +77,7 @@ export function GradebookPage() {
           <button key={c.id} onClick={() => setSelectedCourse(c.id)}
             className={cx('chip transition', selectedCourse === c.id
               ? 'bg-brand-600 text-white shadow-[var(--shadow-glow)]'
-              : 'bg-white text-ink-500 ring-1 ring-ink-200 hover:ring-brand-200')}>
+              : 'bg-white dark:bg-[#1e2033] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#2d3148] hover:ring-brand-200 dark:hover:ring-brand-700')}>
             {c.title}
           </button>
         ))}
@@ -98,8 +98,8 @@ export function GradebookPage() {
             <table className="text-xs border-collapse">
               <thead>
                 {/* Module row */}
-                <tr className="bg-ink-50 border-b border-ink-200">
-                  <th className="sticky left-0 bg-ink-50 px-4 py-2 text-left font-bold text-ink-700 min-w-[180px] z-10">
+                <tr className="bg-ink-50 dark:bg-[#151722] border-b border-ink-200 dark:border-[#282c44]">
+                  <th className="sticky left-0 bg-ink-50 dark:bg-[#151722] px-4 py-2 text-left font-bold text-ink-700 dark:text-[#e8eaf0] min-w-[180px] z-10">
                     Студент
                   </th>
                   {data.lessons.map((l, i) => {
@@ -118,9 +118,9 @@ export function GradebookPage() {
               </thead>
               <tbody>
                 {data.students.map((s, si) => (
-                  <tr key={s.id} className={cx('border-b border-ink-50', si % 2 === 1 && 'bg-ink-50/40')}>
-                    <td className="sticky left-0 bg-white px-4 py-2 font-semibold text-ink-800 border-r border-ink-100 z-10"
-                      style={{ background: si % 2 === 1 ? 'rgba(249,250,251,0.9)' : 'white' }}>
+                  <tr key={s.id} className={cx('border-b border-ink-50 dark:border-[#1e2033]', si % 2 === 1 && 'bg-ink-50/40 dark:bg-[#151722]/40')}>
+                    <td className="sticky left-0 px-4 py-2 font-semibold text-ink-800 dark:text-[#e8eaf0] border-r border-ink-100 dark:border-[#282c44] z-10"
+                      style={{ background: 'inherit' }}>
                       <div className="truncate max-w-[175px]">{s.name}</div>
                     </td>
                     {s.cells.map((cell) => (
@@ -129,7 +129,7 @@ export function GradebookPage() {
                           <span className={cx('font-bold', gradeColor(cell.grade))}>{cell.grade}</span>
                         ) : cell.attendance ? (
                           <span className={cx('rounded px-1 py-0.5 text-[9px] font-semibold',
-                            ATTENDANCE_COLOR[cell.attendance] ?? 'bg-ink-100 text-ink-500')}>
+                            ATTENDANCE_COLOR[cell.attendance] ?? 'bg-ink-100 text-ink-500 dark:bg-[#1e2033] dark:text-[#9aa2bd]')}>
                             {{ Present: 'П', Late: 'З', AbsentWithReason: 'НБ+', AbsentWithoutReason: 'НБ' }[cell.attendance] ?? '?'}
                           </span>
                         ) : (

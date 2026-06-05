@@ -26,6 +26,11 @@ export function TestPage() {
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const sessionRef = useRef<StartTestResponse | null>(null);
+
+  // Cleanup countdown timer on unmount
+  useEffect(() => {
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, []);
   const answersRef = useRef<Record<string, unknown>>({});
   answersRef.current = answers;
 

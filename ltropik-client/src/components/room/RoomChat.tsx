@@ -30,10 +30,10 @@ export function RoomChat({ messages, onSend }: Props) {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-2xl overflow-hidden border border-ink-200">
+    <div className="flex flex-col h-full bg-white dark:bg-[#1a1c2e] rounded-2xl overflow-hidden border border-ink-200 dark:border-[#282c44]">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-ink-100 bg-ink-50">
-        <h3 className="font-bold text-ink-800 text-sm flex items-center gap-2">
+      <div className="px-4 py-3 border-b border-ink-100 dark:border-[#282c44] bg-ink-50 dark:bg-[#151722]">
+        <h3 className="font-bold text-ink-800 dark:text-[#e8eaf0] text-sm flex items-center gap-2">
           <span>💬</span> Чат кімнати
         </h3>
       </div>
@@ -56,7 +56,7 @@ export function RoomChat({ messages, onSend }: Props) {
               <div className={`max-w-[85%] px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed ${
                 isOwn
                   ? 'bg-brand-600 text-white rounded-br-sm'
-                  : 'bg-ink-100 text-ink-800 rounded-bl-sm'
+                  : 'bg-ink-100 dark:bg-[#252840] text-ink-800 dark:text-[#e8eaf0] rounded-bl-sm'
               }`}>
                 {msg.content}
               </div>
@@ -70,7 +70,7 @@ export function RoomChat({ messages, onSend }: Props) {
       </div>
 
       {/* Input */}
-      <div className="border-t border-ink-100 p-3 flex gap-2 bg-white">
+      <div className="border-t border-ink-100 dark:border-[#282c44] p-3 flex gap-2 bg-white dark:bg-[#1a1c2e]">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}

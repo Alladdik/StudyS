@@ -98,7 +98,7 @@ export function RegisterPage() {
       </div>
 
       {/* Right form panel */}
-      <div className="flex-1 flex items-center justify-center p-6 bg-white overflow-y-auto">
+      <div className="flex-1 flex items-center justify-center p-6 bg-white dark:bg-[#0f1018] overflow-y-auto">
         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .4 }}
           className="w-full max-w-sm py-6">
 
@@ -109,21 +109,21 @@ export function RegisterPage() {
             <span className="font-extrabold text-xl text-ink-900">LTropik</span>
           </div>
 
-          <h2 className="text-3xl font-extrabold tracking-tight text-ink-900 mb-1">Реєстрація</h2>
-          <p className="text-sm text-ink-400 mb-6">Створіть акаунт безкоштовно</p>
+          <h2 className="text-3xl font-extrabold tracking-tight text-ink-900 dark:text-white mb-1">Реєстрація</h2>
+          <p className="text-sm text-ink-400 dark:text-[#6b7394] mb-6">Створіть акаунт безкоштовно</p>
 
           {/* Step indicator */}
           <div className="flex items-center gap-2 mb-6">
             {[1, 2].map((s) => (
               <div key={s} className={cx('flex items-center gap-2', s < 2 && 'flex-1')}>
                 <div className={cx('w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition',
-                  step >= s ? 'bg-brand-600 text-white' : 'bg-ink-100 text-ink-400')}>
+                  step >= s ? 'bg-brand-600 text-white' : 'bg-ink-100 dark:bg-[#1e2033] text-ink-400 dark:text-[#6b7394]')}>
                   {step > s ? '✓' : s}
                 </div>
-                <span className={cx('text-xs font-medium', step >= s ? 'text-brand-600' : 'text-ink-300')}>
+                <span className={cx('text-xs font-medium', step >= s ? 'text-brand-600 dark:text-brand-400' : 'text-ink-300 dark:text-[#3d4460]')}>
                   {s === 1 ? 'Хто ви?' : 'Дані'}
                 </span>
-                {s < 2 && <div className={cx('flex-1 h-px', step > s ? 'bg-brand-300' : 'bg-ink-100')} />}
+                {s < 2 && <div className={cx('flex-1 h-px', step > s ? 'bg-brand-300 dark:bg-brand-700' : 'bg-ink-100 dark:bg-[#282c44]')} />}
               </div>
             ))}
           </div>
@@ -131,16 +131,18 @@ export function RegisterPage() {
           <AnimatePresence mode="wait">
             {step === 1 ? (
               <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                <p className="text-sm font-semibold text-ink-600 mb-3">Оберіть вашу роль:</p>
+                <p className="text-sm font-semibold text-ink-600 dark:text-[#9aa2bd] mb-3">Оберіть вашу роль:</p>
                 <div className="flex flex-col gap-2.5">
                   {ROLES.map((r) => (
                     <button key={r.value} type="button" onClick={() => setRole(r.value)}
                       className={cx('flex items-center gap-3.5 p-4 rounded-2xl border-2 text-left transition',
-                        role === r.value ? 'border-brand-400 bg-brand-50' : 'border-ink-100 hover:border-brand-200 hover:bg-ink-50')}>
+                        role === r.value
+                          ? 'border-brand-400 bg-brand-50 dark:bg-brand-900/20 dark:border-brand-600'
+                          : 'border-ink-100 dark:border-[#282c44] hover:border-brand-200 dark:hover:border-brand-700 hover:bg-ink-50 dark:hover:bg-[#1e2033]')}>
                       <span className="text-3xl">{r.icon}</span>
                       <div>
-                        <p className={cx('font-bold text-sm', role === r.value ? 'text-brand-700' : 'text-ink-800')}>{r.label}</p>
-                        <p className="text-xs text-ink-400">{r.desc}</p>
+                        <p className={cx('font-bold text-sm', role === r.value ? 'text-brand-700 dark:text-brand-400' : 'text-ink-800 dark:text-[#e8eaf0]')}>{r.label}</p>
+                        <p className="text-xs text-ink-400 dark:text-[#6b7394]">{r.desc}</p>
                       </div>
                       {role === r.value && (
                         <div className="ml-auto w-5 h-5 rounded-full bg-brand-500 flex items-center justify-center">
@@ -201,9 +203,9 @@ export function RegisterPage() {
                   <AnimatePresence>
                     {error && (
                       <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
-                        className="flex items-center gap-2 rounded-xl px-4 py-3 bg-rose-50 border border-rose-100">
+                        className="flex items-center gap-2 rounded-xl px-4 py-3 bg-rose-50 dark:bg-rose-900/20 border border-rose-100 dark:border-rose-800/50">
                         <span className="text-rose-500 text-sm">⚠️</span>
-                        <p className="text-sm font-semibold text-rose-600">{error}</p>
+                        <p className="text-sm font-semibold text-rose-600 dark:text-rose-400">{error}</p>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -223,10 +225,10 @@ export function RegisterPage() {
             )}
           </AnimatePresence>
 
-          <div className="mt-6 pt-5 border-t border-ink-100 text-center">
-            <p className="text-sm text-ink-400">
+          <div className="mt-6 pt-5 border-t border-ink-100 dark:border-[#282c44] text-center">
+            <p className="text-sm text-ink-400 dark:text-[#6b7394]">
               Вже є акаунт?{' '}
-              <Link to="/login" className="font-bold text-brand-600 hover:text-brand-700">Увійти</Link>
+              <Link to="/login" className="font-bold text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors">Увійти</Link>
             </p>
           </div>
         </motion.div>

@@ -123,7 +123,7 @@ public class TestsController(
     [Authorize(Roles = "Admin,Teacher")]
     public async Task<IActionResult> GetAttempts(Guid id, CancellationToken ct)
     {
-        var attempts = await db.TestAttempts
+        var raw = await db.TestAttempts
             .Include(a => a.Student)
             .Where(a => a.TestId == id && a.FinishedAt != null)
             .OrderByDescending(a => a.StartedAt)
@@ -131,15 +131,30 @@ public class TestsController(
             {
                 a.Id,
                 a.StudentId,
-                StudentName = a.Student.FirstName + " " + a.Student.LastName,
+                StudentName  = a.Student.FirstName + " " + a.Student.LastName,
                 StudentEmail = a.Student.Email,
                 a.ScorePercentage,
                 a.Passed,
                 a.StartedAt,
                 a.FinishedAt,
-                AnswersJson = a.AnswersJson != null ? JsonSerializer.Deserialize<object>(a.AnswersJson.RootElement.GetRawText(), (JsonSerializerOptions)null!) : null
+                RawAnswers = a.AnswersJson != null ? a.AnswersJson.RootElement.GetRawText() : null
             })
             .ToListAsync(ct);
+
+        var attempts = raw.Select(a => new
+        {
+            a.Id,
+            a.StudentId,
+            a.StudentName,
+            a.StudentEmail,
+            a.ScorePercentage,
+            a.Passed,
+            a.StartedAt,
+            a.FinishedAt,
+            AnswersJson = a.RawAnswers != null
+                ? JsonSerializer.Deserialize<object>(a.RawAnswers)
+                : null
+        });
         return Ok(attempts);
     }
 
@@ -147,6 +162,19 @@ public class TestsController(
     [Authorize(Roles = "Admin,Teacher")]
     public async Task<IActionResult> Create([FromQuery] Guid lessonId, [FromQuery] string? allowedStudentIds, CreateTestRequest req, CancellationToken ct)
     {
+        // Teachers can only create tests for their own course lessons
+        if (User.IsInRole("Teacher"))
+        {
+            var lesson = await db.Lessons
+                .Include(l => l.Module)
+                .FirstOrDefaultAsync(l => l.Id == lessonId, ct);
+            if (lesson == null) return NotFound();
+
+            var owns = await db.CourseTeachers
+                .AnyAsync(ct2 => ct2.CourseId == lesson.Module.CourseId && ct2.TeacherId == CurrentUserId, ct);
+            if (!owns) return Forbid();
+        }
+
         var questionsJson = JsonSerializer.Serialize(req.Questions);
         var test = new Test
         {
@@ -167,8 +195,17 @@ public class TestsController(
     [Authorize(Roles = "Admin,Teacher")]
     public async Task<IActionResult> Update(Guid id, [FromQuery] string? allowedStudentIds, CreateTestRequest req, CancellationToken ct)
     {
-        var test = await db.Tests.FindAsync([id], ct);
+        var test = await db.Tests
+            .Include(t => t.Lesson).ThenInclude(l => l.Module)
+            .FirstOrDefaultAsync(t => t.Id == id, ct);
         if (test == null) return NotFound();
+
+        if (User.IsInRole("Teacher"))
+        {
+            var owns = await db.CourseTeachers
+                .AnyAsync(ct2 => ct2.CourseId == test.Lesson.Module.CourseId && ct2.TeacherId == CurrentUserId, ct);
+            if (!owns) return Forbid();
+        }
 
         var questionsJson = JsonSerializer.Serialize(req.Questions);
 

@@ -1,4 +1,5 @@
 using LTropik.Application.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -35,20 +36,26 @@ public class DailyQuestResetWorker(
         var db    = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
-        var quests = db.DailyQuests.Where(q => q.IsActive).ToList();
+        var quests = await db.DailyQuests.Where(q => q.IsActive).ToListAsync(ct);
         if (quests.Count == 0) return;
 
-        var students = db.Users
+        var students = await db.Users
             .Where(u => u.Role == Domain.Enums.UserRole.Student && u.IsActive)
             .Select(u => u.Id)
-            .ToList();
+            .ToListAsync(ct);
+
+        // Load existing quests for today in one query to avoid N+1
+        var existingKeys = await db.StudentDailyQuests
+            .Where(sq => sq.Date == today && students.Contains(sq.StudentId))
+            .Select(sq => new { sq.StudentId, sq.QuestId })
+            .ToListAsync(ct);
+        var existingSet = existingKeys.Select(x => (x.StudentId, x.QuestId)).ToHashSet();
 
         foreach (var studentId in students)
         {
             foreach (var quest in quests)
             {
-                if (!db.StudentDailyQuests.Any(sq =>
-                    sq.StudentId == studentId && sq.QuestId == quest.Id && sq.Date == today))
+                if (!existingSet.Contains((studentId, quest.Id)))
                 {
                     db.StudentDailyQuests.Add(new Domain.Entities.StudentDailyQuest
                     {

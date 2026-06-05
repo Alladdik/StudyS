@@ -79,7 +79,7 @@ export function PublicCoursesPage() {
       </section>
 
       {/* Stats */}
-      <section className="flex flex-wrap justify-center gap-8 py-8 bg-white/60 backdrop-blur border-y border-ink-100">
+      <section className="flex flex-wrap justify-center gap-8 py-8 bg-white/60 dark:bg-[#1a1c2e]/60 backdrop-blur border-y border-ink-100 dark:border-[#282c44]">
         {[
           { label: 'Курсів', value: courses.length },
           { label: 'Студентів', value: courses.reduce((s, c) => s + c.studentCount, 0) },
@@ -106,7 +106,7 @@ export function PublicCoursesPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {courses.map(c => (
               <Link key={c.id} to={`/courses/${c.id}`}
-                className="group bg-white rounded-2xl border border-ink-100 p-5 hover:shadow-lg hover:border-brand-200 transition flex flex-col gap-3">
+                className="group bg-white dark:bg-[#1a1c2e] rounded-2xl border border-ink-100 dark:border-[#282c44] p-5 hover:shadow-lg dark:hover:shadow-black/30 hover:border-brand-200 dark:hover:border-brand-700 transition flex flex-col gap-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-extrabold text-lg">
                   {c.title[0]}
                 </div>

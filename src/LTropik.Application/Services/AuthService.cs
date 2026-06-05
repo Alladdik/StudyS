@@ -151,7 +151,7 @@ public class AuthService(
         return Convert.ToBase64String(salt) + ":" + Convert.ToBase64String(hash);
     }
 
-    private static bool VerifyPassword(string password, string storedHash)
+    public static bool VerifyPassword(string password, string storedHash)
     {
         var parts = storedHash.Split(':');
         if (parts.Length != 2)

@@ -108,7 +108,7 @@ export function LoginPage() {
       </div>
 
       {/* ── Right: form panel ────────────────────────────── */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-white">
+      <div className="flex-1 flex items-center justify-center p-8 bg-white dark:bg-[#0f1018]">
 
         <motion.div
           initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45, ease: 'easeOut' }}
@@ -118,15 +118,15 @@ export function LoginPage() {
           <div className="lg:hidden flex items-center gap-2.5 mb-8">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-extrabold"
               style={{ background: 'linear-gradient(135deg,#7350ff,#5526db)' }}>L</div>
-            <span className="font-extrabold text-xl" style={{ color: '#262a3d' }}>LTropik</span>
+            <span className="font-extrabold text-xl text-ink-900 dark:text-white">LTropik</span>
           </div>
 
           {twoFaMode ? (
             <>
-              <h2 className="text-[2rem] font-extrabold tracking-tight mb-1" style={{ color: '#181b29' }}>
+              <h2 className="text-[2rem] font-extrabold tracking-tight mb-1 text-ink-900 dark:text-white">
                 🔐 Підтвердження
               </h2>
-              <p className="text-sm mb-8" style={{ color: '#9aa2bd' }}>
+              <p className="text-sm mb-8 text-ink-400 dark:text-[#6b7394]">
                 Ми надіслали 6-значний код у ваш Telegram. Введіть його нижче.
               </p>
               <form onSubmit={handle2fa} className="flex flex-col gap-5">
@@ -147,9 +147,8 @@ export function LoginPage() {
                 <AnimatePresence>
                   {error && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                      className="flex items-center gap-3 rounded-xl px-4 py-3"
-                      style={{ background: '#fff1f2', border: '1.5px solid #fecdd3' }}>
-                      <p className="text-sm font-semibold" style={{ color: '#e11d48' }}>{error}</p>
+                      className="flex items-center gap-3 rounded-xl px-4 py-3 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800/50">
+                      <p className="text-sm font-semibold text-rose-600 dark:text-rose-400">{error}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -165,10 +164,10 @@ export function LoginPage() {
             </>
           ) : (
             <>
-          <h2 className="text-[2rem] font-extrabold tracking-tight mb-1" style={{ color: '#181b29' }}>
+          <h2 className="text-[2rem] font-extrabold tracking-tight mb-1 text-ink-900 dark:text-white">
             З поверненням 👋
           </h2>
-          <p className="text-sm mb-8" style={{ color: '#9aa2bd' }}>Увійдіть, щоб продовжити навчання</p>
+          <p className="text-sm mb-8 text-ink-400 dark:text-[#6b7394]">Увійдіть, щоб продовжити навчання</p>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
 
@@ -177,7 +176,7 @@ export function LoginPage() {
               <label className="label">Email</label>
               <div className="relative">
                 {/* icon */}
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: '#9aa2bd' }}>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none text-ink-400 dark:text-[#4d5470]">
                   <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7}
                       d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
@@ -199,7 +198,7 @@ export function LoginPage() {
             <div>
               <label className="label">Пароль</label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: '#9aa2bd' }}>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none text-ink-400 dark:text-[#4d5470]">
                   <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7}
                       d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
@@ -233,12 +232,11 @@ export function LoginPage() {
                   initial={{ opacity: 0, y: -8, height: 0 }}
                   animate={{ opacity: 1, y: 0, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="flex items-center gap-3 rounded-xl px-4 py-3"
-                  style={{ background: '#fff1f2', border: '1.5px solid #fecdd3' }}>
-                  <svg width="16" height="16" fill="none" stroke="#f43f5e" viewBox="0 0 24 24" className="shrink-0">
+                  className="flex items-center gap-3 rounded-xl px-4 py-3 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800/50">
+                  <svg width="16" height="16" className="shrink-0 text-rose-500 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                   </svg>
-                  <p className="text-sm font-semibold" style={{ color: '#e11d48' }}>{error}</p>
+                  <p className="text-sm font-semibold text-rose-600 dark:text-rose-400">{error}</p>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -253,17 +251,18 @@ export function LoginPage() {
           </form>
 
           <div className="mt-4 text-center">
-            <Link to="/forgot-password" className="text-sm font-semibold" style={{ color: '#9aa2bd' }}
-              onMouseOver={e => (e.currentTarget.style.color = '#6535f6')}
-              onMouseOut={e => (e.currentTarget.style.color = '#9aa2bd')}>
+            <Link to="/forgot-password"
+              className="text-sm font-semibold text-ink-400 dark:text-[#6b7394] hover:text-brand-600 dark:hover:text-brand-400 transition-colors">
               Забули пароль?
             </Link>
           </div>
 
-          <div className="mt-5 pt-6" style={{ borderTop: '1px solid #eef0f6' }}>
-            <p className="text-sm text-center" style={{ color: '#9aa2bd' }}>
+          <div className="mt-5 pt-6 border-t border-ink-100 dark:border-[#282c44]">
+            <p className="text-sm text-center text-ink-400 dark:text-[#6b7394]">
               Немає акаунту?{' '}
-              <Link to="/register" className="font-bold" style={{ color: '#6535f6' }}>Зареєструватись</Link>
+              <Link to="/register" className="font-bold text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors">
+                Зареєструватись
+              </Link>
             </p>
           </div>
 

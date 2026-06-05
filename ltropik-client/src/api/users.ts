@@ -21,6 +21,9 @@ export interface CustomFieldDef {
 export const getUsers = (params?: { role?: string; search?: string; page?: number; pageSize?: number }) =>
   api.get<{ total: number; page: number; pageSize: number; items: UserItem[] }>('/users', { params });
 
+export const getUserById = (id: string) =>
+  api.get<UserItem>(`/users/${id}`);
+
 export const createUser = (data: {
   email: string; password: string;
   firstName: string; lastName: string; role: string;

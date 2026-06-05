@@ -12,13 +12,13 @@ interface HealthData {
 
 function StatusBadge({ status }: { status: 'OK' | 'ERROR' | 'LOADING' }) {
   if (status === 'LOADING') return (
-    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-ink-100 text-ink-500">
+    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-ink-100 dark:bg-[#1e2033] text-ink-500 dark:text-[#6b7394]">
       <Spinner className="w-3 h-3" /> Перевірка…
     </span>
   );
   return (
     <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
-      status === 'OK' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
+      status === 'OK' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400'
     }`}>
       <span className={`w-1.5 h-1.5 rounded-full ${status === 'OK' ? 'bg-emerald-500' : 'bg-rose-500'}`} />
       {status === 'OK' ? 'Працює' : 'Помилка'}

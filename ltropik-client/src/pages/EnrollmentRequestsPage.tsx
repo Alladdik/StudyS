@@ -59,7 +59,7 @@ export function EnrollmentRequestsPage() {
       <div className="flex gap-2 mb-5 flex-wrap">
         {(['all', 'Pending', 'Approved', 'Rejected'] as const).map(f => (
           <button key={f} onClick={() => setFilter(f)}
-            className={`chip ${filter === f ? 'bg-brand-600 text-white' : 'bg-white text-ink-500 ring-1 ring-ink-200'}`}>
+            className={`chip ${filter === f ? 'bg-brand-600 text-white' : 'bg-white dark:bg-[#1e2033] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#2d3148]'}`}>
             { f === 'all' ? `Всі (${requests.length})`
               : `${statusLabel[f]} (${requests.filter(r => r.status === f).length})`}
           </button>
@@ -80,7 +80,7 @@ export function EnrollmentRequestsPage() {
             </thead>
             <tbody>
               {filtered.map(req => (
-                <tr key={req.id} className="border-b border-ink-50 last:border-0 hover:bg-ink-50/60 transition">
+                <tr key={req.id} className="border-b border-ink-50 dark:border-[#1e2033] last:border-0 hover:bg-ink-50/60 dark:hover:bg-[#1e2033]/60 transition">
                   <td className="px-5 py-3.5">
                     <div className="flex items-center gap-2.5">
                       <Avatar name={req.studentName} size="sm" />

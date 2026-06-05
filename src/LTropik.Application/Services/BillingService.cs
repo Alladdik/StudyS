@@ -104,6 +104,13 @@ public class BillingService(
         };
         db.PaymentTransactions.Add(tx);
 
+        // Skip enrollment update if no course is associated with this payment
+        if (courseId == Guid.Empty)
+        {
+            await db.SaveChangesAsync(ct);
+            return;
+        }
+
         var enrollment = await db.CourseStudents
             .FirstOrDefaultAsync(cs => cs.StudentId == studentId && cs.CourseId == courseId, ct);
 

@@ -50,7 +50,7 @@ public class ProfileController(IApplicationDbContext db, AuthService auth) : Con
             if (string.IsNullOrWhiteSpace(req.CurrentPassword))
                 return BadRequest(new { error = "Для зміни пароля потрібен поточний пароль" });
 
-            if (AuthService.HashPassword(req.CurrentPassword) != user.PasswordHash)
+            if (!AuthService.VerifyPassword(req.CurrentPassword, user.PasswordHash))
                 return BadRequest(new { error = "Поточний пароль невірний" });
 
             user.PasswordHash = AuthService.HashPassword(req.NewPassword);

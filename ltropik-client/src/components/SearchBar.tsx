@@ -64,7 +64,7 @@ export function SearchBar() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Пошук…"
-          className="w-full pl-9 pr-4 py-2 text-sm bg-ink-50 border border-ink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-300 focus:bg-white transition"
+          className="w-full pl-9 pr-4 py-2 text-sm bg-ink-50 dark:bg-[#1e2033] border border-ink-200 dark:border-[#2d3148] text-ink-800 dark:text-[#e8eaf0] placeholder-ink-400 dark:placeholder-[#4d5470] rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-300 focus:bg-white dark:focus:bg-[#1e2033] transition"
         />
       </div>
 
@@ -75,19 +75,19 @@ export function SearchBar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.12 }}
-            className="absolute left-0 top-11 w-80 bg-white rounded-2xl shadow-2xl border border-ink-100 z-50 overflow-hidden"
+            className="absolute left-0 top-11 w-80 bg-white dark:bg-[#1a1c2e] rounded-2xl shadow-2xl dark:shadow-black/50 border border-ink-100 dark:border-[#282c44] z-50 overflow-hidden"
           >
             {results.map((r, i) => (
               <button
                 key={i}
                 onClick={() => handleSelect(r)}
-                className={cx('w-full text-left px-4 py-2.5 hover:bg-ink-50 transition flex items-center gap-3',
-                  i > 0 && 'border-t border-ink-50')}
+                className={cx('w-full text-left px-4 py-2.5 hover:bg-ink-50 dark:hover:bg-[#1e2033] transition flex items-center gap-3',
+                  i > 0 && 'border-t border-ink-50 dark:border-[#1e2033]')}
               >
                 <span className="text-lg flex-shrink-0">{categoryIcon[r.category] ?? '🔍'}</span>
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-ink-800 truncate">{r.title}</p>
-                  {r.subtitle && <p className="text-xs text-ink-400 truncate">{r.subtitle}</p>}
+                  <p className="text-sm font-semibold text-ink-800 dark:text-[#e8eaf0] truncate">{r.title}</p>
+                  {r.subtitle && <p className="text-xs text-ink-400 dark:text-[#6b7394] truncate">{r.subtitle}</p>}
                 </div>
                 <span className="ml-auto text-[10px] text-ink-300 flex-shrink-0">{r.category}</span>
               </button>

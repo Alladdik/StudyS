@@ -250,7 +250,7 @@ export function CourseBuilderPage() {
           </div>
           {courses.map((c) => (
             <button key={c.id} onClick={() => selectCourse(c)}
-              className={cx('text-left px-3 py-2.5 rounded-xl text-sm font-medium transition flex flex-col gap-1 w-full', selected?.id === c.id ? 'bg-brand-50 text-brand-700 ring-1 ring-brand-100' : 'text-ink-600 hover:bg-ink-50')}>
+              className={cx('text-left px-3 py-2.5 rounded-xl text-sm font-medium transition flex flex-col gap-1 w-full', selected?.id === c.id ? 'bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-400 ring-1 ring-brand-100 dark:ring-brand-800/40' : 'text-ink-600 dark:text-[#9aa2bd] hover:bg-ink-50 dark:hover:bg-[#1e2033]')}>
               <span className="truncate w-full font-bold">{c.title}</span>
               <span className="text-[10px] uppercase font-bold tracking-wider">
                 {c.status === 'Draft' && <span className="text-ink-400">Чернетка</span>}
@@ -406,7 +406,7 @@ export function CourseBuilderPage() {
                     + Додати блок контенту
                   </button>
                   {showBlockPicker && (
-                    <div className="absolute left-0 top-12 bg-white border border-ink-200 rounded-2xl shadow-xl z-10 p-2 flex flex-col gap-0.5 min-w-52">
+                    <div className="absolute left-0 top-12 bg-white dark:bg-[#1a1c2e] border border-ink-200 dark:border-[#282c44] rounded-2xl shadow-xl dark:shadow-black/40 z-10 p-2 flex flex-col gap-0.5 min-w-52">
                       {BLOCK_TYPES.map((type) => (
                         <button key={type} onClick={() => addBlock(type)} className="text-left px-3 py-2.5 hover:bg-brand-50 rounded-xl text-sm flex items-center gap-2.5 transition">
                           <span className="text-lg">{blockIcons[type]}</span> {blockLabels[type]}
@@ -439,7 +439,7 @@ export function CourseBuilderPage() {
                 <h3 className="font-bold text-ink-700 text-sm mb-3">Викладачі ({members.teachers.length})</h3>
                 
                 {role === 'Admin' && (
-                  <div className="bg-ink-50/60 p-3.5 rounded-2xl mb-3 flex gap-2 items-center">
+                  <div className="bg-ink-50/60 dark:bg-[#1e2033]/60 p-3.5 rounded-2xl mb-3 flex gap-2 items-center">
                     <select
                       value={selectedTeacherId}
                       onChange={(e) => setSelectedTeacherId(e.target.value)}
@@ -479,7 +479,7 @@ export function CourseBuilderPage() {
                 <h3 className="font-bold text-ink-700 text-sm mb-3">Записані студенти ({members.students.length})</h3>
                 
                 {role === 'Admin' && (
-                  <div className="bg-ink-50/60 p-3.5 rounded-2xl mb-3 flex gap-2 items-center">
+                  <div className="bg-ink-50/60 dark:bg-[#1e2033]/60 p-3.5 rounded-2xl mb-3 flex gap-2 items-center">
                     <select
                       value={selectedStudentId}
                       onChange={(e) => setSelectedStudentId(e.target.value)}

@@ -6,7 +6,7 @@ import { getCourses, getCourseMembers } from '../api/courses';
 import api from '../api/client';
 import type { ScheduleEntry, Course } from '../types';
 import { useAuthStore } from '../store/authStore';
-import { Card, Loader, Modal } from '../components/ui';
+import { Card, Loader, Modal, toast } from '../components/ui';
 
 interface Module { id: string; title: string; lessons: { id: string; title: string }[]; }
 interface TeacherMember { teacherId: string; name: string; email: string; }
@@ -153,7 +153,7 @@ export function CalendarPage() {
       setSelectedTeacherId('');
     } catch (err: any) {
       console.error(err);
-      alert(err.response?.data?.error || 'Помилка при створенні');
+      toast('error', err.response?.data?.error || 'Помилка при створенні');
     } finally {
       setSaving(false);
     }
@@ -174,7 +174,7 @@ export function CalendarPage() {
       setActiveEntry(null);
     } catch (err: any) {
       console.error(err);
-      alert(err.response?.data?.error || 'Помилка при оновленні');
+      toast('error', err.response?.data?.error || 'Помилка при оновленні');
     } finally {
       setUpdating(false);
     }
@@ -188,7 +188,7 @@ export function CalendarPage() {
       setEntries((p) => p.filter((e) => e.id !== id));
     } catch (err) {
       console.error(err);
-      alert('Помилка при видаленні');
+      toast('error', 'Помилка при видаленні');
     }
   }
 
@@ -203,7 +203,7 @@ export function CalendarPage() {
       setActiveEntry(null);
     } catch (err) {
       console.error(err);
-      alert('Помилка при видаленні');
+      toast('error', 'Помилка при видаленні');
     } finally {
       setDeleting(false);
     }
@@ -221,7 +221,7 @@ export function CalendarPage() {
     try {
       await updateSchedule(entry.id, { startsAt: newIso, durationMinutes: entry.durationMinutes });
     } catch {
-      alert('Не вдалося перемістити заняття');
+      toast('error', 'Не вдалося перемістити заняття');
       await fetchEntries(currentMonth);
     }
   }
@@ -409,7 +409,7 @@ export function CalendarPage() {
                 {activeEntry.notes && (
                   <div>
                     <p className="text-xs text-ink-400 font-bold uppercase tracking-wider">Нотатки</p>
-                    <p className="text-sm text-ink-700 bg-ink-50 rounded-lg p-2.5 mt-1 border border-ink-100">{activeEntry.notes}</p>
+                    <p className="text-sm text-ink-700 dark:text-[#b0b8d0] bg-ink-50 dark:bg-[#1e2033] rounded-lg p-2.5 mt-1 border border-ink-100 dark:border-[#282c44]">{activeEntry.notes}</p>
                   </div>
                 )}
 
