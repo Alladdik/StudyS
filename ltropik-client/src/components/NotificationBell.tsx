@@ -102,7 +102,7 @@ export function NotificationBell() {
       {/* Bell button */}
       <button onClick={handleOpen}
         title={`Сповіщення — ${connStatus === 'connected' ? 'live' : connStatus === 'connecting' ? 'підключення…' : 'offline'}`}
-        className="relative w-9 h-9 rounded-xl flex items-center justify-center text-ink-500 hover:bg-ink-100 transition">
+        className="relative w-9 h-9 rounded-xl flex items-center justify-center text-ink-500 hover:bg-ink-100 dark:hover:bg-[#252840] transition">
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
             d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -124,16 +124,16 @@ export function NotificationBell() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -8 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 top-12 w-80 bg-white rounded-2xl shadow-2xl border border-ink-100 z-50 overflow-hidden">
+            className="absolute right-0 top-12 w-80 bg-white dark:bg-[#1a1c2e] rounded-2xl shadow-2xl dark:shadow-black/50 border border-ink-100 dark:border-[#282c44] z-50 overflow-hidden">
 
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-ink-100">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-ink-100 dark:border-[#282c44]">
               <div className="flex items-center gap-2">
-                <span className="font-bold text-ink-900 text-sm">Сповіщення</span>
+                <span className="font-bold text-ink-900 dark:text-white text-sm">Сповіщення</span>
                 <span className={cx('text-[10px] px-1.5 py-0.5 rounded-full font-semibold',
-                  connStatus === 'connected' ? 'bg-emerald-100 text-emerald-700' :
-                  connStatus === 'connecting' ? 'bg-amber-100 text-amber-700' :
-                  'bg-rose-100 text-rose-700')}>
+                  connStatus === 'connected' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400' :
+                  connStatus === 'connecting' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400' :
+                  'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400')}>
                   {connStatus === 'connected' ? '● live' : connStatus === 'connecting' ? '● …' : '● offline'}
                 </span>
               </div>
@@ -162,13 +162,13 @@ export function NotificationBell() {
               ) : (
                 notifications.map((n) => (
                   <button key={n.id} onClick={() => handleClick(n)}
-                    className={cx('w-full text-left px-4 py-3 border-b border-ink-50 last:border-0 hover:bg-ink-50 transition',
-                      !n.isRead && 'bg-brand-50/50')}>
+                    className={cx('w-full text-left px-4 py-3 border-b border-ink-50 dark:border-[#1e2033] last:border-0 hover:bg-ink-50 dark:hover:bg-[#1e2033] transition',
+                      !n.isRead && 'bg-brand-50/50 dark:bg-brand-900/10')}>
                     <div className="flex items-start gap-3">
                       <span className={cx('w-2 h-2 rounded-full mt-1.5 flex-shrink-0',
                         !n.isRead ? 'bg-brand-500' : 'bg-ink-200')} />
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-ink-800 truncate">{n.title}</p>
+                        <p className="text-sm font-semibold text-ink-800 dark:text-[#e8eaf0] truncate">{n.title}</p>
                         <p className="text-xs text-ink-500 mt-0.5 line-clamp-2">{n.body}</p>
                         <p className="text-[10px] text-ink-300 mt-1">
                           {new Date(n.createdAt).toLocaleString('uk-UA')}

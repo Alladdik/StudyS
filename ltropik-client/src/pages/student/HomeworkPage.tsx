@@ -94,7 +94,7 @@ export function HomeworkPage() {
           <button onClick={() => navigate(-1)} className="btn btn-ghost w-9 h-9 px-0 rounded-xl">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
           </button>
-          <h1 className="text-xl font-extrabold text-ink-900">Домашнє завдання</h1>
+          <h1 className="text-xl font-extrabold text-ink-900 dark:text-white">Домашнє завдання</h1>
           {statusCfg && <Badge tone={statusCfg.tone} className="ml-auto">{statusCfg.label}</Badge>}
         </div>
 
@@ -151,7 +151,7 @@ export function HomeworkPage() {
                 <textarea value={answer} onChange={(e) => setAnswer(e.target.value)}
                   placeholder="Введи відповідь, посилання на репозиторій або опис рішення…"
                   disabled={isPassed || isOnReview}
-                  className="input min-h-40 resize-none disabled:opacity-50 disabled:bg-ink-50" />
+                  className="input min-h-40 resize-none disabled:opacity-50 disabled:bg-ink-50 dark:disabled:bg-[#1e2033]" />
                 <div className="flex items-center justify-between mt-4">
                   <div className="flex items-center gap-3">
                     <p className="text-xs text-ink-400">{answer.length} символів</p>

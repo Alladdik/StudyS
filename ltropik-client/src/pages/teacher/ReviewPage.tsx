@@ -84,7 +84,7 @@ export function ReviewPage() {
             <div className="flex items-center gap-3">
               <Avatar name={current.studentName} />
               <div className="min-w-0">
-                <p className="font-bold text-ink-900 truncate">{current.studentName}</p>
+                <p className="font-bold text-ink-900 dark:text-white truncate">{current.studentName}</p>
                 <p className="text-xs text-ink-400">{new Date(current.updatedAt).toLocaleString('uk')}</p>
               </div>
               <Badge tone="amber" className="ml-auto">На перевірці</Badge>
@@ -97,7 +97,7 @@ export function ReviewPage() {
           {/* Review */}
           <Card className="p-5 flex flex-col gap-4" onKeyDown={handleKeyDown}>
             {current.aiFeedbackDraft && (
-              <div className="bg-brand-50 border border-brand-100 rounded-xl p-4">
+              <div className="bg-brand-50 dark:bg-brand-900/20 border border-brand-100 dark:border-brand-800/40 rounded-xl p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-bold text-brand-600 uppercase tracking-wider flex items-center gap-1.5">🤖 AI Рецензія</span>
                   <button onClick={() => setFeedback(current.aiFeedbackDraft ?? '')} className="btn btn-soft py-1 px-2.5 text-xs">Вставити</button>
@@ -111,12 +111,12 @@ export function ReviewPage() {
             <div className="flex gap-2">
               <button onClick={() => setReviewStatus('Passed')}
                 className={cx('flex-1 py-2 rounded-xl text-sm font-semibold transition border-2',
-                  reviewStatus === 'Passed' ? 'border-emerald-400 bg-emerald-50 text-emerald-700' : 'border-ink-100 text-ink-500 hover:border-emerald-200')}>
+                  reviewStatus === 'Passed' ? 'border-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400' : 'border-ink-100 dark:border-[#282c44] text-ink-500 dark:text-[#6b7394] hover:border-emerald-200')}>
                 ✅ Зараховано
               </button>
               <button onClick={() => setReviewStatus('RequiresChanges')}
                 className={cx('flex-1 py-2 rounded-xl text-sm font-semibold transition border-2',
-                  reviewStatus === 'RequiresChanges' ? 'border-amber-400 bg-amber-50 text-amber-700' : 'border-ink-100 text-ink-500 hover:border-amber-200')}>
+                  reviewStatus === 'RequiresChanges' ? 'border-amber-400 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400' : 'border-ink-100 dark:border-[#282c44] text-ink-500 dark:text-[#6b7394] hover:border-amber-200')}>
                 🔄 Доопрацювати
               </button>
             </div>

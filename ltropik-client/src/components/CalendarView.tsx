@@ -87,15 +87,15 @@ export function CalendarView({ entries, currentMonth, onMonthChange, onDayClick,
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
-        <button onClick={prev} className="w-9 h-9 rounded-xl hover:bg-ink-100 flex items-center justify-center transition">
+        <button onClick={prev} className="w-9 h-9 rounded-xl hover:bg-ink-100 dark:hover:bg-[#252840] flex items-center justify-center transition">
           <svg className="w-4 h-4 text-ink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        <span className="font-bold text-ink-900 text-lg">
+        <span className="font-bold text-ink-900 dark:text-white text-lg">
           {MONTHS_UA[currentMonth.month]} {currentMonth.year}
         </span>
-        <button onClick={next} className="w-9 h-9 rounded-xl hover:bg-ink-100 flex items-center justify-center transition">
+        <button onClick={next} className="w-9 h-9 rounded-xl hover:bg-ink-100 dark:hover:bg-[#252840] flex items-center justify-center transition">
           <svg className="w-4 h-4 text-ink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
@@ -143,9 +143,9 @@ export function CalendarView({ entries, currentMonth, onMonthChange, onDayClick,
               } : undefined}
               className={cx(
                 'min-h-[84px] rounded-xl p-1.5 border transition select-none flex flex-col justify-between group',
-                day ? 'border-ink-100 hover:border-brand-200 hover:bg-brand-50/20 cursor-pointer' : 'border-transparent',
-                isToday && 'border-brand-400 bg-brand-50/50 shadow-sm',
-                dragOverDay === day && 'border-brand-400 bg-brand-100/40 scale-[1.02]'
+                day ? 'border-ink-100 dark:border-[#282c44] hover:border-brand-200 hover:bg-brand-50/20 dark:hover:bg-brand-900/10 cursor-pointer' : 'border-transparent',
+                isToday && 'border-brand-400 bg-brand-50/50 dark:bg-brand-900/20 shadow-sm',
+                dragOverDay === day && 'border-brand-400 bg-brand-100/40 dark:bg-brand-900/20 scale-[1.02]'
               )}
             >
               {day && (
@@ -157,7 +157,7 @@ export function CalendarView({ entries, currentMonth, onMonthChange, onDayClick,
                       </span>
                     )}
                     <span className={cx('day-num-label text-xs font-bold ml-auto',
-                      isToday ? 'text-brand-600 bg-brand-100 w-5 h-5 flex items-center justify-center rounded-full' : 'text-ink-600')}>{day}</span>
+                      isToday ? 'text-brand-600 bg-brand-100 dark:bg-brand-900/30 w-5 h-5 flex items-center justify-center rounded-full' : 'text-ink-600 dark:text-[#9aa2bd]')}>{day}</span>
                   </div>
                   <div className="flex-1 flex flex-col gap-1 justify-end">
                     {events.slice(0, 2).map((e, j) => {
@@ -186,7 +186,7 @@ export function CalendarView({ entries, currentMonth, onMonthChange, onDayClick,
                       );
                     })}
                     {events.length > 2 && (
-                      <div className="text-[9px] text-ink-500 font-bold bg-ink-100/60 rounded px-1 py-0.2 self-start">
+                      <div className="text-[9px] text-ink-500 dark:text-[#6b7394] font-bold bg-ink-100/60 dark:bg-[#252840]/60 rounded px-1 py-0.2 self-start">
                         +{events.length - 2} ще
                       </div>
                     )}

@@ -193,7 +193,7 @@ export function ProfilePage() {
             {profile.firstName[0]}{profile.lastName[0]}
           </div>
           <div>
-            <h2 className="text-xl font-extrabold text-ink-900">
+            <h2 className="text-xl font-extrabold text-ink-900 dark:text-white">
               {profile.firstName} {profile.lastName}
             </h2>
             <p className="text-sm text-ink-400">{profile.email}</p>
@@ -205,7 +205,7 @@ export function ProfilePage() {
 
         {/* ── Edit form ──────────────────────────────────── */}
         <Card className="p-6">
-          <h3 className="font-extrabold text-ink-900 text-base mb-5">Редагувати дані</h3>
+          <h3 className="font-extrabold text-ink-900 dark:text-white text-base mb-5">Редагувати дані</h3>
           <form onSubmit={handleSave} className="flex flex-col gap-4">
             <div className="grid grid-cols-2 gap-3">
               <div>
@@ -220,7 +220,7 @@ export function ProfilePage() {
               </div>
             </div>
 
-            <hr className="border-ink-100" />
+            <hr className="border-ink-100 dark:border-[#282c44]" />
             <p className="text-xs text-ink-400 font-semibold uppercase tracking-wide">Зміна пароля (необов'язково)</p>
 
             <div>
@@ -245,7 +245,7 @@ export function ProfilePage() {
           <div className="flex items-center gap-3 mb-4">
             <span className="text-2xl">✈️</span>
             <div>
-              <h3 className="font-extrabold text-ink-900 text-base">Telegram-бот</h3>
+              <h3 className="font-extrabold text-ink-900 dark:text-white text-base">Telegram-бот</h3>
               <p className="text-sm text-ink-400">Отримуйте сповіщення про оцінки, розклад та ДЗ</p>
             </div>
           </div>
@@ -269,7 +269,7 @@ export function ProfilePage() {
               <ol className="text-sm text-ink-600 space-y-1.5 list-none">
                 <li className="flex gap-2"><span className="text-brand-500 font-bold">1.</span> Знайдіть бота в Telegram (назва в налаштуваннях школи)</li>
                 <li className="flex gap-2"><span className="text-brand-500 font-bold">2.</span> Натисніть кнопку нижче — отримайте код</li>
-                <li className="flex gap-2"><span className="text-brand-500 font-bold">3.</span> Надішліть боту команду <code className="bg-ink-100 px-1.5 py-0.5 rounded text-xs font-mono">/link КОД</code></li>
+                <li className="flex gap-2"><span className="text-brand-500 font-bold">3.</span> Надішліть боту команду <code className="bg-ink-100 dark:bg-[#252840] px-1.5 py-0.5 rounded text-xs font-mono">/link КОД</code></li>
               </ol>
 
               {linkCode ? (

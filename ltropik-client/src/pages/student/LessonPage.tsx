@@ -126,13 +126,13 @@ export function LessonPage() {
         {/* Homework */}
         {lesson.homeworks && lesson.homeworks.length > 0 && (
           <div className="mt-10">
-            <h2 className="text-lg font-bold text-ink-900 mb-4 flex items-center gap-2"><span className="text-2xl">📋</span> Домашні завдання</h2>
+            <h2 className="text-lg font-bold text-ink-900 dark:text-white mb-4 flex items-center gap-2"><span className="text-2xl">📋</span> Домашні завдання</h2>
             <div className="flex flex-col gap-3">
               {lesson.homeworks.map((hw) => (
                 <Link key={hw.id} to={`/student/homework/${hw.id}?courseId=${courseId}`}>
                   <Card hover className="p-4 flex items-center justify-between gap-4">
                     <div className="min-w-0">
-                      <p className="font-semibold text-ink-800">Завдання</p>
+                      <p className="font-semibold text-ink-800 dark:text-[#e8eaf0]">Завдання</p>
                       <p className="text-sm text-ink-400 mt-0.5 line-clamp-2">{hw.instruction}</p>
                     </div>
                     <div className="w-9 h-9 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center flex-shrink-0">→</div>
@@ -146,13 +146,13 @@ export function LessonPage() {
         {/* Tests */}
         {lesson.tests && lesson.tests.length > 0 && (
           <div className="mt-8">
-            <h2 className="text-lg font-bold text-ink-900 mb-4 flex items-center gap-2"><span className="text-2xl">✅</span> Тести</h2>
+            <h2 className="text-lg font-bold text-ink-900 dark:text-white mb-4 flex items-center gap-2"><span className="text-2xl">✅</span> Тести</h2>
             <div className="flex flex-col gap-3">
               {lesson.tests.map((test) => (
                 <Link key={test.id} to={`/student/test/${test.id}`}>
                   <Card hover className="p-4 flex items-center justify-between gap-4">
-                    <p className="font-semibold text-ink-800">{test.title}</p>
-                    <span className="chip bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100">Пройти</span>
+                    <p className="font-semibold text-ink-800 dark:text-[#e8eaf0]">{test.title}</p>
+                    <span className="chip bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 ring-1 ring-emerald-100 dark:ring-emerald-800/40">Пройти</span>
                   </Card>
                 </Link>
               ))}
@@ -167,7 +167,7 @@ export function LessonPage() {
               <span className="text-xs font-semibold text-ink-500">Прогрес курсу</span>
               <span className="text-xs font-bold text-brand-600">{progressPct}%</span>
             </div>
-            <div className="h-2 bg-ink-100 rounded-full overflow-hidden">
+            <div className="h-2 bg-ink-100 dark:bg-[#252840] rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-brand-500 to-brand-600 rounded-full transition-all duration-500" style={{ width: `${progressPct}%` }} />
             </div>
           </div>

@@ -79,7 +79,7 @@ function InlineField({ label, value, onSave, type = 'text', placeholder }: {
         </div>
       ) : (
         <button onClick={() => setEditing(true)}
-          className="w-full text-left px-3 py-1.5 rounded-xl text-sm text-ink-800 bg-ink-50 hover:bg-brand-50 hover:text-brand-700 border border-transparent hover:border-brand-100 transition group flex items-center justify-between">
+          className="w-full text-left px-3 py-1.5 rounded-xl text-sm text-ink-800 dark:text-[#e8eaf0] bg-ink-50 dark:bg-[#1e2033] hover:bg-brand-50 dark:hover:bg-brand-900/20 hover:text-brand-700 dark:hover:text-brand-400 border border-transparent hover:border-brand-100 dark:hover:border-brand-800/40 transition group flex items-center justify-between">
           <span className="truncate">{value || <span className="text-ink-300 italic">{placeholder ?? 'Не вказано'}</span>}</span>
           <span className="opacity-0 group-hover:opacity-100 text-brand-400 text-xs flex-shrink-0 ml-2">✎</span>
         </button>
@@ -294,7 +294,7 @@ function UserDrawer({ user, courses, students, onClose, onRefresh, isManager }: 
             <p className="text-xs text-ink-400 truncate">{data.email}</p>
           </div>
           <Badge tone={ROLE_TONES[data.role] ?? 'gray'}>{ROLE_EMOJIS[data.role]} {ROLE_LABELS[data.role] ?? data.role}</Badge>
-          <button onClick={onClose} className="w-8 h-8 rounded-xl bg-ink-100 hover:bg-ink-200 flex items-center justify-center text-ink-500 transition ml-1">✕</button>
+          <button onClick={onClose} className="w-8 h-8 rounded-xl bg-ink-100 dark:bg-[#252840] hover:bg-ink-200 dark:hover:bg-[#2d3148] flex items-center justify-center text-ink-500 transition ml-1">✕</button>
         </div>
 
         {/* Actions */}
@@ -306,14 +306,14 @@ function UserDrawer({ user, courses, students, onClose, onRefresh, isManager }: 
             </button>
           )}
           <button onClick={copyEmail}
-            className="py-2 px-3 rounded-xl bg-white border border-ink-200 hover:bg-ink-50 text-ink-600 text-xs font-semibold transition">
+            className="py-2 px-3 rounded-xl bg-white dark:bg-[#1e2033] border border-ink-200 dark:border-[#2d3148] hover:bg-ink-50 dark:hover:bg-[#252840] text-ink-600 dark:text-[#9aa2bd] text-xs font-semibold transition">
             📋 Email
           </button>
           {!isManager && (
             <button onClick={handleBlock} disabled={actionLoading === 'block'}
               className={cx('py-2 px-3 rounded-xl text-xs font-semibold transition',
-                data.isBlocked ? 'bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100'
-                  : 'bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-100')}>
+                data.isBlocked ? 'bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700/50 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/30'
+                  : 'bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-700/50 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/30')}>
               {data.isBlocked ? '✅ Розблокувати' : '🔒 Заблокувати'}
             </button>
           )}
@@ -346,8 +346,8 @@ function UserDrawer({ user, courses, students, onClose, onRefresh, isManager }: 
                   <button key={r} onClick={() => save({ role: r })}
                     className={cx('flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold border transition',
                       data.role === r
-                        ? 'border-brand-300 bg-brand-50 text-brand-700'
-                        : 'border-ink-200 bg-white text-ink-500 hover:border-brand-200 hover:bg-brand-50/50')}>
+                        ? 'border-brand-300 dark:border-brand-600 bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300'
+                        : 'border-ink-200 dark:border-[#2d3148] bg-white dark:bg-[#1e2033] text-ink-500 dark:text-[#9aa2bd] hover:border-brand-200 dark:hover:border-brand-700 hover:bg-brand-50/50 dark:hover:bg-brand-900/20')}>
                     {ROLE_EMOJIS[r]} {ROLE_LABELS[r]}
                   </button>
                 ))}
@@ -430,9 +430,9 @@ function UserDrawer({ user, courses, students, onClose, onRefresh, isManager }: 
 
         {/* Footer: danger zone — Admin only */}
         {!isManager && (
-          <div className="px-5 py-3 border-t border-ink-100 flex-shrink-0">
+          <div className="px-5 py-3 border-t border-ink-100 dark:border-[#282c44] flex-shrink-0">
             <button onClick={handleDelete}
-              className="w-full py-2.5 rounded-2xl text-sm font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition">
+              className="w-full py-2.5 rounded-2xl text-sm font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-900/20 hover:bg-rose-100 dark:hover:bg-rose-900/30 border border-rose-200 dark:border-rose-700/50 transition">
               🗑 Видалити акаунт назавжди
             </button>
           </div>
@@ -496,7 +496,7 @@ function CreateModal({ onClose, onCreated }: { onClose: () => void; onCreated: (
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-ink-500">Пароль</span>
                   <div className="flex items-center gap-1.5">
-                    <span className="font-mono text-sm text-ink-800 bg-white px-2 py-0.5 rounded-lg border">{created.password}</span>
+                    <span className="font-mono text-sm text-ink-800 dark:text-[#e8eaf0] bg-white dark:bg-[#1e2033] px-2 py-0.5 rounded-lg border border-ink-200 dark:border-[#2d3148]">{created.password}</span>
                     <button onClick={() => { navigator.clipboard.writeText(created.password); toast('success', 'Скопійовано'); }}
                       className="text-emerald-600 hover:text-emerald-800 text-xs">📋</button>
                   </div>
@@ -622,7 +622,7 @@ export function UsersPage() {
           <button key={r} onClick={() => setRoleFilter(r)}
             className={cx('chip transition-all', roleFilter === r
               ? 'bg-brand-600 text-white shadow-[var(--shadow-glow)]'
-              : 'bg-white text-ink-500 ring-1 ring-ink-200 hover:ring-brand-200')}>
+              : 'bg-white dark:bg-[#1e2033] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#2d3148] hover:ring-brand-200')}>
             {r === 'All' ? `Всі (${data?.total ?? '…'})` : `${ROLE_EMOJIS[r]} ${ROLE_LABELS[r]}`}
           </button>
         ))}
@@ -654,7 +654,7 @@ export function UsersPage() {
                       <div className="flex items-center gap-3">
                         <Av name={`${user.firstName} ${user.lastName}`} role={user.role} size={36} />
                         <div>
-                          <p className="font-semibold text-ink-800 group-hover:text-brand-700 transition leading-tight">
+                          <p className="font-semibold text-ink-800 dark:text-[#e8eaf0] group-hover:text-brand-700 dark:group-hover:text-brand-400 transition leading-tight">
                             {user.firstName} {user.lastName}
                           </p>
                           {user.isBlocked && <span className="text-[10px] text-rose-500 font-medium">🔒 Заблоковано</span>}
@@ -665,7 +665,7 @@ export function UsersPage() {
                     {/* Email */}
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-ink-600 max-w-[200px] truncate">{user.email}</span>
+                        <span className="text-ink-600 dark:text-[#9aa2bd] max-w-[200px] truncate">{user.email}</span>
                         <button onClick={e => { e.stopPropagation(); navigator.clipboard.writeText(user.email); toast('success', 'Скопійовано'); }}
                           className="opacity-0 group-hover:opacity-100 text-ink-300 hover:text-brand-500 transition text-xs">📋</button>
                       </div>
@@ -681,7 +681,7 @@ export function UsersPage() {
                     {/* Status */}
                     <td className="px-5 py-3">
                       <span className={cx('inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full',
-                        user.isBlocked ? 'bg-rose-50 text-rose-600' : 'bg-emerald-50 text-emerald-700')}>
+                        user.isBlocked ? 'bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400' : 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400')}>
                         <span className={cx('w-1.5 h-1.5 rounded-full', user.isBlocked ? 'bg-rose-400' : 'bg-emerald-400')} />
                         {user.isBlocked ? 'Заблок.' : 'Активний'}
                       </span>
@@ -696,7 +696,7 @@ export function UsersPage() {
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
                         <button onClick={e => { e.stopPropagation(); openUser(user); }}
-                          className="px-2.5 py-1 rounded-lg bg-brand-50 hover:bg-brand-100 text-brand-600 text-xs font-bold transition">
+                          className="px-2.5 py-1 rounded-lg bg-brand-50 dark:bg-brand-900/20 hover:bg-brand-100 dark:hover:bg-brand-800/30 text-brand-600 dark:text-brand-400 text-xs font-bold transition">
                           ✎ Редагувати
                         </button>
                       </div>
@@ -713,10 +713,10 @@ export function UsersPage() {
               <span className="text-xs text-ink-400">{data?.total} користувачів</span>
               <div className="flex items-center gap-1">
                 <button disabled={page <= 1} onClick={() => setPage(p => p - 1)}
-                  className="w-8 h-8 rounded-xl border border-ink-200 flex items-center justify-center text-ink-500 hover:bg-ink-100 disabled:opacity-30 transition text-sm">←</button>
-                <span className="text-xs text-ink-500 px-2">{page} / {totalPages}</span>
+                  className="w-8 h-8 rounded-xl border border-ink-200 dark:border-[#2d3148] flex items-center justify-center text-ink-500 dark:text-[#9aa2bd] hover:bg-ink-100 dark:hover:bg-[#252840] disabled:opacity-30 transition text-sm">←</button>
+                <span className="text-xs text-ink-500 dark:text-[#9aa2bd] px-2">{page} / {totalPages}</span>
                 <button disabled={page >= totalPages} onClick={() => setPage(p => p + 1)}
-                  className="w-8 h-8 rounded-xl border border-ink-200 flex items-center justify-center text-ink-500 hover:bg-ink-100 disabled:opacity-30 transition text-sm">→</button>
+                  className="w-8 h-8 rounded-xl border border-ink-200 dark:border-[#2d3148] flex items-center justify-center text-ink-500 dark:text-[#9aa2bd] hover:bg-ink-100 dark:hover:bg-[#252840] disabled:opacity-30 transition text-sm">→</button>
               </div>
             </div>
           )}

@@ -57,7 +57,7 @@ export function AiMentorChat({ courseId, lessonContext, maxMessages = MAX_MESSAG
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: 'spring', damping: 22 }}
-            className="fixed bottom-24 right-6 w-80 sm:w-96 bg-white rounded-3xl shadow-2xl border border-ink-100 flex flex-col z-40 overflow-hidden"
+            className="fixed bottom-24 right-6 w-80 sm:w-96 bg-white dark:bg-[#1a1c2e] rounded-3xl shadow-2xl dark:shadow-black/50 border border-ink-100 dark:border-[#282c44] flex flex-col z-40 overflow-hidden"
             style={{ maxHeight: '70vh' }}>
             {/* Header */}
             <div className="flex items-center gap-3 px-4 py-3.5 bg-gradient-to-r from-brand-600 to-brand-700">
@@ -70,7 +70,7 @@ export function AiMentorChat({ courseId, lessonContext, maxMessages = MAX_MESSAG
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3 min-h-0 bg-ink-50/50">
+            <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3 min-h-0 bg-ink-50/50 dark:bg-[#131522]/50">
               {messages.length === 0 && (
                 <div className="text-center text-ink-400 text-sm py-8">
                   <p className="text-4xl mb-2">💬</p>
@@ -86,7 +86,7 @@ export function AiMentorChat({ courseId, lessonContext, maxMessages = MAX_MESSAG
                   <div className={`max-w-[85%] px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed ${
                     msg.role === 'user'
                       ? 'bg-gradient-to-br from-brand-500 to-brand-600 text-white rounded-br-md shadow-sm'
-                      : 'bg-white text-ink-700 rounded-bl-md border border-ink-100'
+                      : 'bg-white dark:bg-[#1e2033] text-ink-700 dark:text-[#b0b8d0] rounded-bl-md border border-ink-100 dark:border-[#282c44]'
                   }`}>
                     {msg.text}
                   </div>
@@ -94,7 +94,7 @@ export function AiMentorChat({ courseId, lessonContext, maxMessages = MAX_MESSAG
               ))}
               {loading && (
                 <div className="flex justify-start">
-                  <div className="bg-white border border-ink-100 rounded-2xl rounded-bl-md px-4 py-3 flex gap-1.5">
+                  <div className="bg-white dark:bg-[#1e2033] border border-ink-100 dark:border-[#282c44] rounded-2xl rounded-bl-md px-4 py-3 flex gap-1.5">
                     {[0, 1, 2].map((i) => (
                       <motion.span key={i} className="w-2 h-2 bg-brand-300 rounded-full inline-block"
                         animate={{ y: [0, -6, 0] }} transition={{ repeat: Infinity, duration: 0.8, delay: i * 0.15 }} />
@@ -106,7 +106,7 @@ export function AiMentorChat({ courseId, lessonContext, maxMessages = MAX_MESSAG
             </div>
 
             {/* Input */}
-            <div className="border-t border-ink-100 p-3 bg-white">
+            <div className="border-t border-ink-100 dark:border-[#282c44] p-3 bg-white dark:bg-[#1a1c2e]">
               {remaining <= 0 ? (
                 <p className="text-center text-sm text-ink-400 py-1">Ліміт запитань вичерпано ({maxMessages}/{maxMessages})</p>
               ) : (

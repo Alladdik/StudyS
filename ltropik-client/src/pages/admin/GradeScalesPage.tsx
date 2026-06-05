@@ -81,7 +81,7 @@ export function GradeScalesPage() {
       <div className="grid lg:grid-cols-2 gap-5">
         {/* Form Card */}
         <Card className="p-6">
-          <h2 className="font-extrabold text-ink-900 text-lg mb-4">
+          <h2 className="font-extrabold text-ink-900 dark:text-white text-lg mb-4">
             {editingScaleId ? '✏️ Редагувати шкалу' : '✨ Нова шкала'}
           </h2>
           
@@ -100,13 +100,13 @@ export function GradeScalesPage() {
                       placeholder={`Значення ${i + 1} (напр. A, 12, Зараховано)`} className="input py-2 flex-1" />
                     
                     <label className={cx('chip cursor-pointer select-none font-semibold text-xs', 
-                      v.isPassing ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100' : 'bg-rose-50 text-rose-700 ring-1 ring-rose-100')}>
+                      v.isPassing ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 ring-1 ring-emerald-100 dark:ring-emerald-800/40' : 'bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-400 ring-1 ring-rose-100 dark:ring-rose-800/40')}>
                       <input type="checkbox" checked={v.isPassing} onChange={(e) => setValues((p) => p.map((x, j) => j === i ? { ...x, isPassing: e.target.checked } : x))} className="sr-only" />
                       {v.isPassing ? '✓ Зараховано' : '✕ Незараховано'}
                     </label>
 
                     {values.length > 1 && (
-                      <button onClick={() => setValues((p) => p.filter((_, j) => j !== i))} className="text-ink-300 hover:text-rose-500 transition px-1">✕</button>
+                      <button onClick={() => setValues((p) => p.filter((_, j) => j !== i))} className="text-ink-300 dark:text-[#4d5470] hover:text-rose-500 transition px-1">✕</button>
                     )}
                   </div>
                 ))}
@@ -127,17 +127,17 @@ export function GradeScalesPage() {
 
         {/* Existing scales */}
         <Card className="p-6">
-          <h2 className="font-extrabold text-ink-900 text-lg mb-4">📊 Існуючі шкали</h2>
+          <h2 className="font-extrabold text-ink-900 dark:text-white text-lg mb-4">📊 Існуючі шкали</h2>
           <div className="flex flex-col gap-3">
             {scales.map((s) => (
-              <div key={s.id} className="rounded-xl border border-ink-200 p-4 hover:border-brand-300 transition group relative">
+              <div key={s.id} className="rounded-xl border border-ink-200 dark:border-[#2d3148] p-4 hover:border-brand-300 transition group relative">
                 <div className="flex items-center justify-between mb-2.5">
-                  <p className="font-bold text-ink-800 text-base">{s.name}</p>
+                  <p className="font-bold text-ink-800 dark:text-[#e8eaf0] text-base">{s.name}</p>
                   <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition duration-150">
                     <button onClick={() => handleEdit(s)} className="btn btn-soft text-[10px] py-1 px-2.5" title="Редагувати">
                       ✏️ Ред.
                     </button>
-                    <button onClick={() => handleDelete(s.id)} className="btn text-[10px] py-1 px-2.5 !bg-rose-50 text-rose-600 hover:!bg-rose-100" title="Видалити">
+                    <button onClick={() => handleDelete(s.id)} className="btn text-[10px] py-1 px-2.5 !bg-rose-50 dark:!bg-rose-900/20 text-rose-600 dark:text-rose-400 hover:!bg-rose-100 dark:hover:!bg-rose-900/30" title="Видалити">
                       🗑️ Вид.
                     </button>
                   </div>

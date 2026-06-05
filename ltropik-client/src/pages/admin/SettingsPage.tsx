@@ -134,7 +134,7 @@ export function SettingsPage() {
           <Card key={section.title} className="p-6">
             <div className="flex items-start justify-between mb-5">
               <div>
-                <h2 className="text-lg font-bold text-ink-900 flex items-center gap-2">
+                <h2 className="text-lg font-bold text-ink-900 dark:text-white flex items-center gap-2">
                   <span className="text-2xl">{section.icon}</span>
                   {section.title}
                 </h2>
@@ -206,11 +206,11 @@ export function SettingsPage() {
         <Card className="p-6 border-rose-100">
           <h2 className="text-lg font-bold text-rose-700 mb-1">Зона небезпеки</h2>
           <p className="text-sm text-ink-400 mb-4">
-            JWT Secret задається через <code className="bg-ink-100 px-1 rounded">appsettings.json → Jwt:Key</code> і
+            JWT Secret задається через <code className="bg-ink-100 dark:bg-[#252840] px-1 rounded">appsettings.json → Jwt:Key</code> і
             вимагає перезапуску сервера (зміна скасує всі активні сесії).
           </p>
           <p className="text-sm text-ink-400">
-            Рядок підключення до БД: <code className="bg-ink-100 px-1 rounded">ConnectionStrings:Postgres</code> — теж через appsettings.json або змінну середовища.
+            Рядок підключення до БД: <code className="bg-ink-100 dark:bg-[#252840] px-1 rounded">ConnectionStrings:Postgres</code> — теж через appsettings.json або змінну середовища.
           </p>
         </Card>
 

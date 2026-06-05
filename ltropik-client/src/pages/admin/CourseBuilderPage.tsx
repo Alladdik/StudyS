@@ -265,7 +265,7 @@ export function CourseBuilderPage() {
         {/* Tree */}
         {selected ? (
           <Card className="flex-1 p-6 lg:overflow-y-auto">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-4 border-b border-ink-100">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-4 border-b border-ink-100 dark:border-[#282c44]">
               <div className="min-w-0 flex-1">
                 {isEditingTitle ? (
                   <div className="flex items-center gap-2 max-w-md">
@@ -281,10 +281,10 @@ export function CourseBuilderPage() {
                   </div>
                 ) : (
                   <div className="flex items-center gap-2.5 flex-wrap">
-                    <h2 className="font-extrabold text-ink-900 text-lg tracking-tight">{selected.title}</h2>
-                    {selected.status === 'Draft' && <span className="text-xs bg-ink-100 text-ink-500 font-bold px-2 py-0.5 rounded-lg">Чернетка</span>}
-                    {selected.status === 'OnReview' && <span className="text-xs bg-amber-50 text-amber-700 ring-1 ring-amber-100 font-bold px-2 py-0.5 rounded-lg">На розгляді</span>}
-                    {selected.status === 'Published' && <span className="text-xs bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100 font-bold px-2 py-0.5 rounded-lg">Опубліковано</span>}
+                    <h2 className="font-extrabold text-ink-900 dark:text-white text-lg tracking-tight">{selected.title}</h2>
+                    {selected.status === 'Draft' && <span className="text-xs bg-ink-100 dark:bg-[#252840] text-ink-500 dark:text-[#9aa2bd] font-bold px-2 py-0.5 rounded-lg">Чернетка</span>}
+                    {selected.status === 'OnReview' && <span className="text-xs bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 ring-1 ring-amber-100 dark:ring-amber-800/40 font-bold px-2 py-0.5 rounded-lg">На розгляді</span>}
+                    {selected.status === 'Published' && <span className="text-xs bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 ring-1 ring-emerald-100 dark:ring-emerald-800/40 font-bold px-2 py-0.5 rounded-lg">Опубліковано</span>}
                     {role === 'Admin' && (
                       <div className="flex items-center gap-1.5 ml-2">
                         <button 
@@ -337,35 +337,35 @@ export function CourseBuilderPage() {
 
             <div className="flex flex-col gap-3">
               {(selected.modules ?? []).map((m) => (
-                <div key={m.id} className={cx('rounded-xl border p-4 transition', selectedModuleId === m.id ? 'border-brand-200 bg-brand-50/40' : 'border-ink-200')}>
-                  <button onClick={() => setSelectedModuleId(m.id)} className={cx('font-bold mb-2 flex items-center gap-2 transition', selectedModuleId === m.id ? 'text-brand-700' : 'text-ink-800 hover:text-brand-600')}>
-                    <span className="text-ink-300">▸</span> {m.title}
+                <div key={m.id} className={cx('rounded-xl border p-4 transition', selectedModuleId === m.id ? 'border-brand-200 dark:border-brand-700/50 bg-brand-50/40 dark:bg-brand-900/20' : 'border-ink-200 dark:border-[#2d3148]')}>
+                  <button onClick={() => setSelectedModuleId(m.id)} className={cx('font-bold mb-2 flex items-center gap-2 transition', selectedModuleId === m.id ? 'text-brand-700 dark:text-brand-400' : 'text-ink-800 dark:text-[#e8eaf0] hover:text-brand-600')}>
+                    <span className="text-ink-300 dark:text-[#4d5470]">▸</span> {m.title}
                   </button>
                   <div className="pl-6 flex flex-col gap-1.5">
                     {m.lessons.map((l) => (
-                      <div key={l.id} className="text-sm text-ink-600 flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-ink-300" /> {l.title}
+                      <div key={l.id} className="text-sm text-ink-600 dark:text-[#9aa2bd] flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-ink-300 dark:bg-[#4d5470]" /> {l.title}
                       </div>
                     ))}
-                    {m.lessons.length === 0 && <p className="text-xs text-ink-300">Уроків немає</p>}
+                    {m.lessons.length === 0 && <p className="text-xs text-ink-300 dark:text-[#4d5470]">Уроків немає</p>}
                   </div>
                 </div>
               ))}
             </div>
 
             {selectedModuleId && (
-              <div className="mt-5 border-t border-ink-100 pt-5">
-                <p className="text-sm text-ink-500 mb-3">Додати урок до: <strong className="text-ink-800">{selected.modules?.find((m) => m.id === selectedModuleId)?.title}</strong></p>
+              <div className="mt-5 border-t border-ink-100 dark:border-[#282c44] pt-5">
+                <p className="text-sm text-ink-500 dark:text-[#6b7394] mb-3">Додати урок до: <strong className="text-ink-800 dark:text-[#e8eaf0]">{selected.modules?.find((m) => m.id === selectedModuleId)?.title}</strong></p>
                 <input value={newLessonTitle} onChange={(e) => setNewLessonTitle(e.target.value)} placeholder="Назва уроку…" className="input mb-3" />
 
                 {blocks.length > 0 && (
                   <div className="flex flex-col gap-2 mb-3">
                     {blocks.map((b, i) => (
-                      <div key={i} className="flex flex-col gap-2 bg-ink-50 rounded-xl px-3 py-2.5 text-sm">
+                      <div key={i} className="flex flex-col gap-2 bg-ink-50 dark:bg-[#1e2033] rounded-xl px-3 py-2.5 text-sm">
                         <div className="flex items-center gap-2">
                           <span>{blockIcons[b.type]}</span>
-                          <span className="font-medium text-ink-700">{blockLabels[b.type]}</span>
-                          <button onClick={() => setBlocks((p) => p.filter((_, j) => j !== i))} className="ml-auto text-ink-300 hover:text-rose-500 transition">✕</button>
+                          <span className="font-medium text-ink-700 dark:text-[#b0b8d0]">{blockLabels[b.type]}</span>
+                          <button onClick={() => setBlocks((p) => p.filter((_, j) => j !== i))} className="ml-auto text-ink-300 dark:text-[#4d5470] hover:text-rose-500 transition">✕</button>
                         </div>
                         {/* Inline data editors per block type */}
                         {b.type === 'TextBlock' && (
@@ -383,7 +383,7 @@ export function CourseBuilderPage() {
                             {b.data.url
                               ? <div className="flex items-center gap-2">
                                   <a href={String(b.data.url)} target="_blank" rel="noreferrer" className="text-brand-600 text-xs underline truncate">{String(b.data.name ?? b.data.url)}</a>
-                                  <button onClick={() => { const u = [...blocks]; u[i] = { ...b, data: {} }; setBlocks(u); }} className="text-ink-300 hover:text-rose-500 text-xs">змінити</button>
+                                  <button onClick={() => { const u = [...blocks]; u[i] = { ...b, data: {} }; setBlocks(u); }} className="text-ink-300 dark:text-[#4d5470] hover:text-rose-500 text-xs">змінити</button>
                                 </div>
                               : <FileUpload label="Завантажити файл" onUploaded={(url, name) => {
                                   const u = [...blocks]; u[i] = { ...b, data: { url, name } }; setBlocks(u);
@@ -402,13 +402,13 @@ export function CourseBuilderPage() {
                 )}
 
                 <div className="relative mb-3">
-                  <button onClick={() => setShowBlockPicker((p) => !p)} className="w-full px-3 py-2.5 border-2 border-dashed border-ink-200 rounded-xl text-sm text-ink-400 hover:border-brand-300 hover:text-brand-500 transition">
+                  <button onClick={() => setShowBlockPicker((p) => !p)} className="w-full px-3 py-2.5 border-2 border-dashed border-ink-200 dark:border-[#2d3148] rounded-xl text-sm text-ink-400 dark:text-[#4d5470] hover:border-brand-300 hover:text-brand-500 transition">
                     + Додати блок контенту
                   </button>
                   {showBlockPicker && (
                     <div className="absolute left-0 top-12 bg-white dark:bg-[#1a1c2e] border border-ink-200 dark:border-[#282c44] rounded-2xl shadow-xl dark:shadow-black/40 z-10 p-2 flex flex-col gap-0.5 min-w-52">
                       {BLOCK_TYPES.map((type) => (
-                        <button key={type} onClick={() => addBlock(type)} className="text-left px-3 py-2.5 hover:bg-brand-50 rounded-xl text-sm flex items-center gap-2.5 transition">
+                        <button key={type} onClick={() => addBlock(type)} className="text-left px-3 py-2.5 hover:bg-brand-50 dark:hover:bg-brand-900/20 text-ink-700 dark:text-[#e8eaf0] rounded-xl text-sm flex items-center gap-2.5 transition">
                           <span className="text-lg">{blockIcons[type]}</span> {blockLabels[type]}
                         </button>
                       ))}
@@ -429,21 +429,21 @@ export function CourseBuilderPage() {
 
       <Modal open={showMembers} onClose={() => setShowMembers(false)} className="max-w-lg">
         <div className="p-6">
-          <h2 className="font-extrabold text-ink-900 text-lg mb-5">Учасники курсу «{selected?.title}»</h2>
+          <h2 className="font-extrabold text-ink-900 dark:text-white text-lg mb-5">Учасники курсу «{selected?.title}»</h2>
           {loadingMembers ? (
             <div className="py-8"><Loader /></div>
           ) : members ? (
             <div className="flex flex-col gap-6">
               {/* Teachers */}
               <div>
-                <h3 className="font-bold text-ink-700 text-sm mb-3">Викладачі ({members.teachers.length})</h3>
+                <h3 className="font-bold text-ink-700 dark:text-[#b0b8d0] text-sm mb-3">Викладачі ({members.teachers.length})</h3>
                 
                 {role === 'Admin' && (
                   <div className="bg-ink-50/60 dark:bg-[#1e2033]/60 p-3.5 rounded-2xl mb-3 flex gap-2 items-center">
                     <select
                       value={selectedTeacherId}
                       onChange={(e) => setSelectedTeacherId(e.target.value)}
-                      className="input flex-1 py-1.5 text-xs bg-white"
+                      className="input flex-1 py-1.5 text-xs"
                     >
                       <option value="">— обрати викладача —</option>
                       {allTeachers
@@ -462,9 +462,9 @@ export function CourseBuilderPage() {
 
                 <div className="flex flex-col gap-2 max-h-40 overflow-y-auto pr-1">
                   {members.teachers.map((t) => (
-                    <div key={t.teacherId} className="flex items-center justify-between py-2 border-b border-ink-50 last:border-0 text-sm">
+                    <div key={t.teacherId} className="flex items-center justify-between py-2 border-b border-ink-50 dark:border-[#1e2033] last:border-0 text-sm">
                       <div>
-                        <p className="font-semibold text-ink-800">{t.name}</p>
+                        <p className="font-semibold text-ink-800 dark:text-[#e8eaf0]">{t.name}</p>
                         <p className="text-xs text-ink-400">{t.email}</p>
                       </div>
                       <button onClick={() => handleRemoveTeacher(t.teacherId)} className="text-xs text-rose-500 hover:text-rose-700 font-medium transition">Вилучити</button>
@@ -483,7 +483,7 @@ export function CourseBuilderPage() {
                     <select
                       value={selectedStudentId}
                       onChange={(e) => setSelectedStudentId(e.target.value)}
-                      className="input flex-1 py-1.5 text-xs bg-white"
+                      className="input flex-1 py-1.5 text-xs"
                     >
                       <option value="">— обрати учня —</option>
                       {allStudents
@@ -502,9 +502,9 @@ export function CourseBuilderPage() {
 
                 <div className="flex flex-col gap-2 max-h-52 overflow-y-auto pr-1">
                   {members.students.map((s) => (
-                    <div key={s.studentId} className="flex items-center justify-between py-2 border-b border-ink-50 last:border-0 text-sm">
+                    <div key={s.studentId} className="flex items-center justify-between py-2 border-b border-ink-50 dark:border-[#1e2033] last:border-0 text-sm">
                       <div>
-                        <p className="font-semibold text-ink-800">{s.name}</p>
+                        <p className="font-semibold text-ink-800 dark:text-[#e8eaf0]">{s.name}</p>
                         <p className="text-xs text-ink-400">{s.email}</p>
                       </div>
                       <button onClick={() => handleRemoveStudent(s.studentId)} className="text-xs text-rose-500 hover:text-rose-700 font-medium transition">Вилучити</button>

@@ -29,7 +29,7 @@ export function TeacherAnalyticsPage() {
                   <Card key={t.id} className={`p-4 text-center flex flex-col items-center gap-2 ${sizes[i]}`}>
                     <span className="text-2xl">{medals[i]}</span>
                     <Avatar name={t.name} size="md" />
-                    <p className="font-extrabold text-ink-900 text-sm leading-tight">{t.name}</p>
+                    <p className="font-extrabold text-ink-900 dark:text-white text-sm leading-tight">{t.name}</p>
                     <p className="text-xs text-ink-400">{t.studentCount} студентів</p>
                   </Card>
                 );
@@ -40,7 +40,7 @@ export function TeacherAnalyticsPage() {
           <Card className="overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-ink-100">
+                <tr className="border-b border-ink-100 dark:border-[#282c44]">
                   {['#', "Ім'я", 'Курсів', 'Студентів', 'Перевірено ДЗ', 'На черзі ДЗ'].map(h => (
                     <th key={h} className="text-left px-5 py-3.5 text-xs font-bold text-ink-400 uppercase tracking-wider">{h}</th>
                   ))}
@@ -48,13 +48,13 @@ export function TeacherAnalyticsPage() {
               </thead>
               <tbody>
                 {stats.map((t, i) => (
-                  <tr key={t.id} className="border-b border-ink-50 last:border-0 hover:bg-ink-50/60 transition">
+                  <tr key={t.id} className="border-b border-ink-50 dark:border-[#1e2033] last:border-0 hover:bg-ink-50/60 dark:hover:bg-[#1e2033]/60 transition">
                     <td className="px-5 py-3.5 font-bold text-ink-400">{i + 1}</td>
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-3">
                         <Avatar name={t.name} size="sm" />
                         <div>
-                          <p className="font-semibold text-ink-800">{t.name}</p>
+                          <p className="font-semibold text-ink-800 dark:text-[#e8eaf0]">{t.name}</p>
                           <p className="text-xs text-ink-400">{t.email}</p>
                         </div>
                       </div>

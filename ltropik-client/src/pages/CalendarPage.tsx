@@ -263,7 +263,7 @@ export function CalendarPage() {
 
         {/* Upcoming list */}
         <div>
-          <h2 className="font-bold text-ink-900 mb-3">Найближчі заняття</h2>
+          <h2 className="font-bold text-ink-900 dark:text-white mb-3">Найближчі заняття</h2>
           <div className="flex flex-col gap-2">
             {entries
               .filter((e) => new Date(e.startsAt) >= new Date())
@@ -281,12 +281,12 @@ export function CalendarPage() {
                     </p>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-ink-800 text-sm truncate">{e.lessonTitle}</p>
+                    <p className="font-semibold text-ink-800 dark:text-[#e8eaf0] text-sm truncate">{e.lessonTitle}</p>
                     <p className="text-xs text-ink-400 truncate">{e.courseTitle} · {e.teacherName}</p>
                   </div>
-                  <div className="text-sm text-ink-600 font-medium flex-shrink-0">
+                  <div className="text-sm text-ink-600 dark:text-[#9aa2bd] font-medium flex-shrink-0">
                     {new Date(e.startsAt).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
-                    <span className="text-ink-300 ml-1">{e.durationMinutes} хв</span>
+                    <span className="text-ink-300 dark:text-[#4d5470] ml-1">{e.durationMinutes} хв</span>
                   </div>
                   {canCreate && (
                     <button
@@ -294,7 +294,7 @@ export function CalendarPage() {
                         evt.stopPropagation();
                         handleDelete(e.id);
                       }}
-                      className="text-ink-300 hover:text-rose-500 transition ml-2 p-1.5"
+                      className="text-ink-300 dark:text-[#4d5470] hover:text-rose-500 transition ml-2 p-1.5"
                     >
                       ✕
                     </button>
@@ -311,10 +311,10 @@ export function CalendarPage() {
       {/* Create modal */}
       <Modal open={showCreate} onClose={() => setShowCreate(false)} className="max-w-md">
         <div className="p-6">
-          <h2 className="font-extrabold text-ink-900 text-lg mb-5">Нове заняття</h2>
+          <h2 className="font-extrabold text-ink-900 dark:text-white text-lg mb-5">Нове заняття</h2>
           <div className="flex flex-col gap-4">
             {courses.length === 0 && (
-              <div className="p-3 bg-amber-50 border border-amber-100 rounded-xl text-xs text-amber-700">
+              <div className="p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800/40 rounded-xl text-xs text-amber-700 dark:text-amber-400">
                 ⚠️ У вас немає активних або призначених курсів. Переконайтеся, що ви зареєстровані як викладач принаймні для одного курсу.
               </div>
             )}
@@ -326,7 +326,7 @@ export function CalendarPage() {
               </select>
             </div>
             {selectedCourseId && modules.length === 0 && (
-              <div className="p-3 bg-amber-50 border border-amber-100 rounded-xl text-xs text-amber-700">
+              <div className="p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800/40 rounded-xl text-xs text-amber-700 dark:text-amber-400">
                 ⚠️ Цей курс не має жодного модуля чи уроку. Додайте їх у Конструкторі курсів перед плануванням.
               </div>
             )}
@@ -374,7 +374,7 @@ export function CalendarPage() {
         {activeEntry && (
           <div className="p-6">
             <div className="flex justify-between items-start mb-5">
-              <h2 className="font-extrabold text-ink-900 text-lg">
+              <h2 className="font-extrabold text-ink-900 dark:text-white text-lg">
                 {isEditing ? 'Редагування заняття' : 'Деталі заняття'}
               </h2>
               <button onClick={() => setActiveEntry(null)} className="text-ink-400 hover:text-ink-600 transition">✕</button>
@@ -384,27 +384,27 @@ export function CalendarPage() {
               <div className="flex flex-col gap-4">
                 <div>
                   <p className="text-xs text-ink-400 font-bold uppercase tracking-wider">Курс</p>
-                  <p className="font-semibold text-ink-800">{activeEntry.courseTitle}</p>
+                  <p className="font-semibold text-ink-800 dark:text-[#e8eaf0]">{activeEntry.courseTitle}</p>
                 </div>
                 <div>
                   <p className="text-xs text-ink-400 font-bold uppercase tracking-wider">Урок</p>
-                  <p className="font-semibold text-ink-800">{activeEntry.lessonTitle}</p>
+                  <p className="font-semibold text-ink-800 dark:text-[#e8eaf0]">{activeEntry.lessonTitle}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-xs text-ink-400 font-bold uppercase tracking-wider">Час початку</p>
-                    <p className="font-semibold text-ink-800">
+                    <p className="font-semibold text-ink-800 dark:text-[#e8eaf0]">
                       {new Date(activeEntry.startsAt).toLocaleString('uk-UA', { dateStyle: 'short', timeStyle: 'short' })}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-ink-400 font-bold uppercase tracking-wider">Тривалість</p>
-                    <p className="font-semibold text-ink-800">{activeEntry.durationMinutes} хвилин</p>
+                    <p className="font-semibold text-ink-800 dark:text-[#e8eaf0]">{activeEntry.durationMinutes} хвилин</p>
                   </div>
                 </div>
                 <div>
                   <p className="text-xs text-ink-400 font-bold uppercase tracking-wider">Викладач</p>
-                  <p className="font-semibold text-ink-800">{activeEntry.teacherName}</p>
+                  <p className="font-semibold text-ink-800 dark:text-[#e8eaf0]">{activeEntry.teacherName}</p>
                 </div>
                 {activeEntry.notes && (
                   <div>
@@ -414,9 +414,9 @@ export function CalendarPage() {
                 )}
 
                 {canCreate && (
-                  <div className="flex gap-2.5 mt-4 pt-4 border-t border-ink-100">
+                  <div className="flex gap-2.5 mt-4 pt-4 border-t border-ink-100 dark:border-[#282c44]">
                     <button onClick={() => setIsEditing(true)} className="btn btn-secondary flex-1">Редагувати</button>
-                    <button onClick={handleDeleteConfirm} disabled={deleting} className="btn bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 flex-shrink-0">
+                    <button onClick={handleDeleteConfirm} disabled={deleting} className="btn bg-rose-50 dark:bg-rose-900/20 hover:bg-rose-100 dark:hover:bg-rose-900/30 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-700/50 flex-shrink-0">
                       {deleting ? 'Видалення...' : 'Видалити'}
                     </button>
                   </div>

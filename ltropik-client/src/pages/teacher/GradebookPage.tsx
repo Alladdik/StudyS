@@ -105,7 +105,7 @@ export function GradebookPage() {
                   {data.lessons.map((l, i) => {
                     const showModule = i === 0 || data.lessons[i - 1].moduleTitle !== l.moduleTitle;
                     return (
-                      <th key={l.id} className="px-2 py-1 text-center font-semibold text-ink-500 border-l border-ink-100 max-w-[80px]"
+                      <th key={l.id} className="px-2 py-1 text-center font-semibold text-ink-500 dark:text-[#6b7394] border-l border-ink-100 dark:border-[#282c44] max-w-[80px]"
                         title={l.title}>
                         {showModule && (
                           <div className="text-[9px] text-brand-500 font-bold truncate mb-0.5">{l.moduleTitle}</div>
@@ -124,7 +124,7 @@ export function GradebookPage() {
                       <div className="truncate max-w-[175px]">{s.name}</div>
                     </td>
                     {s.cells.map((cell) => (
-                      <td key={cell.lessonId} className="px-2 py-2 text-center border-l border-ink-50">
+                      <td key={cell.lessonId} className="px-2 py-2 text-center border-l border-ink-50 dark:border-[#1e2033]">
                         {cell.grade ? (
                           <span className={cx('font-bold', gradeColor(cell.grade))}>{cell.grade}</span>
                         ) : cell.attendance ? (

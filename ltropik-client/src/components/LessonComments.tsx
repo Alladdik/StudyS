@@ -21,7 +21,7 @@ function CommentItem({ comment, lessonId, currentUserId, onReply, onDelete }: {
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
-          <span className="font-semibold text-sm text-ink-800">{comment.authorName}</span>
+          <span className="font-semibold text-sm text-ink-800 dark:text-[#e8eaf0]">{comment.authorName}</span>
           <span className="text-xs text-ink-300">{new Date(comment.createdAt).toLocaleString('uk-UA')}</span>
         </div>
         <p className="text-sm text-ink-600 leading-relaxed">{comment.body}</p>
@@ -32,7 +32,7 @@ function CommentItem({ comment, lessonId, currentUserId, onReply, onDelete }: {
           )}
         </div>
         {comment.replies.length > 0 && (
-          <div className="mt-3 flex flex-col gap-3 pl-3 border-l-2 border-ink-100">
+          <div className="mt-3 flex flex-col gap-3 pl-3 border-l-2 border-ink-100 dark:border-[#282c44]">
             {comment.replies.map((r) => (
               <CommentItem key={r.id} comment={r} lessonId={lessonId} currentUserId={currentUserId} onReply={onReply} onDelete={onDelete} />
             ))}
@@ -82,7 +82,7 @@ export function LessonComments({ lessonId }: Props) {
 
   return (
     <div className="mt-10">
-      <h2 className="text-lg font-bold text-ink-900 mb-5 flex items-center gap-2">
+      <h2 className="text-lg font-bold text-ink-900 dark:text-white mb-5 flex items-center gap-2">
         <span className="text-2xl">💬</span> Коментарі ({comments.length})
       </h2>
 
@@ -97,7 +97,7 @@ export function LessonComments({ lessonId }: Props) {
         </AnimatePresence>
       </div>
 
-      <div className={cx('mt-6 p-4 rounded-2xl border', replyTo ? 'border-brand-200 bg-brand-50/40' : 'border-ink-200 bg-white')}>
+      <div className={cx('mt-6 p-4 rounded-2xl border', replyTo ? 'border-brand-200 dark:border-brand-700/50 bg-brand-50/40 dark:bg-brand-900/20' : 'border-ink-200 dark:border-[#2d3148] bg-white dark:bg-[#1e2033]')}>
         {replyTo && (
           <div className="flex items-center gap-2 mb-3">
             <span className="text-xs text-brand-600 font-medium">Відповідь на коментар</span>

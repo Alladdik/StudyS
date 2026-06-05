@@ -462,18 +462,18 @@ export function QuestionBankPage() {
     <Layout title="Банк питань та тести" subtitle="Управляйте базою тестових питань та створюйте тести">
       
       {/* Tabs bar */}
-      <div className="flex gap-2 border-b border-ink-100 pb-3 mb-5">
+      <div className="flex gap-2 border-b border-ink-100 dark:border-[#282c44] pb-3 mb-5">
         <button
           onClick={() => setActiveTab('questions')}
           className={cx('px-4 py-2 text-sm font-bold rounded-xl transition',
-            activeTab === 'questions' ? 'bg-brand-600 text-white shadow-sm' : 'bg-transparent text-ink-500 hover:bg-ink-50')}
+            activeTab === 'questions' ? 'bg-brand-600 text-white shadow-sm' : 'bg-transparent text-ink-500 dark:text-[#9aa2bd] hover:bg-ink-50 dark:hover:bg-[#1e2033]')}
         >
           ❓ Банк питань ({items.length})
         </button>
         <button
           onClick={() => setActiveTab('tests')}
           className={cx('px-4 py-2 text-sm font-bold rounded-xl transition',
-            activeTab === 'tests' ? 'bg-brand-600 text-white shadow-sm' : 'bg-transparent text-ink-500 hover:bg-ink-50')}
+            activeTab === 'tests' ? 'bg-brand-600 text-white shadow-sm' : 'bg-transparent text-ink-500 dark:text-[#9aa2bd] hover:bg-ink-50 dark:hover:bg-[#1e2033]')}
         >
           📝 Власні тести ({tests.length})
         </button>
@@ -499,7 +499,7 @@ export function QuestionBankPage() {
                         <Badge tone="brand">{item.type === 'Single' ? 'Одна відповідь' : item.type === 'Multi' ? 'Кілька відповідей' : 'Текст'}</Badge>
                         {item.category && <Badge tone="amber">{item.category}</Badge>}
                         {item.tags && item.tags.split(',').map((t, i) => (
-                          <span key={i} className="chip text-xs bg-ink-100 text-ink-500">{t.trim()}</span>
+                          <span key={i} className="chip text-xs bg-ink-100 dark:bg-[#252840] text-ink-500 dark:text-[#9aa2bd]">{t.trim()}</span>
                         ))}
                       </div>
                       <p className="font-bold text-ink-850 mb-2">{item.text}</p>
@@ -551,16 +551,16 @@ export function QuestionBankPage() {
               {tests.map((test) => (
                 <Card key={test.id} className="p-5 flex flex-col justify-between gap-4">
                   <div>
-                    <h3 className="font-extrabold text-ink-900 text-lg mb-1 truncate">{test.title}</h3>
+                    <h3 className="font-extrabold text-ink-900 dark:text-white text-lg mb-1 truncate">{test.title}</h3>
                     <p className="text-xs text-ink-400 mb-3">
                       Курс: <span className="font-semibold text-ink-600">{test.courseTitle}</span> / Урок: <span className="font-semibold text-ink-600">{test.lessonTitle}</span>
                     </p>
                     
                     <div className="grid grid-cols-2 gap-2 text-xs mb-3 text-ink-600">
-                      <div className="bg-ink-50/50 p-2 rounded-lg">⏱ Час: <strong>{test.timeLimitMinutes > 0 ? `${test.timeLimitMinutes} хв` : '∞'}</strong></div>
-                      <div className="bg-ink-50/50 p-2 rounded-lg">🎓 Спроб: <strong>{test.maxAttempts}</strong></div>
-                      <div className="bg-ink-50/50 p-2 rounded-lg">🎯 Прохідний: <strong>{test.passingPercentage}%</strong></div>
-                      <div className="bg-ink-50/50 p-2 rounded-lg">❓ Питань: <strong>{test.questionsCount}</strong></div>
+                      <div className="bg-ink-50/50 dark:bg-[#1e2033]/50 p-2 rounded-lg">⏱ Час: <strong>{test.timeLimitMinutes > 0 ? `${test.timeLimitMinutes} хв` : '∞'}</strong></div>
+                      <div className="bg-ink-50/50 dark:bg-[#1e2033]/50 p-2 rounded-lg">🎓 Спроб: <strong>{test.maxAttempts}</strong></div>
+                      <div className="bg-ink-50/50 dark:bg-[#1e2033]/50 p-2 rounded-lg">🎯 Прохідний: <strong>{test.passingPercentage}%</strong></div>
+                      <div className="bg-ink-50/50 dark:bg-[#1e2033]/50 p-2 rounded-lg">❓ Питань: <strong>{test.questionsCount}</strong></div>
                     </div>
 
                     <div className="mt-1 flex items-center gap-1.5 flex-wrap">
@@ -586,7 +586,7 @@ export function QuestionBankPage() {
       {/* --- Question Edit Modal --- */}
       <Modal open={showForm} onClose={() => setShowForm(false)} className="max-w-lg">
         <div className="p-6">
-          <h2 className="font-extrabold text-ink-900 text-lg mb-5">{editItem ? 'Редагувати питання' : 'Нове питання'}</h2>
+          <h2 className="font-extrabold text-ink-900 dark:text-white text-lg mb-5">{editItem ? 'Редагувати питання' : 'Нове питання'}</h2>
           <div className="flex flex-col gap-4">
             <textarea value={text} onChange={(e) => setText(e.target.value)} rows={3}
               className="input resize-none" placeholder="Текст питання" />
@@ -646,7 +646,7 @@ export function QuestionBankPage() {
       {/* --- Test Create/Edit Modal --- */}
       <Modal open={showTestForm} onClose={() => setShowTestForm(false)} className="max-w-3xl">
         <div className="p-6 max-h-[85vh] overflow-y-auto">
-          <h2 className="font-extrabold text-ink-900 text-xl mb-4">{editTestItem ? '✏️ Редагувати тест' : '✨ Новий тест'}</h2>
+          <h2 className="font-extrabold text-ink-900 dark:text-white text-xl mb-4">{editTestItem ? '✏️ Редагувати тест' : '✨ Новий тест'}</h2>
           
           <div className="grid md:grid-cols-2 gap-5 mb-5">
             {/* Left side parameters */}
@@ -659,7 +659,7 @@ export function QuestionBankPage() {
               {/* Lesson selection */}
               <div>
                 <label className="label">Зв'язок з уроком</label>
-                <div className="flex flex-col gap-2 bg-ink-50/50 p-3 rounded-2xl">
+                <div className="flex flex-col gap-2 bg-ink-50/50 dark:bg-[#1e2033]/50 p-3 rounded-2xl">
                   <select value={testCourseId} onChange={e => handleCourseChange(e.target.value)} className="input text-xs py-1.5">
                     <option value="">— Оберіть курс —</option>
                     {courses.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
@@ -692,7 +692,7 @@ export function QuestionBankPage() {
               </div>
 
               {/* Access control Students */}
-              <div className="border-t border-ink-100 pt-3">
+              <div className="border-t border-ink-100 dark:border-[#282c44] pt-3">
                 <div className="flex items-center justify-between mb-2">
                   <label className="label !mb-0 font-bold">Доступ до тесту</label>
                   <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-brand-650">
@@ -701,7 +701,7 @@ export function QuestionBankPage() {
                   </label>
                 </div>
                 {!allStudentsAllowed && (
-                  <div className="border border-ink-150 rounded-xl p-3 max-h-40 overflow-y-auto flex flex-col gap-1.5">
+                  <div className="border border-ink-150 dark:border-[#2d3148] rounded-xl p-3 max-h-40 overflow-y-auto flex flex-col gap-1.5">
                     {students.map(st => (
                       <label key={st.id} className="flex items-center gap-2 text-xs cursor-pointer text-ink-700 hover:text-ink-950 font-medium">
                         <input
@@ -731,9 +731,9 @@ export function QuestionBankPage() {
                 </button>
               </div>
 
-              <div className="border border-ink-150 rounded-2xl p-4 max-h-[50vh] overflow-y-auto flex flex-col gap-3 bg-ink-50/30">
+              <div className="border border-ink-150 dark:border-[#2d3148] rounded-2xl p-4 max-h-[50vh] overflow-y-auto flex flex-col gap-3 bg-ink-50/30 dark:bg-[#1e2033]/30">
                 {items.map(q => (
-                  <label key={q.id} className="flex items-start gap-3 p-3 rounded-xl bg-white border border-ink-100 cursor-pointer hover:border-brand-300 transition text-left">
+                  <label key={q.id} className="flex items-start gap-3 p-3 rounded-xl bg-white dark:bg-[#1e2033] border border-ink-100 dark:border-[#282c44] cursor-pointer hover:border-brand-300 transition text-left">
                     <input
                       type="checkbox"
                       checked={!!selectedQuestions[q.id]}
@@ -744,7 +744,7 @@ export function QuestionBankPage() {
                       <span className="font-bold text-brand-600 text-[10px] uppercase block mb-1">
                         {q.type === 'Single' ? 'Одна відповідь' : q.type === 'Multi' ? 'Кілька' : 'Вільний текст'}
                       </span>
-                      <p className="font-semibold text-ink-800 line-clamp-2 leading-relaxed">{q.text}</p>
+                      <p className="font-semibold text-ink-800 dark:text-[#e8eaf0] line-clamp-2 leading-relaxed">{q.text}</p>
                     </div>
                   </label>
                 ))}
@@ -756,7 +756,7 @@ export function QuestionBankPage() {
                       <span className="font-bold text-indigo-600 text-[10px] uppercase block mb-1">
                         Нове / Імпортоване Питання
                       </span>
-                      <p className="font-semibold text-ink-800 leading-relaxed">{tq.text}</p>
+                      <p className="font-semibold text-ink-800 dark:text-[#e8eaf0] leading-relaxed">{tq.text}</p>
                     </div>
                     <button 
                       onClick={() => setTestQuestions(prev => prev.filter((_, idx) => idx !== i))}
@@ -774,7 +774,7 @@ export function QuestionBankPage() {
             </div>
           </div>
 
-          <div className="flex gap-3 border-t border-ink-100 pt-4">
+          <div className="flex gap-3 border-t border-ink-100 dark:border-[#282c44] pt-4">
             <button onClick={() => setShowTestForm(false)} className="btn btn-soft flex-1">Скасувати</button>
             <button onClick={handleSaveTest} disabled={testSaving} className="btn btn-primary flex-1">
               {testSaving ? '⏳ Зберігаю…' : '💾 Зберегти тест'}
@@ -787,7 +787,7 @@ export function QuestionBankPage() {
       <Modal open={showAiModal} onClose={() => setShowAiModal(false)} className="max-w-md">
         <div className="p-6">
           <div className="w-12 h-12 rounded-2xl bg-indigo-100 flex items-center justify-center text-2xl mb-4">🤖</div>
-          <h3 className="font-extrabold text-ink-900 text-lg mb-1">Згенерувати тест за допомогою ШІ</h3>
+          <h3 className="font-extrabold text-ink-900 dark:text-white text-lg mb-1">Згенерувати тест за допомогою ШІ</h3>
           <p className="text-xs text-ink-400 mb-4">Введіть тему або вставте конспект уроку, ШІ створить 5 тестових питань.</p>
           
           <textarea
@@ -814,15 +814,15 @@ export function QuestionBankPage() {
       {/* --- Attempts analytics modal --- */}
       <Modal open={showAttemptsModal} onClose={() => setShowAttemptsModal(false)} className="max-w-4xl">
         <div className="p-6 max-h-[85vh] overflow-y-auto">
-          <h2 className="font-extrabold text-ink-900 text-lg mb-1">Спроби здачі тесту «{viewingTestTitle}»</h2>
+          <h2 className="font-extrabold text-ink-900 dark:text-white text-lg mb-1">Спроби здачі тесту «{viewingTestTitle}»</h2>
           <p className="text-xs text-ink-400 mb-5">Аналітика успішності та детальний звіт по кожній роботі</p>
           
           {selectedAttempt ? (
             /* Subview: Detailed Report of a single attempt */
-            <div className="bg-ink-50/50 p-5 rounded-2xl border border-ink-150">
-              <div className="flex items-center justify-between mb-4 pb-3 border-b border-ink-150">
+            <div className="bg-ink-50/50 dark:bg-[#1e2033]/50 p-5 rounded-2xl border border-ink-150 dark:border-[#2d3148]">
+              <div className="flex items-center justify-between mb-4 pb-3 border-b border-ink-150 dark:border-[#2d3148]">
                 <div>
-                  <h3 className="font-bold text-ink-900 text-base">Звіт спроби: {selectedAttempt.studentName}</h3>
+                  <h3 className="font-bold text-ink-900 dark:text-white text-base">Звіт спроби: {selectedAttempt.studentName}</h3>
                   <p className="text-xs text-ink-400">{selectedAttempt.studentEmail}</p>
                 </div>
                 <div className="text-right">
@@ -850,21 +850,21 @@ export function QuestionBankPage() {
                         const time = questionTimes[qId] || 0;
                         
                         return (
-                          <div key={qId} className="bg-white p-4 rounded-xl border border-ink-100">
+                          <div key={qId} className="bg-white dark:bg-[#1e2033] p-4 rounded-xl border border-ink-100 dark:border-[#282c44]">
                             <div className="flex items-start gap-2 mb-2">
-                              <span className="w-5 h-5 rounded-md bg-ink-100 text-ink-600 flex items-center justify-center text-xs font-bold">{idx + 1}</span>
+                              <span className="w-5 h-5 rounded-md bg-ink-100 dark:bg-[#252840] text-ink-600 dark:text-[#9aa2bd] flex items-center justify-center text-xs font-bold">{idx + 1}</span>
                               <div>
-                                <p className="font-bold text-ink-800 text-sm">ID питання: {qId}</p>
+                                <p className="font-bold text-ink-800 dark:text-[#e8eaf0] text-sm">ID питання: {qId}</p>
                                 <p className="text-xs text-ink-500 mt-0.5">⏱ Час розгляду питання: <strong className="text-brand-600 font-semibold">{time} сек</strong></p>
                               </div>
                             </div>
                             
                             <div className="grid md:grid-cols-2 gap-2 text-xs mt-3">
-                              <div className="p-2.5 rounded-lg bg-ink-50">
+                              <div className="p-2.5 rounded-lg bg-ink-50 dark:bg-[#1e2033]">
                                 <span className="text-ink-400 block font-semibold mb-0.5">Відповідь студента:</span>
-                                <strong className="text-ink-700 select-all">{JSON.stringify(ansVal)}</strong>
+                                <strong className="text-ink-700 dark:text-[#e8eaf0] select-all">{JSON.stringify(ansVal)}</strong>
                               </div>
-                              <div className="p-2.5 rounded-lg bg-emerald-50/60 text-emerald-800">
+                              <div className="p-2.5 rounded-lg bg-emerald-50/60 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-400">
                                 <span className="text-emerald-600/80 block font-semibold mb-0.5">Час витрачено на питання:</span>
                                 <strong>{time} секунд</strong>
                               </div>
@@ -896,10 +896,10 @@ export function QuestionBankPage() {
               ) : attempts.length === 0 ? (
                 <EmptyState icon="📊" title="Спроб ще немає" hint="Студенти ще не проходили цей тест" />
               ) : (
-                <div className="overflow-x-auto border border-ink-100 rounded-2xl bg-white">
+                <div className="overflow-x-auto border border-ink-100 dark:border-[#282c44] rounded-2xl bg-white dark:bg-[#1a1c2e]">
                   <table className="w-full text-xs">
                     <thead>
-                      <tr className="border-b border-ink-100 bg-ink-50/50">
+                      <tr className="border-b border-ink-100 dark:border-[#282c44] bg-ink-50/50 dark:bg-[#151722]/50">
                         {['Студент', 'Email', 'Дата', 'Час всього', 'Оцінка', 'Статус', ''].map((h, i) => (
                           <th key={i} className="text-left px-4 py-3 font-bold text-ink-400 uppercase tracking-wider">{h}</th>
                         ))}
@@ -907,12 +907,12 @@ export function QuestionBankPage() {
                     </thead>
                     <tbody>
                       {attempts.map((att) => (
-                        <tr key={att.id} className="border-b border-ink-50 last:border-0 hover:bg-ink-50/40 transition">
-                          <td className="px-4 py-3.5 font-bold text-ink-800">{att.studentName}</td>
-                          <td className="px-4 py-3.5 text-ink-500">{att.studentEmail}</td>
+                        <tr key={att.id} className="border-b border-ink-50 dark:border-[#1e2033] last:border-0 hover:bg-ink-50/40 dark:hover:bg-[#1e2033]/60 transition">
+                          <td className="px-4 py-3.5 font-bold text-ink-800 dark:text-[#e8eaf0]">{att.studentName}</td>
+                          <td className="px-4 py-3.5 text-ink-500 dark:text-[#6b7394]">{att.studentEmail}</td>
                           <td className="px-4 py-3.5 text-ink-400">{new Date(att.startedAt).toLocaleDateString('uk-UA')}</td>
-                          <td className="px-4 py-3.5 text-ink-700 font-semibold">{formatDuration(att.startedAt, att.finishedAt)}</td>
-                          <td className="px-4 py-3.5 text-ink-850 font-bold">{att.scorePercentage}%</td>
+                          <td className="px-4 py-3.5 text-ink-700 dark:text-[#b0b8d0] font-semibold">{formatDuration(att.startedAt, att.finishedAt)}</td>
+                          <td className="px-4 py-3.5 text-ink-800 dark:text-white font-bold">{att.scorePercentage}%</td>
                           <td className="px-4 py-3.5">
                             <Badge tone={att.passed ? 'green' : 'rose'}>{att.passed ? 'Зарах.' : 'Незарах.'}</Badge>
                           </td>
