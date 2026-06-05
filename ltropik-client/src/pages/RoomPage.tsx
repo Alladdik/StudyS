@@ -296,7 +296,7 @@ export function RoomPage() {
               sidePanel === 'people' ? 'text-white' : 'text-white/60 hover:text-white')}
             style={{ background: sidePanel === 'people' ? 'rgba(101,53,246,0.35)' : 'rgba(255,255,255,0.07)' }}>
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-            {participantCount + 1}
+            {participantCount}
           </button>
 
           <button
