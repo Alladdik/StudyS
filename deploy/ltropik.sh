@@ -36,9 +36,9 @@ FRONTEND_SRC="ltropik-client"
 BACKEND_SRC="src/LTropik.WebAPI"
 
 # PostgreSQL
-DB_NAME="ltropikdb"
+DB_NAME="ltropik"
 DB_USER="ltropikuser"
-DB_PASS="CHANGE_ME_secure_password"   # ← change before first setup
+DB_PASS="CHANGE_ME_secure_password"   # ← змінити перед першим setup!
 
 # ── Colors ────────────────────────────────────────────────────────────────────
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
@@ -124,9 +124,9 @@ deploy_artifacts() {
     rsync -a --delete "$REPO_DIR/$FRONTEND_SRC/dist/" "$FRONTEND_DIR/"
     ok "Frontend synced"
 
-    # Backend: sync publish/ → /opt/ltropik/backend/ (never touch wwwroot symlink)
+    # Backend: sync publish/ → /opt/ltropik/backend/ (never touch wwwroot or Production cfg)
     log "Syncing backend…"
-    rsync -a --delete --exclude='wwwroot/' "$backend_tmp/" "$BACKEND_DIR/"
+    rsync -a --delete --exclude='wwwroot/' --exclude='appsettings.Production.json' "$backend_tmp/" "$BACKEND_DIR/"
     ok "Backend synced"
     rm -rf "$backend_tmp"
 
@@ -264,6 +264,23 @@ action_setup() {
     else
         git clone "$REPO_URL" "$REPO_DIR"
         ok "Repo cloned"
+    fi
+
+    # Production appsettings
+    section "Production appsettings"
+    local prod_cfg="$REPO_DIR/deploy/appsettings.Production.json"
+    local dest_cfg="$BACKEND_DIR/appsettings.Production.json"
+    if [[ -f "$dest_cfg" ]]; then
+        ok "appsettings.Production.json already exists — skipping"
+    elif [[ -f "$prod_cfg" ]]; then
+        # Substitute DB_PASS placeholder
+        sed "s|CHANGE_ME_secure_password|$DB_PASS|g" "$prod_cfg" > "$dest_cfg"
+        chown www-data:www-data "$dest_cfg"
+        chmod 640 "$dest_cfg"
+        ok "appsettings.Production.json written to $dest_cfg"
+        warn "→ Edit $dest_cfg to set JWT key, Telegram token, email, etc."
+    else
+        warn "deploy/appsettings.Production.json not found — skipping"
     fi
 
     # First build + deploy

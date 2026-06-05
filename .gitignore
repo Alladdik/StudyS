@@ -20,6 +20,8 @@ artifacts/
 **/appsettings.Local.json
 **/appsettings.Development.json
 # (appsettings.json без секретів — можна пушити)
+# Виключення: шаблон для VPS (без реальних секретів)
+!deploy/appsettings.Production.json
 
 # Data Protection keys
 **/dp-keys/
