@@ -80,7 +80,7 @@ function InlineField({ label, value, onSave, type = 'text', placeholder }: {
       ) : (
         <button onClick={() => setEditing(true)}
           className="w-full text-left px-3 py-1.5 rounded-xl text-sm text-ink-800 dark:text-[#e8eaf0] bg-ink-50 dark:bg-[#1e2033] hover:bg-brand-50 dark:hover:bg-brand-900/20 hover:text-brand-700 dark:hover:text-brand-400 border border-transparent hover:border-brand-100 dark:hover:border-brand-800/40 transition group flex items-center justify-between">
-          <span className="truncate">{value || <span className="text-ink-300 italic">{placeholder ?? 'Не вказано'}</span>}</span>
+          <span className="truncate">{value || <span className="text-ink-300 dark:text-[#4d5470] italic">{placeholder ?? 'Не вказано'}</span>}</span>
           <span className="opacity-0 group-hover:opacity-100 text-brand-400 text-xs flex-shrink-0 ml-2">✎</span>
         </button>
       )}
@@ -115,8 +115,8 @@ function PasswordBlock({ userId, onSaved }: { userId: string; onSaved: () => voi
 
       {savedPw && (
         <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
-          className="mb-2 flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-200">
-          <span className="text-emerald-700 text-xs font-mono flex-1">{savedPw}</span>
+          className="mb-2 flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700/50">
+          <span className="text-emerald-700 dark:text-emerald-400 text-xs font-mono flex-1">{savedPw}</span>
           <button onClick={() => { navigator.clipboard.writeText(savedPw); toast('success', 'Скопійовано'); }}
             className="text-emerald-600 hover:text-emerald-800 text-xs">📋</button>
           <button onClick={() => setSavedPw(null)} className="text-emerald-400 hover:text-emerald-600 text-xs">✕</button>
@@ -137,7 +137,7 @@ function PasswordBlock({ userId, onSaved }: { userId: string; onSaved: () => voi
         </div>
         <button onClick={() => setNewPw(genPassword())}
           title="Згенерувати пароль"
-          className="px-2 py-1.5 rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-600 text-sm border border-brand-100 transition">
+          className="px-2 py-1.5 rounded-xl bg-brand-50 dark:bg-brand-900/20 hover:bg-brand-100 dark:hover:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-sm border border-brand-100 dark:border-brand-800/40 transition">
           🎲
         </button>
         <button onClick={save} disabled={!newPw || saving}
@@ -474,27 +474,27 @@ function CreateModal({ onClose, onCreated }: { onClose: () => void; onCreated: (
 
           <div className="px-6 py-5 border-b border-ink-100 dark:border-[#282c44] flex items-center justify-between">
             <h2 className="font-extrabold text-ink-900 dark:text-white text-lg">+ Новий акаунт</h2>
-            <button onClick={onClose} className="w-8 h-8 rounded-xl bg-ink-100 hover:bg-ink-200 flex items-center justify-center text-ink-500 transition">✕</button>
+            <button onClick={onClose} className="w-8 h-8 rounded-xl bg-ink-100 dark:bg-[#252840] hover:bg-ink-200 dark:hover:bg-[#2d3148] flex items-center justify-center text-ink-500 dark:text-[#9aa2bd] transition">✕</button>
           </div>
 
           {created ? (
             <div className="p-6">
               <div className="text-center mb-5">
                 <div className="text-4xl mb-2">✅</div>
-                <p className="font-bold text-ink-900">Акаунт створено!</p>
+                <p className="font-bold text-ink-900 dark:text-white">Акаунт створено!</p>
               </div>
-              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 space-y-2 mb-5">
-                <p className="text-xs font-bold text-emerald-700 uppercase">Дані для входу</p>
+              <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700/50 rounded-2xl p-4 space-y-2 mb-5">
+                <p className="text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase">Дані для входу</p>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-ink-500">Email</span>
+                  <span className="text-sm text-ink-500 dark:text-[#6b7394]">Email</span>
                   <div className="flex items-center gap-1.5">
-                    <span className="font-mono text-sm text-ink-800">{created.email}</span>
+                    <span className="font-mono text-sm text-ink-800 dark:text-[#e8eaf0]">{created.email}</span>
                     <button onClick={() => { navigator.clipboard.writeText(created.email); toast('success', 'Скопійовано'); }}
                       className="text-emerald-600 hover:text-emerald-800 text-xs">📋</button>
                   </div>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-ink-500">Пароль</span>
+                  <span className="text-sm text-ink-500 dark:text-[#6b7394]">Пароль</span>
                   <div className="flex items-center gap-1.5">
                     <span className="font-mono text-sm text-ink-800 dark:text-[#e8eaf0] bg-white dark:bg-[#1e2033] px-2 py-0.5 rounded-lg border border-ink-200 dark:border-[#2d3148]">{created.password}</span>
                     <button onClick={() => { navigator.clipboard.writeText(created.password); toast('success', 'Скопійовано'); }}
@@ -506,7 +506,7 @@ function CreateModal({ onClose, onCreated }: { onClose: () => void; onCreated: (
                     navigator.clipboard.writeText(`Email: ${created.email}\nПароль: ${created.password}`);
                     toast('success', 'Дані скопійовано');
                   }}
-                  className="w-full mt-2 py-2 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-700 text-xs font-bold transition">
+                  className="w-full mt-2 py-2 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 hover:bg-emerald-200 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 text-xs font-bold transition">
                   📋 Скопіювати все
                 </button>
               </div>
@@ -538,7 +538,7 @@ function CreateModal({ onClose, onCreated }: { onClose: () => void; onCreated: (
                       className="absolute right-2 top-1/2 -translate-y-1/2 text-ink-400 text-xs hover:text-ink-600">{showPw ? '🙈' : '👁'}</button>
                   </div>
                   <button type="button" onClick={() => setForm(f => ({ ...f, password: genPassword() }))}
-                    title="Згенерувати" className="px-2.5 rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-600 border border-brand-100 transition text-sm">🎲</button>
+                    title="Згенерувати" className="px-2.5 rounded-xl bg-brand-50 dark:bg-brand-900/20 hover:bg-brand-100 dark:hover:bg-brand-900/30 text-brand-600 dark:text-brand-400 border border-brand-100 dark:border-brand-800/40 transition text-sm">🎲</button>
                 </div>
               </div>
               <div>
@@ -547,14 +547,14 @@ function CreateModal({ onClose, onCreated }: { onClose: () => void; onCreated: (
                   {['Student', 'Teacher', 'Parent', 'Admin'].map(r => (
                     <button type="button" key={r} onClick={() => setForm(f => ({ ...f, role: r }))}
                       className={cx('flex items-center gap-1 px-3 py-1.5 rounded-xl text-sm border transition',
-                        form.role === r ? 'border-brand-300 bg-brand-50 text-brand-700 font-bold'
-                          : 'border-ink-200 text-ink-500 hover:border-brand-200')}>
+                        form.role === r ? 'border-brand-300 dark:border-brand-600 bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 font-bold'
+                          : 'border-ink-200 dark:border-[#2d3148] text-ink-500 dark:text-[#9aa2bd] hover:border-brand-200')}>
                       {ROLE_EMOJIS[r]} {ROLE_LABELS[r]}
                     </button>
                   ))}
                 </div>
               </div>
-              {error && <p className="text-rose-600 text-sm bg-rose-50 rounded-xl px-3 py-2">{error}</p>}
+              {error && <p className="text-rose-600 dark:text-rose-400 text-sm bg-rose-50 dark:bg-rose-900/20 rounded-xl px-3 py-2">{error}</p>}
               <button type="submit" disabled={loading} className="btn btn-primary w-full py-3 mt-2">
                 {loading ? '⏳ Створення…' : '✅ Створити акаунт'}
               </button>

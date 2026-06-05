@@ -202,6 +202,40 @@ public class UsersController(IApplicationDbContext db, AuthService auth) : Contr
         var user = await db.Users.FindAsync([id], ct);
         if (user == null) return NotFound();
 
+        // Delete records that use Restrict (no cascade) in the correct order
+
+        // Schedules where user is teacher
+        var schedules = await db.Schedules.Where(s => s.TeacherId == id).ToListAsync(ct);
+        db.Schedules.RemoveRange(schedules);
+
+        // Lesson comments authored by user
+        var comments = await db.LessonComments.Where(c => c.AuthorId == id).ToListAsync(ct);
+        db.LessonComments.RemoveRange(comments);
+
+        // Room messages by user
+        var roomMessages = await db.RoomMessages.Where(m => m.UserId == id).ToListAsync(ct);
+        db.RoomMessages.RemoveRange(roomMessages);
+
+        // Rooms hosted by user (cascade will clean RoomMessages, but we removed them above already)
+        var rooms = await db.Rooms.Where(r => r.HostId == id).ToListAsync(ct);
+        db.Rooms.RemoveRange(rooms);
+
+        // Direct messages (sender or receiver)
+        var dms = await db.DirectMessages
+            .Where(m => m.SenderId == id || m.ReceiverId == id).ToListAsync(ct);
+        db.DirectMessages.RemoveRange(dms);
+
+        // Lesson recordings by teacher
+        var recordings = await db.LessonRecordings.Where(r => r.TeacherId == id).ToListAsync(ct);
+        db.LessonRecordings.RemoveRange(recordings);
+
+        // Payment transactions (Restrict)
+        var payments = await db.PaymentTransactions.Where(p => p.StudentId == id).ToListAsync(ct);
+        db.PaymentTransactions.RemoveRange(payments);
+
+        await db.SaveChangesAsync(ct);
+
+        // Now delete the user (remaining cascade relations will auto-clean)
         db.Users.Remove(user);
         await db.SaveChangesAsync(ct);
         return Ok();
