@@ -99,7 +99,7 @@ export function ShopPage() {
       <div className="flex gap-2 mb-5">
         {(['shop', 'inventory'] as const).map(t => (
           <button key={t} onClick={() => setTab(t)}
-            className={cx('chip', tab === t ? 'bg-brand-600 text-white' : 'bg-white text-ink-500 ring-1 ring-ink-200')}>
+            className={cx('chip', tab === t ? 'bg-brand-600 text-white' : 'bg-white dark:bg-[#1e2033] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#2d3148]')}>
             {{ shop: '🛍️ Магазин', inventory: '🎒 Мій інвентар' }[t]}
           </button>
         ))}
@@ -112,6 +112,9 @@ export function ShopPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {items.map(item => {
                 const canAfford = coins >= item.coinsPrice;
+                const ownedCount = purchases.filter(p => p.item.id === item.id).length;
+                const atLimit = item.maxPerStudent != null && ownedCount >= item.maxPerStudent;
+                const canBuy = canAfford && !atLimit;
                 return (
                   <Card key={item.id} className="p-5 flex flex-col gap-3">
                     <div className="flex items-start justify-between">
@@ -119,22 +122,24 @@ export function ShopPage() {
                       <Badge tone={TYPE_TONE[item.type] ?? 'brand'}>{TYPE_LABELS[item.type] ?? item.type}</Badge>
                     </div>
                     <div>
-                      <p className="font-extrabold text-ink-900">{item.name}</p>
-                      <p className="text-sm text-ink-500 mt-0.5">{item.description}</p>
+                      <p className="font-extrabold text-ink-900 dark:text-white">{item.name}</p>
+                      <p className="text-sm text-ink-500 dark:text-[#6b7394] mt-0.5">{item.description}</p>
                     </div>
                     {item.maxPerStudent && (
-                      <p className="text-xs text-ink-400">Макс: {item.maxPerStudent}x на студента</p>
+                      <p className="text-xs text-ink-400">
+                        {atLimit ? '✅ Вже придбано' : `Куплено: ${ownedCount}/${item.maxPerStudent}`}
+                      </p>
                     )}
-                    <div className="flex items-center justify-between mt-auto pt-2 border-t border-ink-100">
+                    <div className="flex items-center justify-between mt-auto pt-2 border-t border-ink-100 dark:border-[#282c44]">
                       <span className="font-bold text-amber-600 text-lg">🪙 {item.coinsPrice}</span>
                       <button
                         onClick={() => setConfirmItem(item)}
-                        disabled={!canAfford || buying === item.id}
+                        disabled={!canBuy || buying === item.id}
                         className={cx(
                           'btn text-sm py-1.5 px-4 disabled:opacity-40',
-                          canAfford ? 'btn-primary' : 'btn-soft'
+                          canBuy ? 'btn-primary' : 'btn-soft'
                         )}>
-                        {!canAfford ? 'Мало монет' : 'Купити'}
+                        {atLimit ? 'Придбано' : !canAfford ? 'Мало монет' : 'Купити'}
                       </button>
                     </div>
                   </Card>
@@ -153,7 +158,7 @@ export function ShopPage() {
                 <Card key={p.id} className={cx('p-5 flex items-center gap-4', p.usedAt && 'opacity-60')}>
                   <span className="text-3xl flex-shrink-0">{p.item.icon}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold text-ink-900">{p.item.name}</p>
+                    <p className="font-bold text-ink-900 dark:text-white">{p.item.name}</p>
                     <p className="text-xs text-ink-400">{new Date(p.purchasedAt).toLocaleDateString('uk-UA')}</p>
                     {p.usedAt && <p className="text-xs text-emerald-600 font-semibold">✓ Використано</p>}
                   </div>
@@ -173,9 +178,9 @@ export function ShopPage() {
         {confirmItem && (
           <div className="p-7 text-center">
             <span className="text-5xl">{confirmItem.icon}</span>
-            <h3 className="font-extrabold text-xl text-ink-900 mt-3">{confirmItem.name}</h3>
-            <p className="text-ink-500 text-sm mt-1">{confirmItem.description}</p>
-            <p className="text-amber-600 font-bold text-2xl mt-4">🪙 {confirmItem.coinsPrice}</p>
+            <h3 className="font-extrabold text-xl text-ink-900 dark:text-white mt-3">{confirmItem.name}</h3>
+            <p className="text-ink-500 dark:text-[#6b7394] text-sm mt-1">{confirmItem.description}</p>
+            <p className="text-amber-600 dark:text-amber-400 font-bold text-2xl mt-4">🪙 {confirmItem.coinsPrice}</p>
             <p className="text-xs text-ink-400 mt-1">Залишиться: {coins - confirmItem.coinsPrice} монет</p>
             <div className="flex gap-3 mt-6">
               <button onClick={() => setConfirmItem(null)} className="btn btn-soft flex-1">Скасувати</button>

@@ -212,6 +212,34 @@ public class AnalyticsController(IApplicationDbContext db) : ControllerBase
         return Ok(result);
     }
 
+    // ── Transactions list ──────────────────────────────────────────────────────
+    [HttpGet("transactions")]
+    public async Task<IActionResult> GetTransactions(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 50,
+        CancellationToken ct = default)
+    {
+        var query = db.PaymentTransactions
+            .Include(t => t.Student)
+            .Include(t => t.Course)
+            .OrderByDescending(t => t.CreatedAt);
+
+        var total = await query.CountAsync(ct);
+        var items = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(t => new
+            {
+                t.Id, t.Amount, t.Currency, t.Status, t.ExternalTxId, t.CreatedAt,
+                studentName  = t.Student.FirstName + " " + t.Student.LastName,
+                studentEmail = t.Student.Email,
+                courseTitle  = t.Course != null ? t.Course.Title : null
+            })
+            .ToListAsync(ct);
+
+        return Ok(new { total, page, pageSize, items });
+    }
+
     // ── Attendance heatmap ─────────────────────────────────────────────────────
     [HttpGet("heatmap")]
     public async Task<IActionResult> GetAttendanceHeatmap(

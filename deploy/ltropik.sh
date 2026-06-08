@@ -170,9 +170,48 @@ action_update() {
     ok "Service restarted"
     wait_for_port "$BACKEND_PORT" 30
 
+    # ── Health check: confirm the app actually answers HTTP, not just opens port
+    health_check || { err "Health check FAILED — see: journalctl -u $SERVICE_NAME -n 50"; }
+
     local elapsed=$((SECONDS - start_time))
-    ok "══════════ DEPLOY DONE in ${elapsed}s ══════════"
+    ok "══════════ ✅ DEPLOY OK — everything works (in ${elapsed}s) ══════════"
     log "══════════ DEPLOY END $(date '+%Y-%m-%d %H:%M:%S') ══════════"
+}
+
+# ── HTTP health check (liveness) ──────────────────────────────────────────────
+health_check() {
+    section "Health check"
+    local url="http://127.0.0.1:$BACKEND_PORT/api/health/ping"
+    for ((i=0; i<15; i++)); do
+        local code
+        code=$(curl -s -o /dev/null -w "%{http_code}" "$url" 2>/dev/null || echo "000")
+        if [[ "$code" == "200" ]]; then
+            ok "API is alive and working ✅ (HTTP 200 from /api/health/ping)"
+            return 0
+        fi
+        log "Waiting for API… (HTTP $code, try $((i+1))/15)"
+        sleep 2
+    done
+    return 1
+}
+
+# ── action: autoupdate (cron-friendly: only deploys if GitHub has new commits) ─
+action_autoupdate() {
+    cd "$REPO_DIR" || err "Repo not found at $REPO_DIR"
+    git fetch origin --quiet
+    local branch local_sha remote_sha
+    branch=$(git remote show origin | grep 'HEAD branch' | awk '{print $NF}')
+    branch=${branch:-main}
+    local_sha=$(git rev-parse HEAD)
+    remote_sha=$(git rev-parse "origin/$branch")
+
+    if [[ "$local_sha" == "$remote_sha" ]]; then
+        log "No new commits — already up to date ($(git rev-parse --short HEAD)). Skipping."
+        exit 0
+    fi
+
+    ok "New commit detected: ${local_sha:0:7} → ${remote_sha:0:7}. Deploying…"
+    action_update
 }
 
 # ── action: setup (first-time VPS) ───────────────────────────────────────────
@@ -475,7 +514,8 @@ mkdir -p "$BASE_DIR" 2>/dev/null || true
 touch "$DEPLOY_LOG" 2>/dev/null || true
 
 case "${1:-menu}" in
-    update)   action_update ;;
+    update)     action_update ;;
+    autoupdate) action_autoupdate ;;
     setup)    action_setup ;;
     status)   action_status ;;
     logs)     action_logs ;;

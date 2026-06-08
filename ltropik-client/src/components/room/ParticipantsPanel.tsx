@@ -7,10 +7,13 @@ interface Props {
   isHost: boolean;
   participants: RemoteParticipant[];
   raisedHands: Set<string>;
+  onMute?: (connectionId: string) => void;
+  onKick?: (connectionId: string) => void;
 }
 
-function Row({ name, micOn, cameraOn, handRaised, you, host }: {
+function Row({ name, micOn, cameraOn, handRaised, you, host, onMute, onKick }: {
   name: string; micOn: boolean; cameraOn: boolean; handRaised?: boolean; you?: boolean; host?: boolean;
+  onMute?: () => void; onKick?: () => void;
 }) {
   const initials = name.split(' ').filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase()).join('');
   return (
@@ -40,12 +43,24 @@ function Row({ name, micOn, cameraOn, handRaised, you, host }: {
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M21 6.5l-4-4-15 15 1.5 1.5 3.5-3.5H16c.55 0 1-.45 1-1v-3.5l4 4V6.5zM16 16H5.5L13 8.5V15h3v1z"/></svg>
           )}
         </span>
+        {onMute && (
+          <button onClick={onMute} title="Вимкнути мікрофон"
+            className="ml-1 w-7 h-7 rounded-lg flex items-center justify-center text-white/40 hover:text-amber-400 hover:bg-white/10 transition">
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 11h-1.7c0 .74-.16 1.43-.43 2.05l1.23 1.23c.56-.98.9-2.09.9-3.28zm-4.02.17c0-.06.02-.11.02-.17V5c0-1.66-1.34-3-3-3S9 3.34 9 5v.18l5.98 5.99zM4.27 3L3 4.27l6.01 6.01V11c0 1.66 1.33 3 2.99 3 .22 0 .44-.03.65-.08l1.66 1.66c-.71.33-1.5.52-2.31.52-2.76 0-5.3-2.1-5.3-5.1H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c.91-.13 1.77-.45 2.54-.9L19.73 21 21 19.73 4.27 3z"/></svg>
+          </button>
+        )}
+        {onKick && (
+          <button onClick={onKick} title="Видалити з кімнати"
+            className="w-7 h-7 rounded-lg flex items-center justify-center text-white/40 hover:text-rose-400 hover:bg-white/10 transition">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24"><path strokeLinecap="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        )}
       </div>
     </div>
   );
 }
 
-export function ParticipantsPanel({ localName, localMicOn, localCameraOn, isHost, participants, raisedHands }: Props) {
+export function ParticipantsPanel({ localName, localMicOn, localCameraOn, isHost, participants, raisedHands, onMute, onKick }: Props) {
   const total = participants.length + 1;
   return (
     <div className="flex flex-col h-full bg-ink-800 rounded-2xl overflow-hidden border border-white/10">
@@ -58,7 +73,9 @@ export function ParticipantsPanel({ localName, localMicOn, localCameraOn, isHost
         <Row name={localName} micOn={localMicOn} cameraOn={localCameraOn} you host={isHost} />
         {participants.map((p) => (
           <Row key={p.connectionId} name={p.displayName} micOn={p.micOn}
-            cameraOn={p.cameraOn} handRaised={raisedHands.has(p.userId)} />
+            cameraOn={p.cameraOn} handRaised={raisedHands.has(p.userId)}
+            onMute={isHost && p.micOn ? () => onMute?.(p.connectionId) : undefined}
+            onKick={isHost ? () => onKick?.(p.connectionId) : undefined} />
         ))}
         {participants.length === 0 && (
           <p className="text-center text-white/30 text-xs py-6">Поки що ви один тут.<br />Поділіться посиланням 🔗</p>

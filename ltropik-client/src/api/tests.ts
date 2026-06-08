@@ -29,7 +29,7 @@ export interface TestResult {
 }
 
 export const getTest = (id: string) => api.get<TestInfo>(`/tests/${id}`);
-export const startTest = (id: string) => api.get<StartTestResponse>(`/tests/${id}/start`);
+export const startTest = (id: string) => api.post<StartTestResponse>(`/tests/${id}/start`);
 export const submitTest = (attemptId: string, answers: Record<string, unknown>, questionTimes?: Record<string, number>) =>
   api.post<TestResult>('/tests/submit', { attemptId, answers, questionTimes });
 export const getRemainingAttempts = (testId: string) =>

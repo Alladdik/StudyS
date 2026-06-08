@@ -5,6 +5,7 @@ import type { QuestionBankItem } from '../../types';
 import { Card, Modal, Loader, EmptyState, Badge, toast, cx } from '../../components/ui';
 import { getCourses } from '../../api/courses';
 import { getUsers } from '../../api/users';
+import { TestBuilderChat, type AiQuestion } from '../../components/TestBuilderChat';
 
 type QType = 'Single' | 'Multi' | 'Text';
 type TabType = 'questions' | 'tests';
@@ -51,6 +52,9 @@ export function QuestionBankPage() {
   const [showAiModal, setShowAiModal] = useState(false);
   const [aiSourceText, setAiSourceText] = useState('');
   const [aiGenerating, setAiGenerating] = useState(false);
+
+  // AI Test Builder Chat
+  const [showAiBuilder, setShowAiBuilder] = useState(false);
 
   // Attempt viewing states
   const [showAttemptsModal, setShowAttemptsModal] = useState(false);
@@ -449,6 +453,34 @@ export function QuestionBankPage() {
     }
   }
 
+  // ── AI Builder save ────────────────────────────────────────────────────────
+  async function handleAiBuilderSave(aiQuestions: AiQuestion[], title: string) {
+    try {
+      // Save each question to question bank
+      for (const q of aiQuestions) {
+        const formattedOptions = q.options?.map(o => ({
+          text: o.text,
+          isCorrect: q.type === 'single'
+            ? o.id === q.correctAnswer
+            : q.correctAnswers?.includes(o.id) ?? false,
+        })) ?? [];
+
+        await api.post('/questionbank', {
+          text: q.text,
+          type: q.type === 'single' ? 'Single' : q.type === 'multiple' ? 'Multi' : 'Text',
+          options: formattedOptions,
+          category: title,
+          tags: 'AI-конструктор',
+        });
+      }
+      await fetchItems();
+      toast('success', `✅ ${aiQuestions.length} питань збережено в Банк питань під категорією «${title}»`);
+      setActiveTab('questions');
+    } catch {
+      toast('error', 'Помилка збереження питань');
+    }
+  }
+
   function formatDuration(start: string, finish: string) {
     const s = new Date(start).getTime();
     const f = new Date(finish).getTime();
@@ -541,6 +573,13 @@ export function QuestionBankPage() {
                 📥 Імпорт JSON
               </button>
             </div>
+            <button
+              onClick={() => setShowAiBuilder(true)}
+              className="btn text-sm py-2 px-4 text-white font-bold flex items-center gap-2"
+              style={{ background: 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}
+            >
+              🤖 AI-конструктор
+            </button>
             <button onClick={openCreateTest} className="btn btn-primary">+ Створити тест</button>
           </div>
 
@@ -936,6 +975,13 @@ export function QuestionBankPage() {
           <button onClick={() => setShowAttemptsModal(false)} className="btn btn-soft w-full text-xs py-2 mt-5">Закрити</button>
         </div>
       </Modal>
+
+      {/* ── AI Test Builder Chat ──────────────────────────────────────────── */}
+      <TestBuilderChat
+        open={showAiBuilder}
+        onClose={() => setShowAiBuilder(false)}
+        onSave={handleAiBuilderSave}
+      />
     </Layout>
   );
 }

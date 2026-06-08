@@ -33,6 +33,9 @@ import { ShopAdminPage } from './pages/admin/ShopAdminPage';
 import { SettingsPage } from './pages/admin/SettingsPage';
 import { AuditLogsPage } from './pages/admin/AuditLogsPage';
 import { SystemHealthPage } from './pages/admin/SystemHealthPage';
+import { GamificationPage } from './pages/admin/GamificationPage';
+import { NotificationsAdminPage } from './pages/admin/NotificationsAdminPage';
+import { FinancePage } from './pages/admin/FinancePage';
 import { EnrollmentRequestsPage } from './pages/EnrollmentRequestsPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
@@ -188,6 +191,15 @@ export default function App() {
         } />
         <Route path="/admin/system" element={
           <ProtectedRoute roles={['Admin']}><SystemHealthPage /></ProtectedRoute>
+        } />
+        <Route path="/admin/gamification" element={
+          <ProtectedRoute roles={['Admin']}><GamificationPage /></ProtectedRoute>
+        } />
+        <Route path="/admin/notifications" element={
+          <ProtectedRoute roles={['Admin']}><NotificationsAdminPage /></ProtectedRoute>
+        } />
+        <Route path="/admin/finance" element={
+          <ProtectedRoute roles={['Admin', 'Manager']}><FinancePage /></ProtectedRoute>
         } />
       </Routes>
     </BrowserRouter>

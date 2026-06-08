@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { Layout } from '../../components/Layout';
 import { AiMentorChat } from '../../components/AiMentorChat';
@@ -34,6 +34,7 @@ export function HomeworkPage() {
 
   // Confetti state
   const [showConfetti, setShowConfetti] = useState(false);
+  const confettiTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -43,14 +44,18 @@ export function HomeworkPage() {
     }).catch(console.error).finally(() => setLoading(false));
   }, [id]);
 
+  // Cleanup confetti timer on unmount
+  useEffect(() => () => { if (confettiTimerRef.current) clearTimeout(confettiTimerRef.current); }, []);
+
   async function handleSubmit() {
     if (!id || !answer.trim()) return;
     setSubmitting(true);
     try { 
       await submitHomework(id, answer); 
-      setSubmitted(true); 
+      setSubmitted(true);
       setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 4500);
+      if (confettiTimerRef.current) clearTimeout(confettiTimerRef.current);
+      confettiTimerRef.current = setTimeout(() => setShowConfetti(false), 4500);
     } finally { 
       setSubmitting(false); 
     }

@@ -16,6 +16,12 @@ public class HealthController(
 {
     private static readonly DateTime _startTime = DateTime.UtcNow;
 
+    // Public liveness probe — used by the deploy pipeline to confirm the app is
+    // actually up after a restart. No auth so CI / external checks can hit it.
+    [AllowAnonymous]
+    [HttpGet("ping")]
+    public IActionResult Ping() => Ok(new { status = "ok", timestamp = DateTimeOffset.UtcNow });
+
     [HttpGet]
     public async Task<IActionResult> Get(CancellationToken ct)
     {

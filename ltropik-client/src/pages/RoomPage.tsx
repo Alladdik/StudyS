@@ -1,12 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useWebRTC } from '../hooks/useWebRTC';
+import { useWebRTC, REACTION_EMOJIS } from '../hooks/useWebRTC';
+import { useActiveSpeaker } from '../hooks/useActiveSpeaker';
 import { useRecording } from '../hooks/useRecording';
 import { VideoTile } from '../components/room/VideoTile';
 import { Whiteboard } from '../components/room/Whiteboard';
 import { RoomChat } from '../components/room/RoomChat';
 import { ParticipantsPanel } from '../components/room/ParticipantsPanel';
+import { RoomSettings } from '../components/room/RoomSettings';
 import { getRoom, endRoom } from '../api/rooms';
 import type { RoomDetail } from '../api/rooms';
 import { useAuthStore } from '../store/authStore';
@@ -120,6 +122,7 @@ const Icon = {
   HangUp:   () => <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>,
   EndCall:  () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="w-6 h-6"><path strokeLinecap="round" d="M6 18L18 6M6 6l12 12"/></svg>,
   Download: () => <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6"><path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5v-2z"/></svg>,
+  Gear:     () => <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>,
 };
 
 export function RoomPage() {
@@ -136,11 +139,31 @@ export function RoomPage() {
 
   const {
     localStream, screenStream, participants, messages, micOn, cameraOn,
-    screenSharing, connected, participantCount, strokes, whiteboardClear,
-    raisedHands, roomEnded, mediaError,
+    screenSharing, connected, connectionQuality, participantCount, strokes, whiteboardClear,
+    raisedHands, reactions, roomEnded, mediaError,
     toggleMic, toggleCamera, startScreenShare, stopScreenShare,
-    sendChatMessage, sendStroke, clearWhiteboard, raiseHand, leave,
+    sendChatMessage, sendStroke, clearWhiteboard, raiseHand, sendReaction, leave,
+    muteParticipant, kickParticipant,
+    devices, selectedCameraId, selectedMicId, selectedSpeakerId,
+    switchCamera, switchMic, switchSpeaker,
   } = useWebRTC(id!);
+
+  const [audioBlocked, setAudioBlocked] = useState(false);
+  const [unlockSignal, setUnlockSignal] = useState(0);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showReactions, setShowReactions] = useState(false);
+  const [pinnedId, setPinnedId] = useState<string | null>(null);
+
+  // Who's currently talking — local + every remote stream.
+  // useMemo prevents new array identity on every render, which would cause
+  // useActiveSpeaker to re-register all AudioContext nodes unnecessarily.
+  const speakerSources = useMemo(() => [
+    { id: 'local', stream: localStream },
+    ...[...participants.values()].map((p) => ({ id: p.connectionId, stream: p.stream })),
+  // participants is a Map — spread it to a stable list for memo comparison
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  ], [localStream, participants]);
+  const speakingIds = useActiveSpeaker(speakerSources);
 
   const {
     recording, recordingUrl,
@@ -182,10 +205,37 @@ export function RoomPage() {
 
   useEffect(() => {
     if (!roomEnded) return;
-    toast('info', roomEnded === 'deleted' ? 'Кімнату видалено ведучим' : 'Ведучий завершив зустріч');
+    const msg = roomEnded === 'deleted' ? 'Кімнату видалено ведучим'
+      : roomEnded === 'kicked' ? 'Вас видалив ведучий'
+      : roomEnded === 'denied' ? 'Немає доступу до цієї кімнати'
+      : 'Ведучий завершив зустріч';
+    toast('info', msg);
     const t = setTimeout(() => navigate('/rooms'), 2500);
     return () => clearTimeout(t);
   }, [roomEnded, navigate]);
+
+  // Keyboard shortcuts: M mute, V camera, E screen, hold Space = push-to-talk.
+  const pttRef = useRef(false);
+  useEffect(() => {
+    const typing = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null;
+      return !!t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
+    };
+    const down = (e: KeyboardEvent) => {
+      if (typing(e) || e.repeat) return; // ignore key-repeat and form fields
+      const k = e.key.toLowerCase();
+      if (k === 'm') { e.preventDefault(); toggleMic(); }
+      else if (k === 'v') { e.preventDefault(); toggleCamera(); }
+      else if (k === 'e') { e.preventDefault(); screenSharing ? stopScreenShare() : startScreenShare(); }
+      else if (e.key === ' ' && !micOn) { e.preventDefault(); pttRef.current = true; toggleMic(); }
+    };
+    const up = (e: KeyboardEvent) => {
+      if (e.key === ' ' && pttRef.current) { pttRef.current = false; toggleMic(); }
+    };
+    window.addEventListener('keydown', down);
+    window.addEventListener('keyup', up);
+    return () => { window.removeEventListener('keydown', down); window.removeEventListener('keyup', up); };
+  }, [micOn, screenSharing, toggleMic, toggleCamera, startScreenShare, stopScreenShare]);
 
   // Join/leave beeps
   const prevIds = useRef<Set<string>>(new Set());
@@ -201,6 +251,12 @@ export function RoomPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [participants]);
 
+  // Clear pin if the pinned participant disconnects (prevents black empty spotlight)
+  useEffect(() => {
+    if (!pinnedId || pinnedId === 'local') return;
+    if (!participants.has(pinnedId)) setPinnedId(null);
+  }, [participants, pinnedId]);
+
   // Unread chat
   useEffect(() => { if (sidePanel !== 'chat' && messages.length > 0) setUnreadCount(p => p + 1); }, [messages.length]); // eslint-disable-line
   useEffect(() => { if (sidePanel === 'chat') setUnreadCount(0); }, [sidePanel]);
@@ -215,6 +271,13 @@ export function RoomPage() {
   const allParticipants = [...participants.values()];
   const sharingParticipant = allParticipants.find(p => p.isScreenSharing);
   const hasScreenShare = !!sharingParticipant || screenSharing;
+
+  // Pin / spotlight (only when nobody is screen-sharing — screen takes priority).
+  const pinnedParticipant = pinnedId && pinnedId !== 'local' ? allParticipants.find(p => p.connectionId === pinnedId) ?? null : null;
+  const pinnedLocal = pinnedId === 'local';
+  const hasPin = !hasScreenShare && (pinnedLocal || !!pinnedParticipant);
+  const togglePin = (key: string) => setPinnedId(prev => (prev === key ? null : key));
+
   const gridCols = hasScreenShare ? 'grid-cols-1'
     : allParticipants.length === 0 ? 'grid-cols-1'
     : allParticipants.length === 1 ? 'grid-cols-2'
@@ -252,7 +315,7 @@ export function RoomPage() {
             className="fixed inset-0 z-[100] flex items-center justify-center" style={{ background: 'rgba(17,19,24,0.92)', backdropFilter: 'blur(12px)' }}>
             <motion.div initial={{ scale: 0.85, y: 24 }} animate={{ scale: 1, y: 0 }} className="text-center text-white">
               <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.1 }} className="text-7xl mb-5">👋</motion.div>
-              <h1 className="text-2xl font-bold mb-2">{roomEnded === 'deleted' ? 'Кімнату видалено' : 'Зустріч завершено'}</h1>
+              <h1 className="text-2xl font-bold mb-2">{roomEnded === 'deleted' ? 'Кімнату видалено' : roomEnded === 'kicked' ? 'Вас видалено' : roomEnded === 'denied' ? 'Доступ заборонено' : 'Зустріч завершено'}</h1>
               <p className="text-white/40">Перенаправляємо…</p>
             </motion.div>
           </motion.div>
@@ -281,6 +344,17 @@ export function RoomPage() {
               {room?.courseName && (
                 <span className="text-[11px] px-1.5 py-0.5 rounded-md font-medium" style={{ background: 'rgba(101,53,246,0.2)', color: '#a78bfa' }}>
                   {room.courseName}
+                </span>
+              )}
+              {connected && connectionQuality !== 'unknown' && (
+                <span className="flex items-center gap-1 text-[11px] font-medium" title="Якість з'єднання"
+                  style={{ color: connectionQuality === 'good' ? '#34d399' : connectionQuality === 'fair' ? '#fbbf24' : '#fb7185' }}>
+                  <span className="flex items-end gap-px h-3">
+                    <span className="w-0.5 rounded-sm" style={{ height: '40%', background: 'currentColor' }} />
+                    <span className="w-0.5 rounded-sm" style={{ height: '70%', background: 'currentColor', opacity: connectionQuality === 'poor' ? 0.25 : 1 }} />
+                    <span className="w-0.5 rounded-sm" style={{ height: '100%', background: 'currentColor', opacity: connectionQuality === 'good' ? 1 : 0.25 }} />
+                  </span>
+                  {connectionQuality === 'good' ? 'Добре' : connectionQuality === 'fair' ? 'Норм' : 'Слабке'}
                 </span>
               )}
             </div>
@@ -320,6 +394,19 @@ export function RoomPage() {
         )}
       </AnimatePresence>
 
+      {/* Audio autoplay blocked — one tap to enable sound */}
+      <AnimatePresence>
+        {audioBlocked && (
+          <motion.button
+            initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+            onClick={() => { setUnlockSignal(n => n + 1); setAudioBlocked(false); }}
+            className="text-sm text-center py-2 px-4 font-semibold flex-shrink-0 w-full cursor-pointer"
+            style={{ background: 'rgba(101,53,246,0.2)', color: '#c4b5fd', borderBottom: '1px solid rgba(101,53,246,0.3)' }}>
+            🔇 Натисніть, щоб увімкнути звук учасників
+          </motion.button>
+        )}
+      </AnimatePresence>
+
       {/* ── Content area ──────────────────────────────────────────────────────── */}
       <div className="flex-1 flex overflow-hidden">
 
@@ -329,29 +416,65 @@ export function RoomPage() {
             <div className="flex flex-col gap-2.5 h-full">
               <div className="flex-1 min-h-0 rounded-2xl overflow-hidden" style={{ background: '#1a1a2e' }}>
                 {screenSharing
-                  ? <VideoTile stream={screenStream} displayName="Ваш екран" micOn={micOn} cameraOn isScreenSharing isLarge />
+                  ? <VideoTile stream={screenStream} displayName="Ваш екран" micOn={micOn} cameraOn isScreenSharing isLarge isLocal />
                   : sharingParticipant
-                    ? <VideoTile stream={sharingParticipant.stream} displayName={sharingParticipant.displayName} micOn={sharingParticipant.micOn} cameraOn isScreenSharing isLarge />
+                    ? <VideoTile stream={sharingParticipant.screenStream} displayName={`${sharingParticipant.displayName} — екран`} micOn cameraOn isScreenSharing isLarge sinkId={selectedSpeakerId} unlockSignal={unlockSignal} onAudioBlocked={() => setAudioBlocked(true)} />
                     : null}
               </div>
               <div className="flex gap-2.5 flex-shrink-0 overflow-x-auto pb-1">
                 <div className="w-36 flex-shrink-0">
-                  <VideoTile stream={localStream} displayName="Ви" micOn={micOn} cameraOn={cameraOn} isLocal />
+                  <VideoTile stream={localStream} displayName="Ви" micOn={micOn} cameraOn={cameraOn} isLocal speaking={speakingIds.has('local')} />
                 </div>
-                {allParticipants.filter(p => !p.isScreenSharing).map(p => (
+                {allParticipants.map(p => (
                   <div key={p.connectionId} className="w-36 flex-shrink-0">
-                    <VideoTile stream={p.stream} displayName={p.displayName} micOn={p.micOn} cameraOn={p.cameraOn} handRaised={raisedHands.has(p.userId)} />
+                    <VideoTile stream={p.stream} displayName={p.displayName} micOn={p.micOn} cameraOn={p.cameraOn}
+                      handRaised={raisedHands.has(p.userId)} speaking={speakingIds.has(p.connectionId)}
+                      sinkId={selectedSpeakerId} unlockSignal={unlockSignal} onAudioBlocked={() => setAudioBlocked(true)}
+                      canModerate={isHost} onMute={() => muteParticipant(p.connectionId)} onKick={() => kickParticipant(p.connectionId)} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : hasPin ? (
+            <div className="flex flex-col gap-2.5 h-full">
+              <div className="flex-1 min-h-0 rounded-2xl overflow-hidden" style={{ background: '#1a1a2e' }}>
+                {pinnedLocal
+                  ? <VideoTile stream={localStream} displayName="Ви" micOn={micOn} cameraOn={cameraOn} isLocal isLarge speaking={speakingIds.has('local')} pinned onPin={() => togglePin('local')} />
+                  : pinnedParticipant && (
+                    <VideoTile stream={pinnedParticipant.stream} displayName={pinnedParticipant.displayName} micOn={pinnedParticipant.micOn} cameraOn={pinnedParticipant.cameraOn} isLarge
+                      handRaised={raisedHands.has(pinnedParticipant.userId)} speaking={speakingIds.has(pinnedParticipant.connectionId)}
+                      sinkId={selectedSpeakerId} unlockSignal={unlockSignal} onAudioBlocked={() => setAudioBlocked(true)}
+                      canModerate={isHost} onMute={() => muteParticipant(pinnedParticipant.connectionId)} onKick={() => kickParticipant(pinnedParticipant.connectionId)}
+                      pinned onPin={() => togglePin(pinnedParticipant.connectionId)} />
+                  )}
+              </div>
+              <div className="flex gap-2.5 flex-shrink-0 overflow-x-auto pb-1">
+                {!pinnedLocal && (
+                  <div className="w-36 flex-shrink-0">
+                    <VideoTile stream={localStream} displayName="Ви" micOn={micOn} cameraOn={cameraOn} isLocal speaking={speakingIds.has('local')} onPin={() => togglePin('local')} />
+                  </div>
+                )}
+                {allParticipants.filter(p => p.connectionId !== pinnedId).map(p => (
+                  <div key={p.connectionId} className="w-36 flex-shrink-0">
+                    <VideoTile stream={p.stream} displayName={p.displayName} micOn={p.micOn} cameraOn={p.cameraOn}
+                      handRaised={raisedHands.has(p.userId)} speaking={speakingIds.has(p.connectionId)}
+                      sinkId={selectedSpeakerId} unlockSignal={unlockSignal} onAudioBlocked={() => setAudioBlocked(true)}
+                      canModerate={isHost} onMute={() => muteParticipant(p.connectionId)} onKick={() => kickParticipant(p.connectionId)}
+                      onPin={() => togglePin(p.connectionId)} />
                   </div>
                 ))}
               </div>
             </div>
           ) : (
             <div className={cx('grid gap-2.5 flex-1 overflow-auto content-start', gridCols)}>
-              <VideoTile stream={localStream} displayName="Ви" micOn={micOn} cameraOn={cameraOn} isLocal />
+              <VideoTile stream={localStream} displayName="Ви" micOn={micOn} cameraOn={cameraOn} isLocal speaking={speakingIds.has('local')} onPin={() => togglePin('local')} />
               {allParticipants.map(p => (
                 <VideoTile key={p.connectionId} stream={p.stream} displayName={p.displayName}
                   micOn={p.micOn} cameraOn={p.cameraOn} isScreenSharing={p.isScreenSharing}
-                  handRaised={raisedHands.has(p.userId)} />
+                  handRaised={raisedHands.has(p.userId)} speaking={speakingIds.has(p.connectionId)}
+                  sinkId={selectedSpeakerId} unlockSignal={unlockSignal} onAudioBlocked={() => setAudioBlocked(true)}
+                  canModerate={isHost} onMute={() => muteParticipant(p.connectionId)} onKick={() => kickParticipant(p.connectionId)}
+                  onPin={() => togglePin(p.connectionId)} />
               ))}
             </div>
           )}
@@ -389,7 +512,7 @@ export function RoomPage() {
                     }}
                   />
                 )}
-                {sidePanel === 'people' && <ParticipantsPanel localName="Ви" localMicOn={micOn} localCameraOn={cameraOn} isHost={isHost} participants={allParticipants} raisedHands={raisedHands} />}
+                {sidePanel === 'people' && <ParticipantsPanel localName="Ви" localMicOn={micOn} localCameraOn={cameraOn} isHost={isHost} participants={allParticipants} raisedHands={raisedHands} onMute={muteParticipant} onKick={kickParticipant} />}
               </div>
             </motion.aside>
           )}
@@ -454,6 +577,10 @@ export function RoomPage() {
               panel={sidePanel === 'people'}
               badge={participantCount > 0 ? participantCount : undefined} size="sm"
             />
+            <CtrlBtn
+              icon={<Icon.Gear />} label="Пристрої"
+              onClick={() => setShowSettings(true)} size="sm"
+            />
           </div>
 
           {/* ── Divider ── */}
@@ -476,6 +603,26 @@ export function RoomPage() {
             />
             {/* Raise hand */}
             <CtrlBtn icon={<span className="text-2xl">✋</span>} label="Рука" onClick={raiseHand} />
+            {/* Reactions */}
+            <div className="relative">
+              <CtrlBtn icon={<span className="text-2xl">😊</span>} label="Реакція" onClick={() => setShowReactions(v => !v)} panel={showReactions} />
+              <AnimatePresence>
+                {showReactions && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8, scale: 0.9 }}
+                    className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 flex gap-1 p-2 rounded-2xl"
+                    style={{ background: '#1e1f26', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 10px 40px rgba(0,0,0,0.5)' }}>
+                    {REACTION_EMOJIS.map(emoji => (
+                      <button key={emoji}
+                        onClick={() => { sendReaction(emoji); setShowReactions(false); }}
+                        className="w-10 h-10 rounded-xl text-2xl hover:bg-white/10 transition flex items-center justify-center">
+                        {emoji}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
 
           {/* ── Divider ── */}
@@ -580,6 +727,41 @@ export function RoomPage() {
               </div>
             </motion.div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Floating reactions ───────────────────────────────────────────── */}
+      <div className="pointer-events-none fixed inset-0 z-[80] overflow-hidden">
+        <AnimatePresence>
+          {reactions.map((r, i) => (
+            <motion.div
+              key={r.id}
+              initial={{ opacity: 0, y: 0, scale: 0.5 }}
+              animate={{ opacity: 1, y: -window.innerHeight * 0.55, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 4, ease: 'easeOut' }}
+              className="absolute bottom-28 flex flex-col items-center"
+              style={{ left: `${12 + (i % 7) * 11}%` }}>
+              <span className="text-5xl drop-shadow-lg">{r.emoji}</span>
+              <span className="text-[11px] text-white/80 font-medium bg-black/40 px-2 py-0.5 rounded-full mt-1 max-w-[90px] truncate">{r.displayName}</span>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+
+      {/* ── Device settings ──────────────────────────────────────────────── */}
+      <AnimatePresence>
+        {showSettings && (
+          <RoomSettings
+            devices={devices}
+            selectedCameraId={selectedCameraId}
+            selectedMicId={selectedMicId}
+            selectedSpeakerId={selectedSpeakerId}
+            onCamera={switchCamera}
+            onMic={switchMic}
+            onSpeaker={switchSpeaker}
+            onClose={() => setShowSettings(false)}
+          />
         )}
       </AnimatePresence>
     </div>

@@ -109,4 +109,134 @@ public class GamificationController(
 
         return Ok(top);
     }
+
+    // ── Admin: Badges CRUD ────────────────────────────────────────────────────
+
+    [HttpGet("admin/badges")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetBadges(CancellationToken ct)
+    {
+        var badges = await db.Badges
+            .Select(b => new
+            {
+                b.Id, b.Name, b.Description, b.Icon,
+                b.Condition, b.ConditionValue, b.CoinsReward,
+                holders = db.StudentBadges.Count(sb => sb.BadgeId == b.Id)
+            })
+            .ToListAsync(ct);
+        return Ok(badges);
+    }
+
+    [HttpPost("admin/badges")]
+    [Authorize(Roles = "Admin")]
+    [Audit("BadgeCreated")]
+    public async Task<IActionResult> CreateBadge([FromBody] BadgeRequest req, CancellationToken ct)
+    {
+        var badge = new Badge
+        {
+            Name = req.Name, Description = req.Description,
+            Icon = req.Icon, Condition = req.Condition,
+            ConditionValue = req.ConditionValue, CoinsReward = req.CoinsReward
+        };
+        db.Badges.Add(badge);
+        await db.SaveChangesAsync(ct);
+        return Ok(badge);
+    }
+
+    [HttpPut("admin/badges/{id:guid}")]
+    [Authorize(Roles = "Admin")]
+    [Audit("BadgeUpdated")]
+    public async Task<IActionResult> UpdateBadge(Guid id, [FromBody] BadgeRequest req, CancellationToken ct)
+    {
+        var badge = await db.Badges.FindAsync([id], ct);
+        if (badge == null) return NotFound();
+        badge.Name = req.Name; badge.Description = req.Description;
+        badge.Icon = req.Icon; badge.Condition = req.Condition;
+        badge.ConditionValue = req.ConditionValue; badge.CoinsReward = req.CoinsReward;
+        await db.SaveChangesAsync(ct);
+        return Ok(badge);
+    }
+
+    [HttpDelete("admin/badges/{id:guid}")]
+    [Authorize(Roles = "Admin")]
+    [Audit("BadgeDeleted")]
+    public async Task<IActionResult> DeleteBadge(Guid id, CancellationToken ct)
+    {
+        var badge = await db.Badges.FindAsync([id], ct);
+        if (badge == null) return NotFound();
+        db.Badges.Remove(badge);
+        await db.SaveChangesAsync(ct);
+        return Ok();
+    }
+
+    // ── Admin: Daily Quests CRUD ──────────────────────────────────────────────
+
+    [HttpGet("admin/quests")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetQuests(CancellationToken ct) =>
+        Ok(await db.DailyQuests.ToListAsync(ct));
+
+    [HttpPost("admin/quests")]
+    [Authorize(Roles = "Admin")]
+    [Audit("QuestCreated")]
+    public async Task<IActionResult> CreateQuest([FromBody] QuestRequest req, CancellationToken ct)
+    {
+        var quest = new DailyQuest
+        {
+            Type = req.Type, Title = req.Title, Description = req.Description,
+            Icon = req.Icon, CoinsReward = req.CoinsReward, IsActive = req.IsActive
+        };
+        db.DailyQuests.Add(quest);
+        await db.SaveChangesAsync(ct);
+        return Ok(quest);
+    }
+
+    [HttpPut("admin/quests/{id:guid}")]
+    [Authorize(Roles = "Admin")]
+    [Audit("QuestUpdated")]
+    public async Task<IActionResult> UpdateQuest(Guid id, [FromBody] QuestRequest req, CancellationToken ct)
+    {
+        var quest = await db.DailyQuests.FindAsync([id], ct);
+        if (quest == null) return NotFound();
+        quest.Type = req.Type; quest.Title = req.Title; quest.Description = req.Description;
+        quest.Icon = req.Icon; quest.CoinsReward = req.CoinsReward; quest.IsActive = req.IsActive;
+        await db.SaveChangesAsync(ct);
+        return Ok(quest);
+    }
+
+    [HttpDelete("admin/quests/{id:guid}")]
+    [Authorize(Roles = "Admin")]
+    [Audit("QuestDeleted")]
+    public async Task<IActionResult> DeleteQuest(Guid id, CancellationToken ct)
+    {
+        var quest = await db.DailyQuests.FindAsync([id], ct);
+        if (quest == null) return NotFound();
+        db.DailyQuests.Remove(quest);
+        await db.SaveChangesAsync(ct);
+        return Ok();
+    }
+
+    // ── Admin: Manual coin award ──────────────────────────────────────────────
+
+    [HttpPost("admin/award/{userId:guid}")]
+    [Authorize(Roles = "Admin")]
+    [Audit("AdminCoinAward")]
+    public async Task<IActionResult> AdminAward(Guid userId, [FromBody] AdminAwardRequest req, CancellationToken ct)
+    {
+        var user = await db.Users.FindAsync([userId], ct);
+        if (user == null) return NotFound();
+
+        var streak = await db.StudentStreaks.FirstOrDefaultAsync(s => s.StudentId == userId, ct);
+        if (streak == null) { streak = new StudentStreak { StudentId = userId }; db.StudentStreaks.Add(streak); }
+
+        if (req.Amount > 0) { streak.TotalCoins += req.Amount; streak.TotalXp += req.Amount / 2; }
+        else { streak.TotalCoins = Math.Max(0, streak.TotalCoins + req.Amount); } // deduct
+
+        await db.SaveChangesAsync(ct);
+        return Ok(new { totalCoins = streak.TotalCoins });
+    }
 }
+
+public record BadgeRequest(string Name, string Description, string Icon, string Condition, int ConditionValue, int CoinsReward);
+public record QuestRequest(string Type, string Title, string Description, string Icon, int CoinsReward, bool IsActive);
+public record AdminAwardRequest(int Amount, string Reason);

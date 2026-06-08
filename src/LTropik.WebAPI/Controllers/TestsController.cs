@@ -46,18 +46,26 @@ public class TestsController(
         return Ok(remaining);
     }
 
-    [HttpGet("{id:guid}/start")]
+    [HttpPost("{id:guid}/start")]
     [Authorize(Roles = "Student")]
     public async Task<IActionResult> Start(Guid id, CancellationToken ct)
     {
+        var test = await db.Tests.FindAsync([id], ct);
+        if (test == null) return NotFound();
+
+        // Return existing unfinished attempt instead of creating a duplicate
+        var existing = await db.TestAttempts
+            .Where(a => a.TestId == id && a.StudentId == CurrentUserId && a.FinishedAt == null)
+            .OrderByDescending(a => a.StartedAt)
+            .FirstOrDefaultAsync(ct);
+
+        if (existing != null)
+            return Ok(new StartTestResponse(existing.Id, existing.StartedAt, test.TimeLimitMinutes));
+
         var remaining = await engine.GetRemainingAttemptsAsync(id, CurrentUserId, ct);
         if (remaining <= 0)
             return BadRequest(new { error = "Вичерпано кількість спроб" });
 
-        var test = await db.Tests.FindAsync([id], ct);
-        if (test == null) return NotFound();
-
-        // Record attempt start on server
         var attempt = new TestAttempt
         {
             TestId = id,

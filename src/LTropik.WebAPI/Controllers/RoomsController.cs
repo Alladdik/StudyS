@@ -1,4 +1,6 @@
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using LTropik.Application.Interfaces;
 using LTropik.Domain.Entities;
 using LTropik.WebAPI.Hubs;
@@ -6,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace LTropik.WebAPI.Controllers;
 
@@ -16,10 +19,21 @@ public class RoomsController(
     IApplicationDbContext db,
     IRoomPresenceService presence,
     INotificationService notificationService,
-    IHubContext<RoomHub> roomHub) : ControllerBase
+    IHubContext<RoomHub> roomHub,
+    IConfiguration configuration) : ControllerBase
 {
     private Guid CurrentUserId =>
         Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+    // Who may enter a room: Admin, the host, or — for course-bound rooms — a
+    // teacher/student of that course. Ad-hoc rooms (no course) stay open by link.
+    private async Task<bool> CanAccessRoom(Room room, CancellationToken ct = default)
+    {
+        if (User.IsInRole("Admin") || room.HostId == CurrentUserId) return true;
+        if (room.CourseId is not Guid cid) return true;
+        return await db.CourseStudents.AnyAsync(cs => cs.CourseId == cid && cs.StudentId == CurrentUserId, ct)
+            || await db.CourseTeachers.AnyAsync(ct2 => ct2.CourseId == cid && ct2.TeacherId == CurrentUserId, ct);
+    }
 
     [HttpPost]
     [Authorize(Roles = "Teacher,Admin")]
@@ -52,16 +66,14 @@ public class RoomsController(
                 .Select(c => c.Title)
                 .FirstOrDefaultAsync(ct) ?? "курс";
 
-            foreach (var studentId in studentIds)
-            {
-                _ = notificationService.SendAsync(
-                    studentId,
-                    "RoomCreated",
-                    $"📹 {hostName} відкрив кімнату",
-                    $"Приєднуйся до «{room.Title}» — {courseName}",
-                    $"/room/{room.Id}",
-                    ct);
-            }
+            // Batch-send (single DB round-trip; avoids concurrent DbContext usage)
+            await notificationService.SendManyAsync(
+                studentIds,
+                "RoomCreated",
+                $"📹 {hostName} відкрив кімнату",
+                $"Приєднуйся до «{room.Title}» — {courseName}",
+                $"/room/{room.Id}",
+                ct);
         }
 
         return Ok(new { room.Id, room.Title, room.CourseId, room.CreatedAt });
@@ -112,6 +124,8 @@ public class RoomsController(
 
         if (room == null) return NotFound(new { error = "Кімнату не знайдено" });
         if (!room.IsActive) return StatusCode(410, new { error = "Кімнату вже завершено" });
+        if (!await CanAccessRoom(room, ct))
+            return StatusCode(403, new { error = "Немає доступу до цієї кімнати" });
 
         var messages = await db.RoomMessages
             .Include(m => m.User)
@@ -144,6 +158,47 @@ public class RoomsController(
             ParticipantCount = presence.GetCount(id.ToString()),
             Participants = participants,
             Messages = messages,
+        });
+    }
+
+    // ── TURN credentials (served from server so they're not in JS bundle) ───
+    [HttpGet("turn-credentials")]
+    public IActionResult GetTurnCredentials()
+    {
+        var host = configuration["Turn:Host"] ?? "ltropik.duckdns.org";
+        var secret = configuration["Turn:Secret"];
+        const int ttlSeconds = 3600; // creds valid for 1 hour
+
+        string username, credential;
+        if (!string.IsNullOrEmpty(secret))
+        {
+            // Time-limited credentials (coturn use-auth-secret / TURN REST API):
+            // username = "<expiry-unix>:<userId>", password = base64(HMAC-SHA1(secret, username)).
+            var expiry = DateTimeOffset.UtcNow.ToUnixTimeSeconds() + ttlSeconds;
+            username = $"{expiry}:{CurrentUserId}";
+            using var hmac = new HMACSHA1(Encoding.UTF8.GetBytes(secret));
+            credential = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(username)));
+        }
+        else
+        {
+            // Legacy static creds — only for local dev where no secret is set.
+            username = configuration["Turn:Username"] ?? "ltropik";
+            credential = configuration["Turn:Credential"] ?? "LTropikTURN2026!";
+        }
+
+        return Ok(new
+        {
+            urls = new[]
+            {
+                $"turn:{host}:3478",
+                $"turn:{host}:3478?transport=tcp",
+                // TLS relay over 5349 — works on locked-down networks that only
+                // allow 443-style TLS traffic. Requires a valid cert on coturn.
+                $"turns:{host}:5349?transport=tcp",
+            },
+            username,
+            credential,
+            ttl = ttlSeconds,
         });
     }
 

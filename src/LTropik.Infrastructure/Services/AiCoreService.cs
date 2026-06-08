@@ -60,6 +60,45 @@ public class AiCoreService(
         return await CallAiAsync(systemPrompt, sourceText, ct);
     }
 
+    public async Task<TestBuilderReply> TestBuilderChatAsync(IEnumerable<ChatTurn> history, CancellationToken ct)
+    {
+        var systemPrompt = """
+            Ти — AI-асистент для створення тестів для вчителів. Твоя мета — допомогти скласти якісний тест.
+
+            Коли вчитель просить створити або змінити питання:
+            1. Відповідай коротко текстом (1-2 речення коментаря).
+            2. Одразу після тексту вивести JSON-блок з питаннями у форматі:
+            ```json
+            [{"id":"q1","type":"single","text":"Питання?","options":[{"id":"a","text":"..."},{"id":"b","text":"..."},{"id":"c","text":"..."},{"id":"d","text":"..."}],"correctAnswer":"a"},
+             {"id":"q2","type":"multiple","text":"Питання?","options":[{"id":"a","text":"..."},{"id":"b","text":"..."},{"id":"c","text":"..."}],"correctAnswers":["a","c"]},
+             {"id":"q3","type":"text","text":"Питання?"}]
+            ```
+            3. Типи питань: "single" (одна відповідь), "multiple" (кілька), "text" (вільна відповідь).
+            4. При виправленні — повертай ВСІ питання (і змінені, і незмінені).
+            5. Якщо вчитель каже "окей", "добре", "зберегти" — відповідай без JSON блоку, просто підтверди.
+            6. Відповідай українською мовою.
+            """;
+
+        var msgs = history.Select(t => new { role = t.Role, content = t.Content });
+        var raw = await CallAiAsync(systemPrompt, null, ct, msgs);
+
+        // Extract ```json ... ``` block if present
+        string? questionsJson = null;
+        var jsonStart = raw.IndexOf("```json", StringComparison.Ordinal);
+        if (jsonStart >= 0)
+        {
+            var jsonEnd = raw.IndexOf("```", jsonStart + 7, StringComparison.Ordinal);
+            if (jsonEnd > jsonStart)
+            {
+                questionsJson = raw[(jsonStart + 7)..jsonEnd].Trim();
+                raw = raw[..jsonStart].Trim() + raw[(jsonEnd + 3)..].Trim();
+                raw = raw.Trim();
+            }
+        }
+
+        return new TestBuilderReply(raw, questionsJson);
+    }
+
     public async Task<string> GetTutorResponseAsync(Guid courseId, string studentQuestion, IEnumerable<string> history, CancellationToken ct)
     {
         var systemPrompt = """

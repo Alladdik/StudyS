@@ -3,6 +3,7 @@ using LTropik.Application.Interfaces;
 using LTropik.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 
 namespace LTropik.WebAPI.Hubs;
 
@@ -13,10 +14,29 @@ public class RoomHub(IApplicationDbContext db, IRoomPresenceService presence) : 
         Guid.Parse(Context.User!.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
     // ── Join ──────────────────────────────────────────────────────────────
+    private async Task<bool> CanAccessRoom(Room room)
+    {
+        if (Context.User!.IsInRole("Admin") || room.HostId == CurrentUserId) return true;
+        if (room.CourseId is not Guid cid) return true; // ad-hoc room → open by link
+        return await db.CourseStudents.AnyAsync(cs => cs.CourseId == cid && cs.StudentId == CurrentUserId)
+            || await db.CourseTeachers.AnyAsync(ct => ct.CourseId == cid && ct.TeacherId == CurrentUserId);
+    }
+
     public async Task JoinRoom(string roomId)
     {
         var user = await db.Users.FindAsync([CurrentUserId]);
         if (user == null) return;
+
+        // Authorize: only host/admin/enrolled may enter a course-bound room.
+        if (Guid.TryParse(roomId, out var rid))
+        {
+            var room = await db.Rooms.FindAsync([rid]);
+            if (room == null || !room.IsActive || !await CanAccessRoom(room))
+            {
+                await Clients.Caller.SendAsync("AccessDenied");
+                return;
+            }
+        }
 
         var displayName = $"{user.FirstName} {user.LastName}";
         presence.Join(roomId, Context.ConnectionId, CurrentUserId, displayName);
@@ -104,6 +124,31 @@ public class RoomHub(IApplicationDbContext db, IRoomPresenceService presence) : 
             Candidate = candidate,
         });
 
+    // ── Host moderation ───────────────────────────────────────────────────
+    private async Task<bool> IsHostOrAdmin(string roomId)
+    {
+        if (Context.User!.IsInRole("Admin")) return true;
+        if (!Guid.TryParse(roomId, out var rid)) return false;
+        var room = await db.Rooms.FindAsync([rid]);
+        return room != null && room.HostId == CurrentUserId;
+    }
+
+    public async Task MuteParticipant(string roomId, string targetConnectionId)
+    {
+        if (!await IsHostOrAdmin(roomId)) return;
+        await Clients.Client(targetConnectionId).SendAsync("ForceMuted");
+    }
+
+    public async Task KickParticipant(string roomId, string targetConnectionId)
+    {
+        if (!await IsHostOrAdmin(roomId)) return;
+        // Tell the target to leave, then clean up presence so others see them go.
+        await Clients.Client(targetConnectionId).SendAsync("Kicked");
+        presence.Leave(roomId, targetConnectionId);
+        await Clients.OthersInGroup(roomId).SendAsync("ParticipantLeft", new { ConnectionId = targetConnectionId });
+        await Clients.Group(roomId).SendAsync("ParticipantCount", presence.GetCount(roomId));
+    }
+
     // ── Media state ───────────────────────────────────────────────────────
     public async Task SetMediaState(string roomId, bool micOn, bool cameraOn)
         => await Clients.OthersInGroup(roomId).SendAsync("ParticipantMediaState", new
@@ -114,17 +159,19 @@ public class RoomHub(IApplicationDbContext db, IRoomPresenceService presence) : 
             CameraOn = cameraOn,
         });
 
-    public async Task StartScreenShare(string roomId)
+    public async Task StartScreenShare(string roomId, string streamId)
         => await Clients.OthersInGroup(roomId).SendAsync("ScreenShareStarted", new
         {
             UserId = CurrentUserId,
             ConnectionId = Context.ConnectionId,
+            StreamId = streamId,
         });
 
     public async Task StopScreenShare(string roomId)
         => await Clients.OthersInGroup(roomId).SendAsync("ScreenShareStopped", new
         {
             UserId = CurrentUserId,
+            ConnectionId = Context.ConnectionId,
         });
 
     // ── Chat ──────────────────────────────────────────────────────────────
@@ -176,4 +223,19 @@ public class RoomHub(IApplicationDbContext db, IRoomPresenceService presence) : 
 
     public async Task LowerHand(string roomId)
         => await Clients.Group(roomId).SendAsync("HandLowered", new { UserId = CurrentUserId });
+
+    // ── Reactions (transient floating emoji) ──────────────────────────────
+    private static readonly string[] AllowedReactions = ["👍", "❤️", "😂", "😮", "👏", "🎉", "🔥", "🙌"];
+
+    public async Task SendReaction(string roomId, string emoji)
+    {
+        if (!AllowedReactions.Contains(emoji)) return;
+        var user = await db.Users.FindAsync([CurrentUserId]);
+        await Clients.Group(roomId).SendAsync("ReceiveReaction", new
+        {
+            UserId = CurrentUserId,
+            DisplayName = $"{user?.FirstName} {user?.LastName}",
+            Emoji = emoji,
+        });
+    }
 }
