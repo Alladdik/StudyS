@@ -20,11 +20,24 @@ public class TestsController(
     private Guid CurrentUserId =>
         Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
+    // A test may carry a per-test allow-list (CSV of student ids). Empty = open
+    // to everyone. Teachers/admins always preview; only students are gated.
+    private static bool IsStudentAllowed(string? allowedStudentIds, Guid studentId)
+    {
+        if (string.IsNullOrWhiteSpace(allowedStudentIds)) return true;
+        return allowedStudentIds
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Any(s => Guid.TryParse(s, out var g) && g == studentId);
+    }
+
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
     {
         var test = await db.Tests.FindAsync([id], ct);
         if (test == null) return NotFound();
+
+        if (User.IsInRole("Student") && !IsStudentAllowed(test.AllowedStudentIds, CurrentUserId))
+            return Forbid();
 
         var questions = JsonSerializer.Deserialize<List<StoredQuestion>>(
             test.Questions.RootElement.GetRawText()) ?? [];
@@ -52,6 +65,9 @@ public class TestsController(
     {
         var test = await db.Tests.FindAsync([id], ct);
         if (test == null) return NotFound();
+
+        if (!IsStudentAllowed(test.AllowedStudentIds, CurrentUserId))
+            return Forbid();
 
         // Return existing unfinished attempt instead of creating a duplicate
         var existing = await db.TestAttempts
@@ -87,6 +103,11 @@ public class TestsController(
         var attempt = await db.TestAttempts.FindAsync([req.AttemptId], ct);
         if (attempt == null || attempt.StudentId != CurrentUserId)
             return Forbid();
+
+        // Already-graded attempt: don't re-grade. Re-POSTing /submit must not let
+        // the student keep trying answers or mint extra attempts.
+        if (attempt.FinishedAt != null)
+            return Conflict(new { error = "Цю спробу вже завершено" });
 
         var result = await engine.SubmitAsync(
             new SubmitTestRequest(attempt.TestId, CurrentUserId, req.Answers), ct);

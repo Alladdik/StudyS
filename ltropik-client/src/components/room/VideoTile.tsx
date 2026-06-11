@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { cx } from '../ui';
 
 interface Props {
@@ -28,19 +28,36 @@ export function VideoTile({
   canModerate, onMute, onKick, pinned, onPin,
 }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // BUG FIX 1: Depend on [stream, cameraOn] so srcObject is re-set when the
   // video element is remounted after cameraOn toggles (stream ref itself doesn't change).
   useEffect(() => {
     const el = videoRef.current;
     if (!el) return;
-    el.srcObject = stream;
+    // Only re-attach when the stream actually changed: re-assigning the same
+    // MediaStream forces the browser to re-buffer and the video visibly blinks
+    // (this effect re-runs every render because callback props change identity).
+    if (el.srcObject !== stream) el.srcObject = stream;
     // Auto-play in case browser paused it. If it's blocked (no user gesture yet),
     // tell the parent so it can show a "tap to enable sound" prompt.
     if (stream && el.paused) {
       el.play().catch(() => { if (!isLocal) onAudioBlocked?.(); });
     }
   }, [stream, cameraOn, isScreenSharing, unlockSignal, isLocal, onAudioBlocked]);
+
+  // Fullscreen for screen-share tiles. Container first (keeps overlays),
+  // native video fullscreen as iOS Safari fallback.
+  const toggleFullscreen = useCallback(() => {
+    if (document.fullscreenElement) { document.exitFullscreen().catch(() => {}); return; }
+    const container = containerRef.current;
+    const video = videoRef.current as (HTMLVideoElement & { webkitEnterFullscreen?: () => void }) | null;
+    if (container?.requestFullscreen) {
+      container.requestFullscreen().catch(() => video?.webkitEnterFullscreen?.());
+    } else {
+      video?.webkitEnterFullscreen?.();
+    }
+  }, []);
 
   // Apply the selected output device (speaker) to remote tiles.
   useEffect(() => {
@@ -60,19 +77,23 @@ export function VideoTile({
   const shouldMirror = isLocal && !isScreenSharing;
 
   return (
-    <div className={cx(
+    <div ref={containerRef} className={cx(
       'relative rounded-2xl overflow-hidden bg-ink-800 flex items-center justify-center transition-shadow group/tile',
-      isLarge ? 'aspect-video w-full' : 'aspect-video',
+      // Large tile fills whatever space the layout gives it instead of forcing
+      // 16:9 — an aspect-locked tile overflowed the container and got cropped.
+      isLarge ? 'w-full h-full' : 'aspect-video',
       isScreenSharing && 'ring-2 ring-brand-500',
       speaking && !isScreenSharing && 'ring-2 ring-emerald-400 shadow-[0_0_0_3px_rgba(52,211,153,0.35)]',
     )}>
-      {/* Video — always in DOM so srcObject stays attached even when hidden */}
+      {/* Video — always in DOM so srcObject stays attached even when hidden.
+          Screen share uses object-contain so the WHOLE screen is visible;
+          camera keeps object-cover (cropping a face is fine, a screen isn't). */}
       <video
         ref={videoRef}
         autoPlay
         playsInline
         muted={isLocal}
-        className={cx('absolute inset-0 w-full h-full object-cover', !showVideo && 'invisible')}
+        className={cx('absolute inset-0 w-full h-full', isScreenSharing ? 'object-contain' : 'object-cover', !showVideo && 'invisible')}
         style={shouldMirror ? { transform: 'scaleX(-1)' } : undefined}
       />
 
@@ -119,23 +140,31 @@ export function VideoTile({
         )}
       </div>
 
-      {/* "Ви" badge */}
-      {isLocal && (
+      {/* "Ви" badge (screen tile's name already says it's yours) */}
+      {isLocal && !isScreenSharing && (
         <div className="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded-full z-10">Ви</div>
       )}
 
-      {/* Pin / focus this tile (hover to reveal) */}
+      {/* Fullscreen for screen share — see the whole screen without cropping */}
+      {isScreenSharing && stream && (
+        <button onClick={toggleFullscreen} title="На весь екран"
+          className="absolute top-2 right-2 z-20 w-9 h-9 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur opacity-0 group-hover/tile:opacity-100 pointer-coarse:opacity-100 transition">
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+        </button>
+      )}
+
+      {/* Pin / focus this tile (hover to reveal; always visible on touch) */}
       {onPin && !isScreenSharing && (
         <button onClick={onPin} title={pinned ? 'Відкріпити' : 'Закріпити'}
           className={cx('absolute top-2 left-2 z-20 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur transition',
-            pinned ? 'bg-brand-600 text-white opacity-100' : 'bg-black/60 text-white opacity-0 group-hover/tile:opacity-100 hover:bg-black/80')}>
+            pinned ? 'bg-brand-600 text-white opacity-100' : 'bg-black/60 text-white opacity-0 group-hover/tile:opacity-100 pointer-coarse:opacity-100 hover:bg-black/80')}>
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M16 9V4h1c.55 0 1-.45 1-1s-.45-1-1-1H7c-.55 0-1 .45-1 1s.45 1 1 1h1v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z"/></svg>
         </button>
       )}
 
-      {/* Host moderation: mute / kick (hover to reveal) */}
+      {/* Host moderation: mute / kick (hover to reveal; always visible on touch) */}
       {canModerate && !isLocal && (
-        <div className="absolute top-2 right-2 z-20 flex items-center gap-1.5 opacity-0 group-hover/tile:opacity-100 transition">
+        <div className="absolute top-2 right-2 z-20 flex items-center gap-1.5 opacity-0 group-hover/tile:opacity-100 pointer-coarse:opacity-100 transition">
           {onMute && (
             <button onClick={onMute} title="Вимкнути мікрофон"
               className="w-8 h-8 rounded-full bg-black/60 hover:bg-amber-500 text-white flex items-center justify-center backdrop-blur">

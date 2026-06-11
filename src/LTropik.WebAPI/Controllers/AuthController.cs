@@ -59,6 +59,7 @@ public class AuthController(
             return CreatedAtAction(nameof(Login), new { id });
         }
         catch (InvalidOperationException ex) { return Conflict(new { error = ex.Message }); }
+        catch (ArgumentException ex) { return BadRequest(new { error = ex.Message }); }
     }
 
     // ── Email verification ────────────────────────────────────────────────────

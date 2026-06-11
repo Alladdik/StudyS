@@ -57,11 +57,14 @@ const AUDIO_CONSTRAINTS: MediaTrackConstraints = {
 const CAMERA_MAX_BITRATE = 1_000_000;  // ~1 Mbps
 const SCREEN_MAX_BITRATE = 2_500_000;  // ~2.5 Mbps (sharper text)
 
-async function capBitrate(sender: RTCRtpSender, maxBitrate: number) {
+async function capBitrate(sender: RTCRtpSender, maxBitrate: number, degradation?: RTCDegradationPreference) {
   try {
     const params = sender.getParameters();
     if (!params.encodings || params.encodings.length === 0) params.encodings = [{}];
     params.encodings[0].maxBitrate = maxBitrate;
+    // Screen share: keep resolution and drop fps instead — otherwise the
+    // encoder "pumps" resolution up/down on weak uplinks and text flickers.
+    if (degradation) params.degradationPreference = degradation;
     await sender.setParameters(params);
   } catch { /* not all browsers allow this before negotiation */ }
 }
@@ -177,7 +180,7 @@ export function useWebRTC(roomId: string) {
     const screen = screenStreamRef.current;
     if (screen) screen.getTracks().forEach((t) => {
       const sender = pc.addTrack(t, screen);
-      if (t.kind === 'video') capBitrate(sender, SCREEN_MAX_BITRATE);
+      if (t.kind === 'video') capBitrate(sender, SCREEN_MAX_BITRATE, 'maintain-resolution');
     });
 
     pc.onicecandidate = (e) => {
@@ -605,7 +608,16 @@ export function useWebRTC(roomId: string) {
     try {
       const screen = await (navigator.mediaDevices as MediaDevices & {
         getDisplayMedia: (c?: MediaStreamConstraints) => Promise<MediaStream>;
-      }).getDisplayMedia({ video: true, audio: true });
+      }).getDisplayMedia({
+        // 15 fps is plenty for slides/code and halves the bandwidth — less
+        // encoder pressure means fewer quality drops ("blinking") for viewers.
+        video: { frameRate: { ideal: 15, max: 30 } },
+        audio: true,
+      });
+
+      // Tell the encoder this is screen content: prioritize sharp text/detail
+      // over smooth motion when bandwidth gets tight.
+      screen.getVideoTracks().forEach((t) => { t.contentHint = 'detail'; });
 
       screenStreamRef.current = screen;
       setScreenStream(screen);
@@ -619,7 +631,7 @@ export function useWebRTC(roomId: string) {
       for (const [connId, pc] of peersRef.current) {
         screen.getTracks().forEach((t) => {
           const sender = pc.addTrack(t, screen);
-          if (t.kind === 'video') capBitrate(sender, SCREEN_MAX_BITRATE);
+          if (t.kind === 'video') capBitrate(sender, SCREEN_MAX_BITRATE, 'maintain-resolution');
         });
         await renegotiate(connId, pc);
       }

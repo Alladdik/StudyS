@@ -36,7 +36,15 @@ public class BillingController(IBillingService billing) : ControllerBase
         using var reader = new StreamReader(Request.Body);
         var payload = await reader.ReadToEndAsync(ct);
 
-        await billing.HandleWayForPayWebhookAsync(payload, ct);
+        try
+        {
+            await billing.HandleWayForPayWebhookAsync(payload, ct);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Unauthorized();
+        }
+
         return Ok(new { status = "accept" });
     }
 

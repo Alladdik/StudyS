@@ -27,32 +27,38 @@ public class AuthService(
         if (!VerifyPassword(request.Password, user.PasswordHash))
             throw new UnauthorizedAccessException("Невірний email або пароль");
 
-        // 2FA: only if user has Telegram linked AND Redis is reachable
+        // 2FA: if the user has Telegram linked, it is REQUIRED. Fail closed —
+        // if we can't arm the one-time code (Redis down), refuse the login rather
+        // than silently issuing a token without the second factor.
         if (user.TelegramId != null)
         {
+            var code = RandomNumberGenerator.GetInt32(100000, 999999).ToString();
+            var pendingToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(24));
+
             try
             {
-                var code = RandomNumberGenerator.GetInt32(100000, 999999).ToString();
-                var pendingToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(24));
-
                 await cache.SetAsync($"2fa:{pendingToken}", new { userId = user.Id, code },
                     TimeSpan.FromMinutes(5), ct);
                 await cache.SetAsync($"2fa_user:{user.Id}", code, TimeSpan.FromMinutes(5), ct);
 
-                // Verify the code was actually stored (Redis is working)
+                // Confirm the code was actually persisted (Redis reachable).
                 var check = await cache.GetAsync<object>($"2fa:{pendingToken}", ct);
-                if (check != null)
-                {
-                    await telegram.Send2faCodeAsync(user.TelegramId, code, ct);
-                    return new LoginResponse("", "", user.Role.ToString(), user.Id,
-                        Requires2fa: true, PendingToken: pendingToken);
-                }
-                // Redis unavailable — fall through to normal login
+                if (check == null)
+                    throw new InvalidOperationException("2FA store unavailable");
             }
             catch
             {
-                // Redis or Telegram unavailable — skip 2FA, log normally
+                throw new UnauthorizedAccessException(
+                    "Двофакторна автентифікація тимчасово недоступна. Спробуйте пізніше.");
             }
+
+            // Code is armed. Telegram delivery is best-effort — if it fails the
+            // user can request a new code; we must NOT downgrade to no-2FA.
+            try { await telegram.Send2faCodeAsync(user.TelegramId, code, ct); }
+            catch { /* delivery failed; code still valid for retry */ }
+
+            return new LoginResponse("", "", user.Role.ToString(), user.Id,
+                Requires2fa: true, PendingToken: pendingToken);
         }
 
         return new LoginResponse(
@@ -95,13 +101,19 @@ public class AuthService(
 
     private record TwoFaPending(Guid userId, string code);
 
+    // Public self-registration may ONLY create these roles. Admin/Manager are
+    // privileged (full control, impersonation, etc.) and must be provisioned by
+    // an existing admin — never accepted from an anonymous register request.
+    private static readonly HashSet<UserRole> SelfServiceRoles =
+        [UserRole.Student, UserRole.Teacher, UserRole.Parent];
+
     public async Task<Guid> RegisterAsync(RegisterRequest request, CancellationToken ct)
     {
         if (await db.Users.AnyAsync(u => u.Email == request.Email, ct))
             throw new InvalidOperationException("Email вже зареєстровано");
 
-        if (!Enum.TryParse<UserRole>(request.Role, true, out var role))
-            throw new ArgumentException("Невідома роль");
+        if (!Enum.TryParse<UserRole>(request.Role, true, out var role) || !SelfServiceRoles.Contains(role))
+            throw new ArgumentException("Недоступна роль для реєстрації");
 
         var user = new User
         {

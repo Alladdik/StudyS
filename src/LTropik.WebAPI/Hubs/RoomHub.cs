@@ -144,6 +144,9 @@ public class RoomHub(IApplicationDbContext db, IRoomPresenceService presence) : 
         if (!await IsHostOrAdmin(roomId)) return;
         // Tell the target to leave, then clean up presence so others see them go.
         await Clients.Client(targetConnectionId).SendAsync("Kicked");
+        // Remove them from the SignalR group server-side so a malicious client that
+        // ignores "Kicked" still stops receiving room signaling/streams.
+        await Groups.RemoveFromGroupAsync(targetConnectionId, roomId);
         presence.Leave(roomId, targetConnectionId);
         await Clients.OthersInGroup(roomId).SendAsync("ParticipantLeft", new { ConnectionId = targetConnectionId });
         await Clients.Group(roomId).SendAsync("ParticipantCount", presence.GetCount(roomId));
@@ -179,6 +182,10 @@ public class RoomHub(IApplicationDbContext db, IRoomPresenceService presence) : 
     {
         if (string.IsNullOrWhiteSpace(content)) return;
         if (!Guid.TryParse(roomId, out var roomGuid)) return;
+
+        // Only someone allowed in the room may post to (and persist into) its chat.
+        var room = await db.Rooms.FindAsync([roomGuid]);
+        if (room == null || !room.IsActive || !await CanAccessRoom(room)) return;
 
         var user = await db.Users.FindAsync([CurrentUserId]);
         var msg = new RoomMessage

@@ -22,6 +22,10 @@ public class HomeworksController(
     private Guid CurrentUserId =>
         Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
+    // A teacher may only touch homework belonging to a course they actually teach.
+    private async Task<bool> TeacherOwnsCourse(Guid courseId, CancellationToken ct) =>
+        await db.CourseTeachers.AnyAsync(t => t.CourseId == courseId && t.TeacherId == CurrentUserId, ct);
+
     [HttpPost("submit")]
     [Authorize(Roles = "Student")]
     public async Task<IActionResult> Submit(SubmitHomeworkRequest req, CancellationToken ct)
@@ -75,6 +79,9 @@ public class HomeworksController(
     [Authorize(Roles = "Teacher")]
     public async Task<IActionResult> GetReviewQueue([FromQuery] Guid courseId, CancellationToken ct)
     {
+        if (!await TeacherOwnsCourse(courseId, ct))
+            return Forbid();
+
         var submissions = await db.HomeworkSubmissions
             .Include(s => s.Student)
             .Include(s => s.GradeValue)
@@ -99,14 +106,17 @@ public class HomeworksController(
         var s = await db.HomeworkSubmissions
             .Include(x => x.Student)
             .Include(x => x.GradeValue)
-            .Include(x => x.Homework)
+            .Include(x => x.Homework).ThenInclude(h => h.Lesson).ThenInclude(l => l.Module)
             .FirstOrDefaultAsync(x => x.Id == id, ct);
 
         if (s == null) return NotFound();
 
-        // Security: students can only read their own submissions; parents cannot read submissions
+        // Security: students read only their own; parents cannot read submissions;
+        // teachers only within courses they teach (admins unrestricted).
         if (User.IsInRole("Student") && s.StudentId != CurrentUserId) return Forbid();
         if (User.IsInRole("Parent")) return Forbid();
+        if (User.IsInRole("Teacher") && !await TeacherOwnsCourse(s.Homework.Lesson.Module.CourseId, ct))
+            return Forbid();
 
         return Ok(new
         {
@@ -153,8 +163,14 @@ public class HomeworksController(
     [Audit("HomeworkReviewed")]
     public async Task<IActionResult> Review(Guid id, ReviewHomeworkRequest req, CancellationToken ct)
     {
-        var submission = await db.HomeworkSubmissions.FindAsync([id], ct);
+        var submission = await db.HomeworkSubmissions
+            .Include(s => s.Homework).ThenInclude(h => h.Lesson).ThenInclude(l => l.Module)
+            .FirstOrDefaultAsync(s => s.Id == id, ct);
         if (submission == null) return NotFound();
+
+        // Teachers may only grade homework in courses they teach (admins unrestricted).
+        if (User.IsInRole("Teacher") && !await TeacherOwnsCourse(submission.Homework.Lesson.Module.CourseId, ct))
+            return Forbid();
 
         submission.TeacherFeedback = req.TeacherFeedback;
         submission.GradeValueId = req.GradeValueId;

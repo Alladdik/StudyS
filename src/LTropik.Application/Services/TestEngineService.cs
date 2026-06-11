@@ -57,23 +57,20 @@ public class TestEngineService(IApplicationDbContext db) : ITestEngineService
         decimal score = totalPoints > 0 ? Math.Round((decimal)earned / totalPoints * 100, 2) : 0;
         bool passed = score >= test.PassingPercentage;
 
-        var attempt = latestAttempt ?? new TestAttempt
-        {
-            TestId = request.TestId,
-            StudentId = request.StudentId,
-            StartedAt = DateTimeOffset.UtcNow
-        };
-
-        attempt.ScorePercentage = score;
-        attempt.Passed = passed;
-        attempt.FinishedAt = DateTimeOffset.UtcNow;
-
+        // Grade the ACTIVE (unfinished) attempt only. No active attempt means the
+        // student never started or already submitted — refuse instead of spinning
+        // up a fresh graded attempt, which would bypass the MaxAttempts limit and
+        // let answers be brute-forced by re-POSTing /submit.
         if (latestAttempt == null)
-            db.TestAttempts.Add(attempt);
+            throw new InvalidOperationException("Активна спроба не знайдена. Розпочніть тест заново.");
+
+        latestAttempt.ScorePercentage = score;
+        latestAttempt.Passed = passed;
+        latestAttempt.FinishedAt = DateTimeOffset.UtcNow;
 
         await db.SaveChangesAsync(ct);
 
-        return new SubmitTestResult(score, passed, attempt.Id);
+        return new SubmitTestResult(score, passed, latestAttempt.Id);
     }
 
     public async Task<int> GetRemainingAttemptsAsync(Guid testId, Guid studentId, CancellationToken ct)

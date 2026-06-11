@@ -1,6 +1,7 @@
 using LTropik.Application.Interfaces;
 using LTropik.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Security.Cryptography;
 using System.Text;
@@ -11,15 +12,16 @@ namespace LTropik.Application.Services;
 public class BillingService(
     IApplicationDbContext db,
     ITelegramNotificationService telegram,
+    IConfiguration config,
     ILogger<BillingService> logger) : IBillingService
 {
     // Stripe webhook handler
     public async Task HandleStripeWebhookAsync(string payload, string signature, CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(signature))
+        if (!VerifyStripeSignature(payload, signature))
         {
-            logger.LogWarning("Stripe webhook rejected: missing Stripe-Signature header");
-            throw new UnauthorizedAccessException("Missing Stripe-Signature");
+            logger.LogWarning("Stripe webhook rejected: invalid or unverifiable signature");
+            throw new UnauthorizedAccessException("Invalid Stripe signature");
         }
 
         using var doc = JsonDocument.Parse(payload);
@@ -50,6 +52,13 @@ public class BillingService(
     public async Task HandleWayForPayWebhookAsync(string payload, CancellationToken ct)
     {
         using var doc = JsonDocument.Parse(payload);
+
+        if (!VerifyWayForPaySignature(doc.RootElement))
+        {
+            logger.LogWarning("WayForPay webhook rejected: invalid or unverifiable signature");
+            throw new UnauthorizedAccessException("Invalid WayForPay signature");
+        }
+
         var transactionStatus = doc.RootElement.GetProperty("transactionStatus").GetString();
 
         if (transactionStatus != "Approved")
@@ -141,5 +150,85 @@ public class BillingService(
         var student = await db.Users.FindAsync([studentId], ct);
         if (student?.TelegramId != null)
             await telegram.NotifyPaymentStatusAsync(studentId, "Success", amount, ct);
+    }
+
+    // ── Signature verification (fail closed) ─────────────────────────────────
+    // Stripe sends "Stripe-Signature: t=<ts>,v1=<hex>[,v1=...]". The signed
+    // payload is "<ts>.<rawBody>" hashed with HMAC-SHA256(webhook secret).
+    private bool VerifyStripeSignature(string payload, string? sigHeader)
+    {
+        var secret = config["Stripe:WebhookSecret"];
+        if (string.IsNullOrWhiteSpace(secret))
+        {
+            logger.LogError("Stripe:WebhookSecret is not configured — rejecting Stripe webhook");
+            return false;
+        }
+        if (string.IsNullOrWhiteSpace(sigHeader)) return false;
+
+        string? t = null;
+        var v1 = new List<string>();
+        foreach (var part in sigHeader.Split(','))
+        {
+            var idx = part.IndexOf('=');
+            if (idx <= 0) continue;
+            var key = part[..idx].Trim();
+            var val = part[(idx + 1)..].Trim();
+            if (key == "t") t = val;
+            else if (key == "v1") v1.Add(val);
+        }
+        if (t is null || v1.Count == 0) return false;
+
+        // Replay protection: reject events older/newer than 5 minutes.
+        if (long.TryParse(t, out var ts) &&
+            Math.Abs(DateTimeOffset.UtcNow.ToUnixTimeSeconds() - ts) > 300)
+            return false;
+
+        using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secret));
+        var expected = Convert.ToHexString(
+            hmac.ComputeHash(Encoding.UTF8.GetBytes($"{t}.{payload}"))).ToLowerInvariant();
+        var expectedBytes = Encoding.UTF8.GetBytes(expected);
+
+        return v1.Any(sig => CryptographicOperations.FixedTimeEquals(
+            expectedBytes, Encoding.UTF8.GetBytes(sig.ToLowerInvariant())));
+    }
+
+    // WayForPay signs the fields below joined by ';' with HMAC-MD5(secret) and
+    // sends it as "merchantSignature" inside the JSON body.
+    private bool VerifyWayForPaySignature(JsonElement root)
+    {
+        var secret = config["WayForPay:MerchantSecret"];
+        if (string.IsNullOrWhiteSpace(secret))
+        {
+            logger.LogError("WayForPay:MerchantSecret is not configured — rejecting WayForPay webhook");
+            return false;
+        }
+        if (!root.TryGetProperty("merchantSignature", out var sigEl)) return false;
+        var provided = sigEl.GetString();
+        if (string.IsNullOrWhiteSpace(provided)) return false;
+
+        string[] fields = ["merchantAccount", "orderReference", "amount", "currency",
+                           "authCode", "cardPan", "transactionStatus", "reasonCode"];
+        var signString = string.Join(";", fields.Select(f => RawValue(root, f)));
+
+        using var hmac = new HMACMD5(Encoding.UTF8.GetBytes(secret));
+        var expected = Convert.ToHexString(
+            hmac.ComputeHash(Encoding.UTF8.GetBytes(signString))).ToLowerInvariant();
+
+        return CryptographicOperations.FixedTimeEquals(
+            Encoding.UTF8.GetBytes(expected),
+            Encoding.UTF8.GetBytes(provided.ToLowerInvariant()));
+    }
+
+    // Renders a JSON value the way WayForPay serialized it before signing:
+    // numbers keep their raw on-the-wire representation, strings their text.
+    private static string RawValue(JsonElement root, string prop)
+    {
+        if (!root.TryGetProperty(prop, out var el)) return "";
+        return el.ValueKind switch
+        {
+            JsonValueKind.String => el.GetString() ?? "",
+            JsonValueKind.Null   => "",
+            _                    => el.GetRawText(),
+        };
     }
 }

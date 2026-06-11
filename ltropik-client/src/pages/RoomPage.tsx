@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useWebRTC, REACTION_EMOJIS } from '../hooks/useWebRTC';
@@ -33,6 +33,36 @@ function playBeep(freq: number) {
   } catch { /* silence */ }
 }
 
+// Phone-sized viewport → side panels become bottom sheets, controls collapse.
+function useIsMobile() {
+  const [mobile, setMobile] = useState(() => window.matchMedia('(max-width: 640px)').matches);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 640px)');
+    const fn = (e: MediaQueryListEvent) => setMobile(e.matches);
+    mq.addEventListener('change', fn);
+    return () => mq.removeEventListener('change', fn);
+  }, []);
+  return mobile;
+}
+
+// Isolated so the 1-second tick re-renders ONLY this span, not the whole room
+// (a full-page re-render every second made remote videos blink).
+function CallTimer({ connected }: { connected: boolean }) {
+  const [elapsed, setElapsed] = useState(0);
+  useEffect(() => {
+    if (!connected) return;
+    const t = setInterval(() => setElapsed(s => s + 1), 1000);
+    return () => clearInterval(t);
+  }, [connected]);
+  if (!connected) return <>Підключення…</>;
+  const h = Math.floor(elapsed / 3600);
+  const m = Math.floor((elapsed % 3600) / 60);
+  const sec = elapsed % 60;
+  return <>{h > 0
+    ? `${h}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`
+    : `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`}</>;
+}
+
 // ── Telegram-style circular control button ──────────────────────────────────
 interface CtrlBtnProps {
   icon: React.ReactNode;
@@ -51,7 +81,7 @@ function CtrlBtn({ icon, label, onClick, active, danger, panel, badge, size = 'm
 
   const circleClass = cx(
     'relative flex items-center justify-center rounded-full transition-all duration-200 select-none',
-    size === 'sm' ? 'w-11 h-11' : 'w-14 h-14',
+    size === 'sm' ? 'w-11 h-11' : 'w-12 h-12 sm:w-14 sm:h-14',
     danger   ? 'bg-rose-600 hover:bg-rose-500 active:bg-rose-700 shadow-lg shadow-rose-900/40'
     : isOff  ? 'bg-[#2d2d2d] hover:bg-[#363636] active:bg-[#222]'
     : panel  ? 'bg-[#2d2d2d] hover:bg-[#363636] active:bg-[#222]'
@@ -105,6 +135,20 @@ function CtrlBtn({ icon, label, onClick, active, danger, panel, badge, size = 'm
   );
 }
 
+// Mobile "more" sheet action tile
+function MoreItem({ icon, label, onClick, danger, active }: {
+  icon: React.ReactNode; label: string; onClick: () => void; danger?: boolean; active?: boolean;
+}) {
+  return (
+    <button onClick={onClick}
+      className="flex flex-col items-center justify-center gap-1.5 py-3 rounded-2xl transition active:scale-95"
+      style={{ background: active ? 'rgba(101,53,246,0.25)' : danger ? 'rgba(239,68,68,0.12)' : 'rgba(255,255,255,0.05)' }}>
+      <span className="text-2xl leading-none">{icon}</span>
+      <span className={cx('text-[11px] font-medium', danger ? 'text-rose-400' : active ? 'text-brand-400' : 'text-white/70')}>{label}</span>
+    </button>
+  );
+}
+
 // ── SVG icons (inline, no external deps) ────────────────────────────────────
 const Icon = {
   MicOn:    () => <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>,
@@ -134,8 +178,10 @@ export function RoomPage() {
   const [sidePanel, setSidePanel] = useState<SidePanel>(null);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showEndConfirm, setShowEndConfirm] = useState(false);
-  const [showTimer, setShowTimer] = useState(false);
-  const [elapsed, setElapsed] = useState(0);
+  const [showMore, setShowMore] = useState(false);
+  const isMobile = useIsMobile();
+  // iPhone Safari has no getDisplayMedia — hide the button instead of erroring
+  const canScreenShare = !!navigator.mediaDevices && 'getDisplayMedia' in navigator.mediaDevices;
 
   const {
     localStream, screenStream, participants, messages, micOn, cameraOn,
@@ -150,6 +196,9 @@ export function RoomPage() {
 
   const [audioBlocked, setAudioBlocked] = useState(false);
   const [unlockSignal, setUnlockSignal] = useState(0);
+  // Stable identity — an inline arrow here changed every render, which made
+  // VideoTile's effect re-run and re-attach srcObject (visible video blink).
+  const handleAudioBlocked = useCallback(() => setAudioBlocked(true), []);
   const [showSettings, setShowSettings] = useState(false);
   const [showReactions, setShowReactions] = useState(false);
   const [pinnedId, setPinnedId] = useState<string | null>(null);
@@ -174,23 +223,6 @@ export function RoomPage() {
   const [whiteboardFullscreen, setWhiteboardFullscreen] = useState(false);
 
   const isHost = room?.hostId === userId || role === 'Admin';
-
-  // Call timer
-  useEffect(() => {
-    if (!connected) return;
-    setShowTimer(true);
-    const t = setInterval(() => setElapsed(s => s + 1), 1000);
-    return () => clearInterval(t);
-  }, [connected]);
-
-  const formatTimer = (s: number) => {
-    const h = Math.floor(s / 3600);
-    const m = Math.floor((s % 3600) / 60);
-    const sec = s % 60;
-    return h > 0
-      ? `${h}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`
-      : `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
-  };
 
   useEffect(() => {
     if (!id) return;
@@ -278,12 +310,13 @@ export function RoomPage() {
   const hasPin = !hasScreenShare && (pinnedLocal || !!pinnedParticipant);
   const togglePin = (key: string) => setPinnedId(prev => (prev === key ? null : key));
 
+  // Phones get at most 2 columns — 3-4 tiny tiles in a row are unusable.
   const gridCols = hasScreenShare ? 'grid-cols-1'
     : allParticipants.length === 0 ? 'grid-cols-1'
-    : allParticipants.length === 1 ? 'grid-cols-2'
+    : allParticipants.length === 1 ? 'grid-cols-1 sm:grid-cols-2'
     : allParticipants.length <= 3 ? 'grid-cols-2'
-    : allParticipants.length <= 8 ? 'grid-cols-3'
-    : 'grid-cols-4';
+    : allParticipants.length <= 8 ? 'grid-cols-2 sm:grid-cols-3'
+    : 'grid-cols-2 sm:grid-cols-4';
 
   const seenIds = new Set<string>();
   const allMessages = [
@@ -292,9 +325,37 @@ export function RoomPage() {
   ].filter(m => { if (!m.id || seenIds.has(m.id)) return false; seenIds.add(m.id); return true; })
    .sort((a, b) => (a.sentAt ? new Date(a.sentAt).getTime() : 0) - (b.sentAt ? new Date(b.sentAt).getTime() : 0));
 
+  // Shared side-panel content (desktop aside / mobile bottom sheet)
+  const panelInner = (
+    <>
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-white font-bold text-sm">
+          {sidePanel ? { chat: '💬 Чат', whiteboard: '🖊 Дошка', people: '👥 Учасники' }[sidePanel] : ''}
+        </p>
+        <button onClick={() => setSidePanel(null)} className="w-7 h-7 rounded-lg flex items-center justify-center text-white/40 hover:text-white transition" style={{ background: 'rgba(255,255,255,0.06)' }}>✕</button>
+      </div>
+      {sidePanel === 'chat' && <RoomChat messages={allMessages} onSend={sendChatMessage} />}
+      {/* Whiteboard — always mounted when panel open; fullscreen prop triggers portal */}
+      {(sidePanel === 'whiteboard' || whiteboardFullscreen) && (
+        <Whiteboard
+          strokes={strokes}
+          clearSignal={whiteboardClear}
+          onStroke={sendStroke}
+          onClear={clearWhiteboard}
+          fullscreen={whiteboardFullscreen}
+          onToggleFullscreen={() => {
+            setWhiteboardFullscreen(f => !f);
+            if (!whiteboardFullscreen) setSidePanel('whiteboard');
+          }}
+        />
+      )}
+      {sidePanel === 'people' && <ParticipantsPanel localName="Ви" localMicOn={micOn} localCameraOn={cameraOn} isHost={isHost} participants={allParticipants} raisedHands={raisedHands} onMute={muteParticipant} onKick={kickParticipant} />}
+    </>
+  );
+
   // ── Error ─────────────────────────────────────────────────────────────────
   if (loadError) return (
-    <div className="h-screen flex items-center justify-center" style={{ background: '#1a1a2e' }}>
+    <div className="h-dvh flex items-center justify-center" style={{ background: '#1a1a2e' }}>
       <div className="text-center text-white">
         <div className="text-7xl mb-5">📭</div>
         <h1 className="text-2xl font-bold mb-2">{loadError}</h1>
@@ -306,7 +367,7 @@ export function RoomPage() {
 
   // ── Main ─────────────────────────────────────────────────────────────────
   return (
-    <div className="h-screen flex flex-col overflow-hidden select-none" style={{ background: '#111318' }}>
+    <div className="h-dvh flex flex-col overflow-hidden select-none" style={{ background: '#111318' }}>
 
       {/* Room ended overlay */}
       <AnimatePresence>
@@ -338,7 +399,7 @@ export function RoomPage() {
               <motion.div animate={{ opacity: connected ? 1 : 0.4 }} className="flex items-center gap-1.5">
                 <span className={cx('w-1.5 h-1.5 rounded-full', connected ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400 animate-pulse')} />
                 <span className="text-[11px]" style={{ color: 'rgba(255,255,255,0.4)' }}>
-                  {connected ? (showTimer ? formatTimer(elapsed) : 'Підключено') : 'Підключення…'}
+                  <CallTimer connected={connected} />
                 </span>
               </motion.div>
               {room?.courseName && (
@@ -418,18 +479,18 @@ export function RoomPage() {
                 {screenSharing
                   ? <VideoTile stream={screenStream} displayName="Ваш екран" micOn={micOn} cameraOn isScreenSharing isLarge isLocal />
                   : sharingParticipant
-                    ? <VideoTile stream={sharingParticipant.screenStream} displayName={`${sharingParticipant.displayName} — екран`} micOn cameraOn isScreenSharing isLarge sinkId={selectedSpeakerId} unlockSignal={unlockSignal} onAudioBlocked={() => setAudioBlocked(true)} />
+                    ? <VideoTile stream={sharingParticipant.screenStream} displayName={`${sharingParticipant.displayName} — екран`} micOn cameraOn isScreenSharing isLarge sinkId={selectedSpeakerId} unlockSignal={unlockSignal} onAudioBlocked={handleAudioBlocked} />
                     : null}
               </div>
               <div className="flex gap-2.5 flex-shrink-0 overflow-x-auto pb-1">
-                <div className="w-36 flex-shrink-0">
+                <div className="w-28 sm:w-36 flex-shrink-0">
                   <VideoTile stream={localStream} displayName="Ви" micOn={micOn} cameraOn={cameraOn} isLocal speaking={speakingIds.has('local')} />
                 </div>
                 {allParticipants.map(p => (
-                  <div key={p.connectionId} className="w-36 flex-shrink-0">
+                  <div key={p.connectionId} className="w-28 sm:w-36 flex-shrink-0">
                     <VideoTile stream={p.stream} displayName={p.displayName} micOn={p.micOn} cameraOn={p.cameraOn}
                       handRaised={raisedHands.has(p.userId)} speaking={speakingIds.has(p.connectionId)}
-                      sinkId={selectedSpeakerId} unlockSignal={unlockSignal} onAudioBlocked={() => setAudioBlocked(true)}
+                      sinkId={selectedSpeakerId} unlockSignal={unlockSignal} onAudioBlocked={handleAudioBlocked}
                       canModerate={isHost} onMute={() => muteParticipant(p.connectionId)} onKick={() => kickParticipant(p.connectionId)} />
                   </div>
                 ))}
@@ -443,22 +504,22 @@ export function RoomPage() {
                   : pinnedParticipant && (
                     <VideoTile stream={pinnedParticipant.stream} displayName={pinnedParticipant.displayName} micOn={pinnedParticipant.micOn} cameraOn={pinnedParticipant.cameraOn} isLarge
                       handRaised={raisedHands.has(pinnedParticipant.userId)} speaking={speakingIds.has(pinnedParticipant.connectionId)}
-                      sinkId={selectedSpeakerId} unlockSignal={unlockSignal} onAudioBlocked={() => setAudioBlocked(true)}
+                      sinkId={selectedSpeakerId} unlockSignal={unlockSignal} onAudioBlocked={handleAudioBlocked}
                       canModerate={isHost} onMute={() => muteParticipant(pinnedParticipant.connectionId)} onKick={() => kickParticipant(pinnedParticipant.connectionId)}
                       pinned onPin={() => togglePin(pinnedParticipant.connectionId)} />
                   )}
               </div>
               <div className="flex gap-2.5 flex-shrink-0 overflow-x-auto pb-1">
                 {!pinnedLocal && (
-                  <div className="w-36 flex-shrink-0">
+                  <div className="w-28 sm:w-36 flex-shrink-0">
                     <VideoTile stream={localStream} displayName="Ви" micOn={micOn} cameraOn={cameraOn} isLocal speaking={speakingIds.has('local')} onPin={() => togglePin('local')} />
                   </div>
                 )}
                 {allParticipants.filter(p => p.connectionId !== pinnedId).map(p => (
-                  <div key={p.connectionId} className="w-36 flex-shrink-0">
+                  <div key={p.connectionId} className="w-28 sm:w-36 flex-shrink-0">
                     <VideoTile stream={p.stream} displayName={p.displayName} micOn={p.micOn} cameraOn={p.cameraOn}
                       handRaised={raisedHands.has(p.userId)} speaking={speakingIds.has(p.connectionId)}
-                      sinkId={selectedSpeakerId} unlockSignal={unlockSignal} onAudioBlocked={() => setAudioBlocked(true)}
+                      sinkId={selectedSpeakerId} unlockSignal={unlockSignal} onAudioBlocked={handleAudioBlocked}
                       canModerate={isHost} onMute={() => muteParticipant(p.connectionId)} onKick={() => kickParticipant(p.connectionId)}
                       onPin={() => togglePin(p.connectionId)} />
                   </div>
@@ -472,7 +533,7 @@ export function RoomPage() {
                 <VideoTile key={p.connectionId} stream={p.stream} displayName={p.displayName}
                   micOn={p.micOn} cameraOn={p.cameraOn} isScreenSharing={p.isScreenSharing}
                   handRaised={raisedHands.has(p.userId)} speaking={speakingIds.has(p.connectionId)}
-                  sinkId={selectedSpeakerId} unlockSignal={unlockSignal} onAudioBlocked={() => setAudioBlocked(true)}
+                  sinkId={selectedSpeakerId} unlockSignal={unlockSignal} onAudioBlocked={handleAudioBlocked}
                   canModerate={isHost} onMute={() => muteParticipant(p.connectionId)} onKick={() => kickParticipant(p.connectionId)}
                   onPin={() => togglePin(p.connectionId)} />
               ))}
@@ -480,9 +541,10 @@ export function RoomPage() {
           )}
         </div>
 
-        {/* Side panel */}
+        {/* Side panel — desktop: aside; mobile: full-screen bottom sheet
+            (a fixed 340px column ate the whole phone screen) */}
         <AnimatePresence>
-          {sidePanel && (
+          {sidePanel && !isMobile && (
             <motion.aside
               key={sidePanel}
               initial={{ width: 0, opacity: 0 }} animate={{ width: 340, opacity: 1 }} exit={{ width: 0, opacity: 0 }}
@@ -490,34 +552,26 @@ export function RoomPage() {
               className="flex-shrink-0 overflow-hidden border-l"
               style={{ borderColor: 'rgba(255,255,255,0.07)', background: 'rgba(26,27,32,0.97)' }}>
               <div style={{ width: 340 }} className="h-full p-3 flex flex-col">
-                {/* Panel header */}
-                <div className="flex items-center justify-between mb-3">
-                  <p className="text-white font-bold text-sm">
-                    {{ chat: '💬 Чат', whiteboard: '🖊 Дошка', people: '👥 Учасники' }[sidePanel]}
-                  </p>
-                  <button onClick={() => setSidePanel(null)} className="w-7 h-7 rounded-lg flex items-center justify-center text-white/40 hover:text-white transition" style={{ background: 'rgba(255,255,255,0.06)' }}>✕</button>
-                </div>
-                {sidePanel === 'chat' && <RoomChat messages={allMessages} onSend={sendChatMessage} />}
-                {/* Whiteboard — always mounted when panel open; fullscreen prop triggers portal */}
-                {(sidePanel === 'whiteboard' || whiteboardFullscreen) && (
-                  <Whiteboard
-                    strokes={strokes}
-                    clearSignal={whiteboardClear}
-                    onStroke={sendStroke}
-                    onClear={clearWhiteboard}
-                    fullscreen={whiteboardFullscreen}
-                    onToggleFullscreen={() => {
-                      setWhiteboardFullscreen(f => !f);
-                      if (!whiteboardFullscreen) setSidePanel('whiteboard');
-                    }}
-                  />
-                )}
-                {sidePanel === 'people' && <ParticipantsPanel localName="Ви" localMicOn={micOn} localCameraOn={cameraOn} isHost={isHost} participants={allParticipants} raisedHands={raisedHands} onMute={muteParticipant} onKick={kickParticipant} />}
+                {panelInner}
               </div>
             </motion.aside>
           )}
         </AnimatePresence>
       </div>
+
+      {/* Mobile side panel as bottom sheet */}
+      <AnimatePresence>
+        {sidePanel && isMobile && (
+          <motion.div
+            key={sidePanel}
+            initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
+            transition={{ type: 'spring', stiffness: 380, damping: 40 }}
+            className="fixed inset-x-0 bottom-0 top-14 z-[70] flex flex-col p-3 rounded-t-2xl border-t"
+            style={{ background: 'rgba(26,27,32,0.98)', borderColor: 'rgba(255,255,255,0.08)', paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))' }}>
+            {panelInner}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── Bottom controls — Telegram style ───────────────────────────────── */}
       <div className="flex-shrink-0 border-t"
@@ -557,78 +611,98 @@ export function RoomPage() {
           )}
         </AnimatePresence>
 
-        <div className="flex items-end justify-center gap-3 sm:gap-5 flex-wrap py-4 px-6">
+        <div className="flex items-end justify-center gap-2 sm:gap-5 flex-wrap py-3 sm:py-4 px-3 sm:px-6"
+          style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))' }}>
 
-          {/* ── Panel toggles (small, secondary) ── */}
-          <div className="flex items-end gap-2.5">
-            <CtrlBtn
-              icon={<Icon.Chat />} label="Чат"
-              onClick={() => setSidePanel(sidePanel === 'chat' ? null : 'chat')}
-              panel={sidePanel === 'chat'} badge={unreadCount} size="sm"
-            />
-            <CtrlBtn
-              icon={<Icon.Board />} label="Дошка"
-              onClick={() => setSidePanel(sidePanel === 'whiteboard' ? null : 'whiteboard')}
-              panel={sidePanel === 'whiteboard'} size="sm"
-            />
-            <CtrlBtn
-              icon={<Icon.People />} label="Учасники"
-              onClick={() => setSidePanel(sidePanel === 'people' ? null : 'people')}
-              panel={sidePanel === 'people'}
-              badge={participantCount > 0 ? participantCount : undefined} size="sm"
-            />
-            <CtrlBtn
-              icon={<Icon.Gear />} label="Пристрої"
-              onClick={() => setShowSettings(true)} size="sm"
-            />
-          </div>
+          {/* ── Panel toggles (small, secondary) — desktop only ── */}
+          {!isMobile && (
+            <div className="flex items-end gap-2.5">
+              <CtrlBtn
+                icon={<Icon.Chat />} label="Чат"
+                onClick={() => setSidePanel(sidePanel === 'chat' ? null : 'chat')}
+                panel={sidePanel === 'chat'} badge={unreadCount} size="sm"
+              />
+              <CtrlBtn
+                icon={<Icon.Board />} label="Дошка"
+                onClick={() => setSidePanel(sidePanel === 'whiteboard' ? null : 'whiteboard')}
+                panel={sidePanel === 'whiteboard'} size="sm"
+              />
+              <CtrlBtn
+                icon={<Icon.People />} label="Учасники"
+                onClick={() => setSidePanel(sidePanel === 'people' ? null : 'people')}
+                panel={sidePanel === 'people'}
+                badge={participantCount > 0 ? participantCount : undefined} size="sm"
+              />
+              <CtrlBtn
+                icon={<Icon.Gear />} label="Пристрої"
+                onClick={() => setShowSettings(true)} size="sm"
+              />
+            </div>
+          )}
 
           {/* ── Divider ── */}
-          <div className="w-px h-10 self-center flex-shrink-0" style={{ background: 'rgba(255,255,255,0.1)' }} />
+          {!isMobile && <div className="w-px h-10 self-center flex-shrink-0" style={{ background: 'rgba(255,255,255,0.1)' }} />}
 
           {/* ── Primary controls (large) ── */}
-          <div className="flex items-end gap-3 sm:gap-4">
+          <div className="flex items-end gap-2 sm:gap-4">
+            {/* Chat — on mobile it lives in the primary row */}
+            {isMobile && (
+              <CtrlBtn
+                icon={<Icon.Chat />} label="Чат"
+                onClick={() => setSidePanel(sidePanel === 'chat' ? null : 'chat')}
+                panel={sidePanel === 'chat'} badge={unreadCount}
+              />
+            )}
             {/* Mic */}
             <CtrlBtn icon={micOn ? <Icon.MicOn /> : <Icon.MicOff />} label={micOn ? 'Мікрофон' : 'Вимкнено'} active={micOn} onClick={toggleMic} />
             {/* Camera */}
             <CtrlBtn icon={cameraOn ? <Icon.CamOn /> : <Icon.CamOff />} label={cameraOn ? 'Камера' : 'Вимкнено'} active={cameraOn} onClick={toggleCamera} />
             {/* HANG UP — biggest, red, center */}
             <CtrlBtn icon={<Icon.HangUp />} label="Завершити" danger onClick={handleLeave} />
-            {/* Screen share */}
-            <CtrlBtn
-              icon={<Icon.Screen />}
-              label={screenSharing ? 'Зупинити' : 'Екран'}
-              active={screenSharing ? undefined : true}
-              onClick={screenSharing ? stopScreenShare : startScreenShare}
-            />
+            {/* Screen share (hidden where the browser can't do it, e.g. iPhone) */}
+            {canScreenShare && (
+              <CtrlBtn
+                icon={<Icon.Screen />}
+                label={screenSharing ? 'Зупинити' : 'Екран'}
+                active={screenSharing ? undefined : true}
+                onClick={screenSharing ? stopScreenShare : startScreenShare}
+              />
+            )}
             {/* Raise hand */}
-            <CtrlBtn icon={<span className="text-2xl">✋</span>} label="Рука" onClick={raiseHand} />
+            {!isMobile && <CtrlBtn icon={<span className="text-2xl">✋</span>} label="Рука" onClick={raiseHand} />}
             {/* Reactions */}
-            <div className="relative">
-              <CtrlBtn icon={<span className="text-2xl">😊</span>} label="Реакція" onClick={() => setShowReactions(v => !v)} panel={showReactions} />
-              <AnimatePresence>
-                {showReactions && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8, scale: 0.9 }}
-                    className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 flex gap-1 p-2 rounded-2xl"
-                    style={{ background: '#1e1f26', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 10px 40px rgba(0,0,0,0.5)' }}>
-                    {REACTION_EMOJIS.map(emoji => (
-                      <button key={emoji}
-                        onClick={() => { sendReaction(emoji); setShowReactions(false); }}
-                        className="w-10 h-10 rounded-xl text-2xl hover:bg-white/10 transition flex items-center justify-center">
-                        {emoji}
-                      </button>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+            {!isMobile && (
+              <div className="relative">
+                <CtrlBtn icon={<span className="text-2xl">😊</span>} label="Реакція" onClick={() => setShowReactions(v => !v)} panel={showReactions} />
+                <AnimatePresence>
+                  {showReactions && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8, scale: 0.9 }}
+                      className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 flex gap-1 p-2 rounded-2xl"
+                      style={{ background: '#1e1f26', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 10px 40px rgba(0,0,0,0.5)' }}>
+                      {REACTION_EMOJIS.map(emoji => (
+                        <button key={emoji}
+                          onClick={() => { sendReaction(emoji); setShowReactions(false); }}
+                          className="w-10 h-10 rounded-xl text-2xl hover:bg-white/10 transition flex items-center justify-center">
+                          {emoji}
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
+            {/* Mobile: everything else lives in the "more" sheet */}
+            {isMobile && (
+              <CtrlBtn icon={<span className="text-2xl leading-none">⋯</span>} label="Ще" onClick={() => setShowMore(true)} panel={showMore} />
+            )}
           </div>
 
           {/* ── Divider ── */}
-          <div className="w-px h-10 self-center flex-shrink-0" style={{ background: 'rgba(255,255,255,0.1)' }} />
+          {!isMobile && <div className="w-px h-10 self-center flex-shrink-0" style={{ background: 'rgba(255,255,255,0.1)' }} />}
 
           {/* ── Secondary right: whiteboard fullscreen + record + host ── */}
+          {!isMobile && (
           <div className="flex items-end gap-2.5">
             {/* Fullscreen whiteboard shortcut */}
             <CtrlBtn
@@ -660,7 +734,7 @@ export function RoomPage() {
               active={recording}
               onClick={() => {
                 if (recordingState === 'error') { resetRecording(); return; }
-                recording ? stopAndUpload() : startRecording();
+                if (recording) stopAndUpload(); else startRecording();
               }}
               disabled={recordingState === 'uploading' || recordingState === 'stopping'}
               size="sm"
@@ -688,8 +762,56 @@ export function RoomPage() {
               />
             )}
           </div>
+          )}
         </div>
       </div>
+
+      {/* ── Mobile "more" bottom sheet ───────────────────────────────────── */}
+      <AnimatePresence>
+        {showMore && isMobile && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            onClick={() => setShowMore(false)}
+            className="fixed inset-0 z-[85]" style={{ background: 'rgba(0,0,0,0.55)' }}>
+            <motion.div
+              initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
+              transition={{ type: 'spring', stiffness: 400, damping: 40 }}
+              onClick={e => e.stopPropagation()}
+              className="absolute inset-x-0 bottom-0 rounded-t-3xl p-4"
+              style={{ background: '#1e1f26', borderTop: '1px solid rgba(255,255,255,0.1)', paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))' }}>
+              <div className="w-10 h-1 rounded-full mx-auto mb-4" style={{ background: 'rgba(255,255,255,0.2)' }} />
+              {/* Reactions row */}
+              <div className="flex justify-between gap-1 mb-4">
+                {REACTION_EMOJIS.map(emoji => (
+                  <button key={emoji}
+                    onClick={() => { sendReaction(emoji); setShowMore(false); }}
+                    className="flex-1 h-11 rounded-xl text-2xl active:bg-white/15 transition flex items-center justify-center">
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+              {/* Actions */}
+              <div className="grid grid-cols-4 gap-2.5">
+                <MoreItem icon="✋" label="Рука" onClick={() => { raiseHand(); setShowMore(false); }} />
+                <MoreItem icon="🖊" label="Дошка" active={sidePanel === 'whiteboard'}
+                  onClick={() => { setSidePanel('whiteboard'); setShowMore(false); }} />
+                <MoreItem icon="👥" label="Учасники" active={sidePanel === 'people'}
+                  onClick={() => { setSidePanel('people'); setShowMore(false); }} />
+                <MoreItem icon="⚙️" label="Пристрої" onClick={() => { setShowSettings(true); setShowMore(false); }} />
+                <MoreItem icon={recording ? '⏹' : '⏺'} label={recording ? 'Стоп запис' : 'Запис'} active={recording}
+                  onClick={() => {
+                    if (recordingState === 'error') { resetRecording(); setShowMore(false); return; }
+                    if (recording) stopAndUpload(); else startRecording();
+                    setShowMore(false);
+                  }} />
+                {isHost && (
+                  <MoreItem icon="🚫" label="Для всіх" danger
+                    onClick={() => { setShowEndConfirm(true); setShowMore(false); }} />
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── End for all — confirm modal ──────────────────────────────────── */}
       <AnimatePresence>

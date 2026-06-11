@@ -103,15 +103,20 @@ public class GamificationService(IApplicationDbContext db) : IGamificationServic
 
     public async Task SpendCoinsAsync(Guid studentId, int amount, CancellationToken ct = default)
     {
-        var streak = await db.StudentStreaks
-            .FirstOrDefaultAsync(s => s.StudentId == studentId, ct)
-            ?? throw new InvalidOperationException("Запис гравця не знайдено");
+        if (amount <= 0) return;
 
-        if (streak.TotalCoins < amount)
-            throw new InvalidOperationException("Недостатньо монет");
+        // Atomic, race-free debit: a single guarded UPDATE. Two concurrent
+        // purchases can't both pass a read-then-write check and overspend —
+        // the WHERE clause enforces the balance at the database level.
+        var affected = await db.StudentStreaks
+            .Where(s => s.StudentId == studentId && s.TotalCoins >= amount)
+            .ExecuteUpdateAsync(s => s.SetProperty(x => x.TotalCoins, x => x.TotalCoins - amount), ct);
 
-        streak.TotalCoins -= amount;
-        await db.SaveChangesAsync(ct);
+        if (affected == 0)
+        {
+            var exists = await db.StudentStreaks.AnyAsync(s => s.StudentId == studentId, ct);
+            throw new InvalidOperationException(exists ? "Недостатньо монет" : "Запис гравця не знайдено");
+        }
     }
 
     private async Task CheckAndAwardBadgesAsync(Guid studentId, StudentStreak streak, CancellationToken ct)
