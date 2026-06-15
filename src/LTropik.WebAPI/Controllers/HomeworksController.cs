@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using LTropik.Application.Authorization;
 using LTropik.Application.DTOs;
 using LTropik.Application.Interfaces;
 using LTropik.Domain.Entities;
@@ -23,8 +24,8 @@ public class HomeworksController(
         Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
     // A teacher may only touch homework belonging to a course they actually teach.
-    private async Task<bool> TeacherOwnsCourse(Guid courseId, CancellationToken ct) =>
-        await db.CourseTeachers.AnyAsync(t => t.CourseId == courseId && t.TeacherId == CurrentUserId, ct);
+    private Task<bool> TeacherOwnsCourse(Guid courseId, CancellationToken ct) =>
+        db.TeacherOwnsCourseAsync(courseId, CurrentUserId, ct);
 
     [HttpPost("submit")]
     [Authorize(Roles = "Student")]
@@ -76,10 +77,11 @@ public class HomeworksController(
     }
 
     [HttpGet("queue")]
-    [Authorize(Roles = "Teacher")]
+    [Authorize(Roles = "Teacher,Admin,Manager")]
     public async Task<IActionResult> GetReviewQueue([FromQuery] Guid courseId, CancellationToken ct)
     {
-        if (!await TeacherOwnsCourse(courseId, ct))
+        // Teachers are limited to their own courses; admins/managers see any course.
+        if (User.IsInRole("Teacher") && !await TeacherOwnsCourse(courseId, ct))
             return Forbid();
 
         var submissions = await db.HomeworkSubmissions

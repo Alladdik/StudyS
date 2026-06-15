@@ -6,6 +6,10 @@ import { useAuthStore } from '../store/authStore';
 import { cx } from './ui';
 import { NotificationBell } from './NotificationBell';
 import { SpotlightSearch } from './SpotlightSearch';
+import { ScrollToTop } from './ScrollToTop';
+import { NetworkStatus } from './NetworkStatus';
+import { KeyboardShortcutsHelp } from './KeyboardShortcutsHelp';
+import { FocusTimer } from './FocusTimer';
 import { useProfile } from '../hooks/useProfile';
 import { useDarkMode } from '../hooks/useDarkMode';
 
@@ -66,7 +70,6 @@ const NAV: Record<string, { label: string; href: string; icon: ReactElement }[]>
   ],
   Manager: [
     { label: 'Головна',      href: '/manager',                 icon: icon('M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z') },
-    { label: 'Курси',        href: '/admin/courses',           icon: icon('M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253') },
     { label: 'Шкали оцінок', href: '/admin/grade-scales',      icon: icon('M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z') },
     { label: 'Аналітика',    href: '/admin/analytics',         icon: icon('M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z') },
     { label: 'Викладачі',    href: '/admin/teacher-analytics', icon: icon('M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0') },
@@ -257,6 +260,10 @@ export function Layout({ children, title, subtitle }: Props) {
   return (
     <div className="min-h-screen flex text-ink-800 dark:text-[#e8eaf0]">
       <SpotlightSearch open={spotlightOpen} onClose={() => setSpotlightOpen(false)} />
+      <NetworkStatus />
+      <ScrollToTop />
+      <KeyboardShortcutsHelp />
+      {role === 'Student' && <FocusTimer />}
       {/* Desktop sidebar */}
       <aside className="hidden lg:flex w-64 flex-shrink-0 flex-col bg-white/80 dark:bg-[#131522cc] backdrop-blur-xl border-r border-ink-100 dark:border-[#282c44] sticky top-0 h-screen">
         {SidebarBody}

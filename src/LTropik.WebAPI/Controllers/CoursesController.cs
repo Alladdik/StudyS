@@ -197,7 +197,9 @@ public class CoursesController(IApplicationDbContext db) : ControllerBase
     public async Task<IActionResult> AssignTeacher(Guid courseId, Guid teacherId, CancellationToken ct)
     {
         var teacher = await db.Users.FindAsync([teacherId], ct);
-        if (teacher == null || teacher.Role != Domain.Enums.UserRole.Teacher)
+        // Admins may also act as teachers, so either role can be assigned to a course.
+        if (teacher == null ||
+            (teacher.Role != Domain.Enums.UserRole.Teacher && teacher.Role != Domain.Enums.UserRole.Admin))
             return BadRequest(new { error = "Користувач не є викладачем" });
 
         if (await db.CourseTeachers.AnyAsync(ct2 => ct2.CourseId == courseId && ct2.TeacherId == teacherId, ct))
@@ -395,4 +397,6 @@ public class CoursesController(IApplicationDbContext db) : ControllerBase
     }
 }
 
-public record AddReviewRequest(int Rating, string? Comment);
+public record AddReviewRequest(
+    [property: System.ComponentModel.DataAnnotations.Range(1, 5)] int Rating,
+    string? Comment);

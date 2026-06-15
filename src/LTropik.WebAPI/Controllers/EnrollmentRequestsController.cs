@@ -58,7 +58,7 @@ public class EnrollmentRequestsController(
 
     // Admin/Teacher: list pending requests for a course
     [HttpGet]
-    [Authorize(Roles = "Admin,Teacher")]
+    [Authorize(Roles = "Admin,Teacher,Manager")]
     public async Task<IActionResult> GetAll([FromQuery] Guid? courseId, CancellationToken ct)
     {
         var query = db.EnrollmentRequests
@@ -99,7 +99,7 @@ public class EnrollmentRequestsController(
 
     // Admin/Teacher: approve
     [HttpPost("{id:guid}/approve")]
-    [Authorize(Roles = "Admin,Teacher")]
+    [Authorize(Roles = "Admin,Teacher,Manager")]
     public async Task<IActionResult> Approve(Guid id, [FromBody] ReviewNoteRequest req, CancellationToken ct)
     {
         var er = await db.EnrollmentRequests.FindAsync([id], ct);
@@ -129,7 +129,7 @@ public class EnrollmentRequestsController(
 
     // Admin/Teacher: reject
     [HttpPost("{id:guid}/reject")]
-    [Authorize(Roles = "Admin,Teacher")]
+    [Authorize(Roles = "Admin,Teacher,Manager")]
     public async Task<IActionResult> Reject(Guid id, [FromBody] ReviewNoteRequest req, CancellationToken ct)
     {
         var er = await db.EnrollmentRequests.FindAsync([id], ct);

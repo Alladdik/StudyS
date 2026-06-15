@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using LTropik.Application.Authorization;
 using LTropik.Application.DTOs;
 using LTropik.Application.Interfaces;
 using LTropik.Domain.Entities;
@@ -26,15 +27,25 @@ public class AttendanceController(
     [Audit("AttendanceSet")]
     public async Task<IActionResult> Set(SetAttendanceRequest req, CancellationToken ct)
     {
+        // Teachers may only set grades/attendance for lessons in their own courses
+        // (admins/managers are unrestricted).
+        if (User.IsInRole("Teacher") && !await db.TeacherOwnsLessonAsync(req.LessonId, CurrentUserId, ct))
+            return Forbid();
+
+        // Load all existing records for this lesson/date in one query instead of
+        // hitting the DB once per student.
+        var studentIds = req.Records.Select(r => r.StudentId).ToList();
+        var existingByStudent = (await db.AttendanceAndGrades
+                .Where(a => a.LessonId == req.LessonId &&
+                            a.LessonDate == req.LessonDate &&
+                            studentIds.Contains(a.StudentId))
+                .ToListAsync(ct))
+            .GroupBy(a => a.StudentId)
+            .ToDictionary(g => g.Key, g => g.First());
+
         foreach (var record in req.Records)
         {
-            var existing = await db.AttendanceAndGrades
-                .FirstOrDefaultAsync(a =>
-                    a.StudentId == record.StudentId &&
-                    a.LessonId == req.LessonId &&
-                    a.LessonDate == req.LessonDate, ct);
-
-            if (existing != null)
+            if (existingByStudent.TryGetValue(record.StudentId, out var existing))
             {
                 existing.Attendance = record.Attendance;
                 existing.GradeId = record.GradeId;
@@ -116,6 +127,11 @@ public class AttendanceController(
             .FirstOrDefaultAsync(l => l.Id == req.LessonId, ct);
 
         if (lesson == null) return NotFound();
+
+        // Teachers may only mark attendance for their own courses (admins/managers unrestricted).
+        if (User.IsInRole("Teacher") &&
+            !await db.TeacherOwnsCourseAsync(lesson.Module.CourseId, CurrentUserId, ct))
+            return Forbid();
 
         foreach (var enrollment in lesson.Module.Course.Students)
         {

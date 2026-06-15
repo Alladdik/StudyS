@@ -9,7 +9,7 @@ namespace LTropik.WebAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "Admin,Teacher")]
+[Authorize(Roles = "Admin,Teacher,Manager")]
 public class QuestionBankController(IApplicationDbContext db) : ControllerBase
 {
     [HttpGet]

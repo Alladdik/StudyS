@@ -1,4 +1,5 @@
 using System.Text;
+using System.Threading.RateLimiting;
 using LTropik.Application.Interfaces;
 using LTropik.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -56,6 +57,22 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 builder.Services.AddInfrastructure(builder.Configuration);
 
+// Rate limiting — throttles brute-force on auth endpoints (login/register/etc.).
+// Keyed per client IP so one attacker can't lock everyone out.
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddPolicy("auth", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 10,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
+            }));
+});
+
 builder.Services.AddCors(opts =>
     opts.AddPolicy("frontend", p => p
         .WithOrigins(builder.Configuration["Frontend:Url"] ?? "http://localhost:5173")
@@ -106,6 +123,9 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+// Catch-all exception → JSON mapper. Must be first so it wraps the whole pipeline.
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 app.UseCors("frontend");
 app.UseSwagger();
 app.UseSwaggerUI();
@@ -114,6 +134,7 @@ app.UseStaticFiles();
 app.UseAuthentication();
 app.UseMiddleware<AccessControlMiddleware>();
 app.UseAuthorization();
+app.UseRateLimiter();
 
 app.MapControllers();
 app.MapHub<ReviewHub>("/hubs/review");

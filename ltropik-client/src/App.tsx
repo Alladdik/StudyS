@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { UnauthorizedPage } from './pages/UnauthorizedPage';
 import { Toaster } from './components/ui';
 import { Onboarding } from './components/Onboarding';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { LoginPage } from './pages/LoginPage';
 import { DiaryPage } from './pages/student/DiaryPage';
@@ -51,6 +52,7 @@ export default function App() {
     <BrowserRouter>
       <Toaster />
       <Onboarding />
+      <ErrorBoundary>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
@@ -97,7 +99,7 @@ export default function App() {
           <ProtectedRoute roles={['Admin']}><AdminDashboardPage /></ProtectedRoute>
         } />
         <Route path="/admin/courses" element={
-          <ProtectedRoute roles={['Admin', 'Teacher', 'Manager']}><CourseBuilderPage /></ProtectedRoute>
+          <ProtectedRoute roles={['Admin', 'Teacher']}><CourseBuilderPage /></ProtectedRoute>
         } />
         <Route path="/admin/grade-scales" element={
           <ProtectedRoute roles={['Admin', 'Manager']}><GradeScalesPage /></ProtectedRoute>
@@ -176,7 +178,7 @@ export default function App() {
           <ProtectedRoute roles={['Admin', 'Manager']}><ShopAdminPage /></ProtectedRoute>
         } />
         <Route path="/admin/groups" element={
-          <ProtectedRoute roles={['Admin', 'Teacher', 'Manager']}><GroupsPage /></ProtectedRoute>
+          <ProtectedRoute roles={['Admin', 'Manager']}><GroupsPage /></ProtectedRoute>
         } />
         <Route path="/admin/question-bank" element={
           <ProtectedRoute roles={['Admin', 'Teacher', 'Manager']}><QuestionBankPage /></ProtectedRoute>
@@ -202,6 +204,7 @@ export default function App() {
           <ProtectedRoute roles={['Admin', 'Manager']}><FinancePage /></ProtectedRoute>
         } />
       </Routes>
+      </ErrorBoundary>
     </BrowserRouter>
   );
 }

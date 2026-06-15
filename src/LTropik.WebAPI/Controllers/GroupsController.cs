@@ -10,7 +10,7 @@ namespace LTropik.WebAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "Admin,Teacher,Manager")]
+[Authorize(Roles = "Admin,Manager")]
 public class GroupsController(IApplicationDbContext db, IEmailService email) : ControllerBase
 {
     [HttpGet]
@@ -43,7 +43,7 @@ public class GroupsController(IApplicationDbContext db, IEmailService email) : C
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Manager")]
     public async Task<IActionResult> Create(CreateGroupRequest req, CancellationToken ct)
     {
         var group = new StudentGroup { Name = req.Name, Description = req.Description };
@@ -53,7 +53,7 @@ public class GroupsController(IApplicationDbContext db, IEmailService email) : C
     }
 
     [HttpPut("{id:guid}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Manager")]
     public async Task<IActionResult> Update(Guid id, UpdateGroupRequest req, CancellationToken ct)
     {
         var group = await db.StudentGroups.FindAsync([id], ct);
@@ -65,7 +65,7 @@ public class GroupsController(IApplicationDbContext db, IEmailService email) : C
     }
 
     [HttpDelete("{id:guid}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Manager")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
         var group = await db.StudentGroups.FindAsync([id], ct);

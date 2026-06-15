@@ -2,12 +2,14 @@ using LTropik.Application.DTOs;
 using LTropik.Application.Interfaces;
 using LTropik.Application.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 
 namespace LTropik.WebAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[EnableRateLimiting("auth")]
 public class AuthController(
     AuthService auth,
     IApplicationDbContext db,

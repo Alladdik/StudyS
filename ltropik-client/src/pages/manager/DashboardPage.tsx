@@ -13,7 +13,6 @@ interface Summary {
 }
 
 const quickActions = [
-  { icon: '📚', label: 'Курси',        desc: 'Конструктор уроків',      href: '/admin/courses',           color: 'from-brand-500 to-brand-700' },
   { icon: '👥', label: 'Користувачі',  desc: 'Перегляд акаунтів',       href: '/admin/users',             color: 'from-sky-500 to-sky-700' },
   { icon: '📊', label: 'Аналітика',    desc: 'Звіти та графіки',         href: '/admin/analytics',         color: 'from-emerald-500 to-emerald-700' },
   { icon: '🗓️', label: 'Розклад',      desc: 'Заняття та календар',     href: '/calendar',                color: 'from-amber-500 to-amber-700' },

@@ -73,7 +73,8 @@ public class ScheduleController(IApplicationDbContext db) : ControllerBase
             if (req.TeacherId.HasValue)
             {
                 teacherId = req.TeacherId.Value;
-                var teacherExists = await db.Users.AnyAsync(u => u.Id == teacherId && u.Role == Domain.Enums.UserRole.Teacher, ct);
+                var teacherExists = await db.Users.AnyAsync(u => u.Id == teacherId &&
+                    (u.Role == Domain.Enums.UserRole.Teacher || u.Role == Domain.Enums.UserRole.Admin), ct);
                 if (!teacherExists) return BadRequest(new { error = "Вказаний користувач не є викладачем" });
             }
             else
@@ -140,7 +141,8 @@ public class ScheduleController(IApplicationDbContext db) : ControllerBase
         {
             if (User.IsInRole("Admin"))
             {
-                var teacherExists = await db.Users.AnyAsync(u => u.Id == req.TeacherId.Value && u.Role == Domain.Enums.UserRole.Teacher, ct);
+                var teacherExists = await db.Users.AnyAsync(u => u.Id == req.TeacherId.Value &&
+                    (u.Role == Domain.Enums.UserRole.Teacher || u.Role == Domain.Enums.UserRole.Admin), ct);
                 if (!teacherExists) return BadRequest(new { error = "Вказаний користувач не є викладачем" });
                 schedule.TeacherId = req.TeacherId.Value;
             }

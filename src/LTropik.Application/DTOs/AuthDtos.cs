@@ -1,6 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace LTropik.Application.DTOs;
 
-public record LoginRequest(string Email, string Password);
+public record LoginRequest(
+    [property: Required, EmailAddress] string Email,
+    [property: Required] string Password);
 
 public record LoginResponse(
     string AccessToken,
@@ -12,11 +16,11 @@ public record LoginResponse(
 );
 
 public record RegisterRequest(
-    string Email,
-    string Password,
-    string FirstName,
-    string LastName,
-    string Role
+    [property: Required, EmailAddress] string Email,
+    [property: Required, MinLength(6)] string Password,
+    [property: Required] string FirstName,
+    [property: Required] string LastName,
+    [property: Required] string Role
 );
 
 public record Verify2faRequest(string PendingToken, string Code);

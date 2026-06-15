@@ -50,13 +50,21 @@ export function CourseBuilderPage() {
       const { data } = await getCourseMembers(selected.id);
       setMembers(data);
 
-      // Load all teachers and students in system
-      const [tRes, sRes] = await Promise.all([
-        getUsers({ role: 'Teacher', pageSize: 1000 }),
-        getUsers({ role: 'Student', pageSize: 1000 })
-      ]);
-      setAllTeachers(tRes.data.items.map(u => ({ id: u.id, name: `${u.firstName} ${u.lastName}`, email: u.email })));
-      setAllStudents(sRes.data.items.map(u => ({ id: u.id, name: `${u.firstName} ${u.lastName}`, email: u.email })));
+      // The add-teacher/add-student pickers are admin-only, and the user-directory
+      // endpoint they rely on is restricted to Admin/Manager. Skip it for teachers
+      // so they can still view course members without hitting a 403.
+      if (role === 'Admin') {
+        const [tRes, aRes, sRes] = await Promise.all([
+          getUsers({ role: 'Teacher', pageSize: 1000 }),
+          getUsers({ role: 'Admin', pageSize: 1000 }),
+          getUsers({ role: 'Student', pageSize: 1000 })
+        ]);
+        // Admins may also act as teachers, so include them in the assignable list.
+        const teacherList = [...tRes.data.items, ...aRes.data.items]
+          .map(u => ({ id: u.id, name: `${u.firstName} ${u.lastName}`, email: u.email }));
+        setAllTeachers(teacherList);
+        setAllStudents(sRes.data.items.map(u => ({ id: u.id, name: `${u.firstName} ${u.lastName}`, email: u.email })));
+      }
     } catch {
       toast('error', 'Не вдалося завантажити список учасників');
     } finally {

@@ -99,11 +99,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         {
             e.ToTable("course_teachers");
             e.HasKey(x => new { x.CourseId, x.TeacherId });
+            // The PK covers CourseId-prefixed lookups; teacher-ownership checks filter
+            // by TeacherId alone ("courses I teach") which the PK can't serve.
+            e.HasIndex(x => x.TeacherId);
         });
         b.Entity<CourseStudent>(e =>
         {
             e.ToTable("course_students");
             e.HasKey(x => new { x.CourseId, x.StudentId });
+            // Same reasoning: "courses this student is enrolled in" filters by StudentId.
+            e.HasIndex(x => x.StudentId);
         });
 
         // Module / Lesson
@@ -129,6 +134,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         {
             e.ToTable("attendance_and_grades");
             e.Property(x => x.Attendance).HasConversion(new EnumToStringConverter<Domain.Enums.AttendanceStatus>());
+            // Journal/gradebook and the batched upsert all filter by lesson + date.
+            e.HasIndex(x => new { x.LessonId, x.LessonDate });
         });
 
         // Tests

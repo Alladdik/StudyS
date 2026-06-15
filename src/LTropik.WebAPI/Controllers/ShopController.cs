@@ -184,4 +184,10 @@ public class ShopController(IApplicationDbContext db, IGamificationService gamif
 }
 
 public record BuyItemRequest(Guid? CourseId);
-public record CreateShopItemRequest(string Name, string Description, string? Icon, string Type, int CoinsPrice, int? MaxPerStudent);
+public record CreateShopItemRequest(
+    [property: System.ComponentModel.DataAnnotations.Required] string Name,
+    string Description,
+    string? Icon,
+    [property: System.ComponentModel.DataAnnotations.Required] string Type,
+    [property: System.ComponentModel.DataAnnotations.Range(0, int.MaxValue)] int CoinsPrice,
+    int? MaxPerStudent);

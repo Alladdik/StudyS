@@ -26,7 +26,7 @@ public class GradeScalesController(IApplicationDbContext db) : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Manager")]
     [Audit("GradeScaleCreated")]
     public async Task<IActionResult> Create(CreateGradeScaleRequest req, CancellationToken ct)
     {
@@ -51,7 +51,7 @@ public class GradeScalesController(IApplicationDbContext db) : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Manager")]
     [Audit("GradeScaleUpdated")]
     public async Task<IActionResult> Update(Guid id, CreateGradeScaleRequest req, CancellationToken ct)
     {
@@ -84,7 +84,7 @@ public class GradeScalesController(IApplicationDbContext db) : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Manager")]
     [Audit("GradeScaleDeleted")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {

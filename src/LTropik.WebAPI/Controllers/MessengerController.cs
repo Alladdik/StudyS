@@ -158,6 +158,11 @@ public class MessengerController(
             return BadRequest(new { error = "Повідомлення порожнє" });
 
         var me = CurrentUserId;
+        if (partnerId == me)
+            return BadRequest(new { error = "Не можна надіслати повідомлення самому собі" });
+        if (!await db.Users.AnyAsync(u => u.Id == partnerId && u.IsActive, ct))
+            return NotFound(new { error = "Отримувача не знайдено" });
+
         var msg = new DirectMessage
         {
             SenderId   = me,
@@ -184,6 +189,12 @@ public class MessengerController(
     [HttpGet("course/{courseId:guid}")]
     public async Task<IActionResult> GetCourseChat(Guid courseId, CancellationToken ct)
     {
+        // Only members of the course (or admins/managers) may read its chat.
+        var isMember = User.IsInRole("Admin") || User.IsInRole("Manager")
+            || await db.CourseStudents.AnyAsync(cs => cs.CourseId == courseId && cs.StudentId == CurrentUserId, ct)
+            || await db.CourseTeachers.AnyAsync(ct2 => ct2.CourseId == courseId && ct2.TeacherId == CurrentUserId, ct);
+        if (!isMember) return Forbid();
+
         // Find or create persistent chat room for this course
         var room = await db.Rooms
             .FirstOrDefaultAsync(r => r.CourseId == courseId && r.Title == "💬 Чат курсу", ct);

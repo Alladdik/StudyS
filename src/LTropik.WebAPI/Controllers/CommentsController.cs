@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using LTropik.Application.Authorization;
 using LTropik.Application.DTOs;
 using LTropik.Application.Interfaces;
 using LTropik.Domain.Entities;
@@ -16,9 +17,27 @@ public class CommentsController(IApplicationDbContext db) : ControllerBase
     private Guid CurrentUserId =>
         Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
+    // Comments belong to a lesson, so access follows course membership: an enrolled
+    // student or a teacher of the course (admins/managers unrestricted).
+    private async Task<bool> CanAccessLesson(Guid lessonId, CancellationToken ct)
+    {
+        if (User.IsInRole("Admin") || User.IsInRole("Manager")) return true;
+
+        var courseId = await db.Lessons
+            .Where(l => l.Id == lessonId)
+            .Select(l => l.Module.CourseId)
+            .FirstOrDefaultAsync(ct);
+        if (courseId == Guid.Empty) return false;
+
+        return await db.CourseStudents.AnyAsync(cs => cs.CourseId == courseId && cs.StudentId == CurrentUserId, ct)
+            || await db.CourseTeachers.AnyAsync(t => t.CourseId == courseId && t.TeacherId == CurrentUserId, ct);
+    }
+
     [HttpGet("lesson/{lessonId:guid}")]
     public async Task<IActionResult> GetByLesson(Guid lessonId, CancellationToken ct)
     {
+        if (!await CanAccessLesson(lessonId, ct)) return Forbid();
+
         var all = await db.LessonComments
             .Include(c => c.Author)
             .Where(c => c.LessonId == lessonId && !c.IsDeleted)
@@ -36,6 +55,8 @@ public class CommentsController(IApplicationDbContext db) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CreateCommentRequest req, CancellationToken ct)
     {
+        if (!await CanAccessLesson(req.LessonId, ct)) return Forbid();
+
         var comment = new LessonComment
         {
             LessonId = req.LessonId,
@@ -59,8 +80,13 @@ public class CommentsController(IApplicationDbContext db) : ControllerBase
         var comment = await db.LessonComments.FindAsync([id], ct);
         if (comment == null) return NotFound();
 
+        // Author can delete their own; admins/managers anywhere; a teacher only on a
+        // lesson in a course they actually teach (previously any teacher could delete
+        // any comment on any course).
         var role = User.FindFirstValue(ClaimTypes.Role);
-        if (comment.AuthorId != CurrentUserId && role is not "Admin" and not "Teacher")
+        var isModerator = role is "Admin" or "Manager"
+            || (role == "Teacher" && await db.TeacherOwnsLessonAsync(comment.LessonId, CurrentUserId, ct));
+        if (comment.AuthorId != CurrentUserId && !isModerator)
             return Forbid();
 
         comment.IsDeleted = true;
