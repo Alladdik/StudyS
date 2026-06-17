@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations;
 namespace LTropik.Application.DTOs;
 
 public record LoginRequest(
-    [property: Required, EmailAddress] string Email,
-    [property: Required] string Password);
+    [Required, EmailAddress] string Email,
+    [Required] string Password);
 
 public record LoginResponse(
     string AccessToken,
@@ -16,11 +16,11 @@ public record LoginResponse(
 );
 
 public record RegisterRequest(
-    [property: Required, EmailAddress] string Email,
-    [property: Required, MinLength(6)] string Password,
-    [property: Required] string FirstName,
-    [property: Required] string LastName,
-    [property: Required] string Role
+    [Required, EmailAddress] string Email,
+    [Required, MinLength(6)] string Password,
+    [Required] string FirstName,
+    [Required] string LastName,
+    [Required] string Role
 );
 
 public record Verify2faRequest(string PendingToken, string Code);

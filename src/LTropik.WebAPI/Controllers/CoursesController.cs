@@ -398,5 +398,5 @@ public class CoursesController(IApplicationDbContext db) : ControllerBase
 }
 
 public record AddReviewRequest(
-    [property: System.ComponentModel.DataAnnotations.Range(1, 5)] int Rating,
+    [System.ComponentModel.DataAnnotations.Range(1, 5)] int Rating,
     string? Comment);

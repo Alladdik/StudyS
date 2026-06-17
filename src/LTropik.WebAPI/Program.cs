@@ -1,6 +1,7 @@
 using System.Text;
 using System.Threading.RateLimiting;
 using LTropik.Application.Interfaces;
+using Microsoft.AspNetCore.HttpOverrides;
 using LTropik.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using LTropik.WebAPI;
@@ -57,8 +58,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 builder.Services.AddInfrastructure(builder.Configuration);
 
+// Behind nginx every request arrives from 127.0.0.1, so honour X-Forwarded-For/Proto.
+// Without this the rate limiter below would bucket ALL users under the proxy IP and
+// lock the whole site out after a handful of logins.
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
 // Rate limiting — throttles brute-force on auth endpoints (login/register/etc.).
-// Keyed per client IP so one attacker can't lock everyone out.
+// Keyed per real client IP (resolved via forwarded headers above).
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -67,7 +78,7 @@ builder.Services.AddRateLimiter(options =>
             partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
             factory: _ => new FixedWindowRateLimiterOptions
             {
-                PermitLimit = 10,
+                PermitLimit = 20,
                 Window = TimeSpan.FromMinutes(1),
                 QueueLimit = 0
             }));
@@ -122,6 +133,9 @@ using (var scope = app.Services.CreateScope())
         throw; // Fail fast — don't run with broken schema
     }
 }
+
+// Resolve real client IP from nginx before anything that depends on it (rate limiter).
+app.UseForwardedHeaders();
 
 // Catch-all exception → JSON mapper. Must be first so it wraps the whole pipeline.
 app.UseMiddleware<ExceptionHandlingMiddleware>();
