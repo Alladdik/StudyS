@@ -12,7 +12,7 @@ interface HealthData {
 
 function StatusBadge({ status }: { status: 'OK' | 'ERROR' | 'LOADING' }) {
   if (status === 'LOADING') return (
-    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-ink-100 dark:bg-[#1e2033] text-ink-500 dark:text-[#6b7394]">
+    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-ink-100 dark:bg-[#102a1d] text-ink-500 dark:text-[#6b7394]">
       <Spinner className="w-3 h-3" /> Перевірка…
     </span>
   );
@@ -32,9 +32,9 @@ function MetricCard({ icon, label, value, sub, tone = 'default' }: {
 }) {
   const bg = tone === 'ok' ? 'bg-emerald-50 dark:bg-[#0d2418]'
     : tone === 'error' ? 'bg-rose-50 dark:bg-[#2a1018]'
-    : 'bg-ink-50 dark:bg-[#1a1c2e]';
+    : 'bg-ink-50 dark:bg-[#0e2218]';
   return (
-    <div className={`rounded-2xl p-5 border border-ink-100 dark:border-[#282c44] ${bg}`}>
+    <div className={`rounded-2xl p-5 border border-ink-100 dark:border-[#1c3a2a] ${bg}`}>
       <div className="text-2xl mb-2">{icon}</div>
       <p className="text-xs text-ink-400 font-semibold uppercase tracking-wide mb-1">{label}</p>
       <p className="text-2xl font-extrabold text-ink-900 dark:text-white">{value}</p>

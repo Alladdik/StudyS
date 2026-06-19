@@ -24,14 +24,14 @@ export function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-8 bg-white dark:bg-[#0f1018]">
+    <div className="min-h-screen flex items-center justify-center p-8 bg-white dark:bg-[#0a1912]">
       <motion.div
         initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .4 }}
         className="w-full max-w-sm"
       >
         <div className="mb-8 flex items-center gap-2.5">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-extrabold"
-            style={{ background: 'linear-gradient(135deg,#7350ff,#5526db)' }}>L</div>
+            style={{ background: 'linear-gradient(135deg,#0c8a51,#0b6f43)' }}>L</div>
           <span className="font-extrabold text-xl text-ink-900 dark:text-white">LTropik</span>
         </div>
 
@@ -84,7 +84,7 @@ export function ForgotPasswordPage() {
               </button>
             </form>
 
-            <div className="mt-6 pt-5 border-t border-ink-100 dark:border-[#282c44]">
+            <div className="mt-6 pt-5 border-t border-ink-100 dark:border-[#1c3a2a]">
               <p className="text-sm text-center text-ink-400 dark:text-[#8891b0]">
                 Згадали пароль?{' '}
                 <Link to="/login" className="font-bold text-brand-600">Увійти</Link>

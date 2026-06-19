@@ -11,7 +11,7 @@ export function DailyQuestsWidget() {
 
   useEffect(() => { load(); }, []);
 
-  if (loading) return <div className="h-24 animate-pulse bg-ink-50 dark:bg-[#1e2033] rounded-2xl" />;
+  if (loading) return <div className="h-24 animate-pulse bg-ink-50 dark:bg-[#102a1d] rounded-2xl" />;
   if (quests.length === 0) return null;
 
   const done = quests.filter(q => q.isCompleted).length;
@@ -23,7 +23,7 @@ export function DailyQuestsWidget() {
       'rounded-2xl p-4 border',
       allDone
         ? 'bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 border-emerald-200 dark:border-emerald-800/40'
-        : 'bg-white dark:bg-[#1a1c2e] border-ink-100 dark:border-[#282c44]'
+        : 'bg-white dark:bg-[#0e2218] border-ink-100 dark:border-[#1c3a2a]'
     )}>
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
@@ -32,14 +32,14 @@ export function DailyQuestsWidget() {
         </div>
         <span className={cx(
           'text-xs font-bold px-2 py-1 rounded-full',
-          allDone ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400' : 'bg-ink-100 dark:bg-[#252840] text-ink-600 dark:text-[#9aa2bd]'
+          allDone ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400' : 'bg-ink-100 dark:bg-[#163a28] text-ink-600 dark:text-[#9aa2bd]'
         )}>
           {done}/{total}
         </span>
       </div>
 
       {/* Progress bar */}
-      <div className="h-1.5 bg-ink-100 dark:bg-[#252840] rounded-full mb-3 overflow-hidden">
+      <div className="h-1.5 bg-ink-100 dark:bg-[#163a28] rounded-full mb-3 overflow-hidden">
         <div
           className="h-full bg-gradient-to-r from-brand-500 to-emerald-500 rounded-full transition-all duration-500"
           style={{ width: `${(done / total) * 100}%` }}
@@ -50,7 +50,7 @@ export function DailyQuestsWidget() {
         {quests.map(q => (
           <div key={q.id} className={cx(
             'flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition',
-            q.isCompleted ? 'opacity-60' : 'bg-ink-50 dark:bg-[#1e2033]'
+            q.isCompleted ? 'opacity-60' : 'bg-ink-50 dark:bg-[#102a1d]'
           )}>
             <span className="text-base flex-shrink-0">{q.quest.icon}</span>
             <div className="flex-1 min-w-0">

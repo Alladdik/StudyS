@@ -31,7 +31,7 @@ const ACTION_COLORS: Record<string, string> = {
 };
 
 function actionColor(a: string) {
-  return ACTION_COLORS[a] ?? 'bg-ink-100 text-ink-600 dark:bg-[#1e2033] dark:text-[#9aa2bd]';
+  return ACTION_COLORS[a] ?? 'bg-ink-100 text-ink-600 dark:bg-[#102a1d] dark:text-[#9aa2bd]';
 }
 
 function fmt(iso: string) {
@@ -136,7 +136,7 @@ export function AuditLogsPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-ink-100 bg-ink-50 dark:bg-[#1a1c2e] dark:border-[#282c44]">
+                  <tr className="border-b border-ink-100 bg-ink-50 dark:bg-[#0e2218] dark:border-[#1c3a2a]">
                     <th className="px-4 py-3 text-left font-bold text-ink-500 text-xs uppercase tracking-wide">Час</th>
                     <th className="px-4 py-3 text-left font-bold text-ink-500 text-xs uppercase tracking-wide">Користувач</th>
                     <th className="px-4 py-3 text-left font-bold text-ink-500 text-xs uppercase tracking-wide">Дія</th>
@@ -149,7 +149,7 @@ export function AuditLogsPage() {
                     <Fragment key={item.id}>
                       <tr
                         onClick={() => setExpanded(expanded === item.id ? null : item.id)}
-                        className="border-b border-ink-50 dark:border-[#1e2033] hover:bg-ink-50 dark:hover:bg-[#1a1c2e] cursor-pointer transition">
+                        className="border-b border-ink-50 dark:border-[#102a1d] hover:bg-ink-50 dark:hover:bg-[#0e2218] cursor-pointer transition">
                         <td className="px-4 py-3 text-xs text-ink-500 whitespace-nowrap font-mono">{fmt(item.createdAt)}</td>
                         <td className="px-4 py-3">
                           <p className="font-semibold text-ink-800 dark:text-[#e8eaf0]">{item.userName}</p>
@@ -166,7 +166,7 @@ export function AuditLogsPage() {
                       {expanded === item.id && (
                         <tr key={`${item.id}-details`} className="bg-ink-50 dark:bg-[#141624]">
                           <td colSpan={5} className="px-4 py-3">
-                            <pre className="text-xs font-mono text-ink-700 dark:text-[#c8cad8] whitespace-pre-wrap break-all bg-white dark:bg-[#1a1c2e] border border-ink-100 dark:border-[#282c44] rounded-xl p-4 max-h-60 overflow-auto">
+                            <pre className="text-xs font-mono text-ink-700 dark:text-[#c8cad8] whitespace-pre-wrap break-all bg-white dark:bg-[#0e2218] border border-ink-100 dark:border-[#1c3a2a] rounded-xl p-4 max-h-60 overflow-auto">
                               {tryParseDetails(item.details)}
                             </pre>
                           </td>

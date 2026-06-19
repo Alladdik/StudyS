@@ -83,9 +83,9 @@ function CtrlBtn({ icon, label, onClick, active, danger, panel, badge, size = 'm
     'relative flex items-center justify-center rounded-full transition-all duration-200 select-none',
     size === 'sm' ? 'w-11 h-11' : 'w-12 h-12 sm:w-14 sm:h-14',
     danger   ? 'bg-rose-600 hover:bg-rose-500 active:bg-rose-700 shadow-lg shadow-rose-900/40'
-    : isOff  ? 'bg-[#2d2d2d] hover:bg-[#363636] active:bg-[#222]'
-    : panel  ? 'bg-[#2d2d2d] hover:bg-[#363636] active:bg-[#222]'
-    : 'bg-[#2d2d2d] hover:bg-[#363636] active:bg-[#222]',
+    : isOff  ? 'bg-[#102a1d] hover:bg-[#163a28] active:bg-[#222]'
+    : panel  ? 'bg-[#102a1d] hover:bg-[#163a28] active:bg-[#222]'
+    : 'bg-[#102a1d] hover:bg-[#163a28] active:bg-[#222]',
     disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer',
   );
 
@@ -142,7 +142,7 @@ function MoreItem({ icon, label, onClick, danger, active }: {
   return (
     <button onClick={onClick}
       className="flex flex-col items-center justify-center gap-1.5 py-3 rounded-2xl transition active:scale-95"
-      style={{ background: active ? 'rgba(101,53,246,0.25)' : danger ? 'rgba(239,68,68,0.12)' : 'rgba(255,255,255,0.05)' }}>
+      style={{ background: active ? 'rgba(0,230,118,0.25)' : danger ? 'rgba(239,68,68,0.12)' : 'rgba(255,255,255,0.05)' }}>
       <span className="text-2xl leading-none">{icon}</span>
       <span className={cx('text-[11px] font-medium', danger ? 'text-rose-400' : active ? 'text-brand-400' : 'text-white/70')}>{label}</span>
     </button>
@@ -355,7 +355,7 @@ export function RoomPage() {
 
   // ── Error ─────────────────────────────────────────────────────────────────
   if (loadError) return (
-    <div className="h-dvh flex items-center justify-center" style={{ background: '#1a1a2e' }}>
+    <div className="h-dvh flex items-center justify-center" style={{ background: '#0c1f16' }}>
       <div className="text-center text-white">
         <div className="text-7xl mb-5">📭</div>
         <h1 className="text-2xl font-bold mb-2">{loadError}</h1>
@@ -367,13 +367,13 @@ export function RoomPage() {
 
   // ── Main ─────────────────────────────────────────────────────────────────
   return (
-    <div className="h-dvh flex flex-col overflow-hidden select-none" style={{ background: '#111318' }}>
+    <div className="h-dvh flex flex-col overflow-hidden select-none" style={{ background: '#0a1912' }}>
 
       {/* Room ended overlay */}
       <AnimatePresence>
         {roomEnded && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center" style={{ background: 'rgba(17,19,24,0.92)', backdropFilter: 'blur(12px)' }}>
+            className="fixed inset-0 z-[100] flex items-center justify-center" style={{ background: 'rgba(8,18,12,0.92)', backdropFilter: 'blur(12px)' }}>
             <motion.div initial={{ scale: 0.85, y: 24 }} animate={{ scale: 1, y: 0 }} className="text-center text-white">
               <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.1 }} className="text-7xl mb-5">👋</motion.div>
               <h1 className="text-2xl font-bold mb-2">{roomEnded === 'deleted' ? 'Кімнату видалено' : roomEnded === 'kicked' ? 'Вас видалено' : roomEnded === 'denied' ? 'Доступ заборонено' : 'Зустріч завершено'}</h1>
@@ -385,12 +385,12 @@ export function RoomPage() {
 
       {/* ── Top bar ─────────────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between px-4 py-3 flex-shrink-0 border-b"
-        style={{ background: 'rgba(26,27,32,0.95)', borderColor: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(20px)' }}>
+        style={{ background: 'rgba(10,25,18,0.95)', borderColor: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(20px)' }}>
 
         {/* Left: room info */}
         <div className="flex items-center gap-3 min-w-0">
           <div className="w-9 h-9 rounded-2xl flex items-center justify-center flex-shrink-0"
-            style={{ background: 'linear-gradient(135deg,#6535f6,#8d5cf6)' }}>
+            style={{ background: 'linear-gradient(135deg,#00e676,#0b6f43)' }}>
             <Icon.CamOn />
           </div>
           <div className="min-w-0">
@@ -403,7 +403,7 @@ export function RoomPage() {
                 </span>
               </motion.div>
               {room?.courseName && (
-                <span className="text-[11px] px-1.5 py-0.5 rounded-md font-medium" style={{ background: 'rgba(101,53,246,0.2)', color: '#a78bfa' }}>
+                <span className="text-[11px] px-1.5 py-0.5 rounded-md font-medium" style={{ background: 'rgba(0,230,118,0.2)', color: '#34d399' }}>
                   {room.courseName}
                 </span>
               )}
@@ -429,7 +429,7 @@ export function RoomPage() {
             onClick={() => setSidePanel(sidePanel === 'people' ? null : 'people')}
             className={cx('flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all',
               sidePanel === 'people' ? 'text-white' : 'text-white/60 hover:text-white')}
-            style={{ background: sidePanel === 'people' ? 'rgba(101,53,246,0.35)' : 'rgba(255,255,255,0.07)' }}>
+            style={{ background: sidePanel === 'people' ? 'rgba(0,230,118,0.35)' : 'rgba(255,255,255,0.07)' }}>
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
             {participantCount}
           </button>
@@ -462,7 +462,7 @@ export function RoomPage() {
             initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
             onClick={() => { setUnlockSignal(n => n + 1); setAudioBlocked(false); }}
             className="text-sm text-center py-2 px-4 font-semibold flex-shrink-0 w-full cursor-pointer"
-            style={{ background: 'rgba(101,53,246,0.2)', color: '#c4b5fd', borderBottom: '1px solid rgba(101,53,246,0.3)' }}>
+            style={{ background: 'rgba(0,230,118,0.2)', color: '#86efac', borderBottom: '1px solid rgba(0,230,118,0.3)' }}>
             🔇 Натисніть, щоб увімкнути звук учасників
           </motion.button>
         )}
@@ -475,7 +475,7 @@ export function RoomPage() {
         <div className="flex-1 flex flex-col p-2.5 gap-2.5 overflow-hidden">
           {hasScreenShare ? (
             <div className="flex flex-col gap-2.5 h-full">
-              <div className="flex-1 min-h-0 rounded-2xl overflow-hidden" style={{ background: '#1a1a2e' }}>
+              <div className="flex-1 min-h-0 rounded-2xl overflow-hidden" style={{ background: '#0c1f16' }}>
                 {screenSharing
                   ? <VideoTile stream={screenStream} displayName="Ваш екран" micOn={micOn} cameraOn isScreenSharing isLarge isLocal />
                   : sharingParticipant
@@ -498,7 +498,7 @@ export function RoomPage() {
             </div>
           ) : hasPin ? (
             <div className="flex flex-col gap-2.5 h-full">
-              <div className="flex-1 min-h-0 rounded-2xl overflow-hidden" style={{ background: '#1a1a2e' }}>
+              <div className="flex-1 min-h-0 rounded-2xl overflow-hidden" style={{ background: '#0c1f16' }}>
                 {pinnedLocal
                   ? <VideoTile stream={localStream} displayName="Ви" micOn={micOn} cameraOn={cameraOn} isLocal isLarge speaking={speakingIds.has('local')} pinned onPin={() => togglePin('local')} />
                   : pinnedParticipant && (
@@ -550,7 +550,7 @@ export function RoomPage() {
               initial={{ width: 0, opacity: 0 }} animate={{ width: 340, opacity: 1 }} exit={{ width: 0, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 380, damping: 38 }}
               className="flex-shrink-0 overflow-hidden border-l"
-              style={{ borderColor: 'rgba(255,255,255,0.07)', background: 'rgba(26,27,32,0.97)' }}>
+              style={{ borderColor: 'rgba(255,255,255,0.07)', background: 'rgba(10,25,18,0.97)' }}>
               <div style={{ width: 340 }} className="h-full p-3 flex flex-col">
                 {panelInner}
               </div>
@@ -567,7 +567,7 @@ export function RoomPage() {
             initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
             transition={{ type: 'spring', stiffness: 380, damping: 40 }}
             className="fixed inset-x-0 bottom-0 top-14 z-[70] flex flex-col p-3 rounded-t-2xl border-t"
-            style={{ background: 'rgba(26,27,32,0.98)', borderColor: 'rgba(255,255,255,0.08)', paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))' }}>
+            style={{ background: 'rgba(10,25,18,0.98)', borderColor: 'rgba(255,255,255,0.08)', paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))' }}>
             {panelInner}
           </motion.div>
         )}
@@ -575,7 +575,7 @@ export function RoomPage() {
 
       {/* ── Bottom controls — Telegram style ───────────────────────────────── */}
       <div className="flex-shrink-0 border-t"
-        style={{ background: 'rgba(20,21,26,0.97)', borderColor: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(20px)' }}>
+        style={{ background: 'rgba(8,18,12,0.97)', borderColor: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(20px)' }}>
 
         {/* Recording error/progress banner */}
         <AnimatePresence>
@@ -589,12 +589,12 @@ export function RoomPage() {
           )}
           {(recordingState === 'uploading') && (
             <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-              className="px-4 py-2 text-xs" style={{ background: 'rgba(101,53,246,0.1)', borderBottom: '1px solid rgba(101,53,246,0.2)' }}>
+              className="px-4 py-2 text-xs" style={{ background: 'rgba(0,230,118,0.1)', borderBottom: '1px solid rgba(0,230,118,0.2)' }}>
               <div className="flex items-center justify-between mb-1">
-                <span style={{ color: '#a78bfa' }}>⬆️ Завантаження запису… {recordingProgress}%</span>
+                <span style={{ color: '#34d399' }}>⬆️ Завантаження запису… {recordingProgress}%</span>
               </div>
               <div className="h-1 rounded-full" style={{ background: 'rgba(255,255,255,0.1)' }}>
-                <div className="h-full rounded-full transition-all" style={{ width: `${recordingProgress}%`, background: '#6535f6' }} />
+                <div className="h-full rounded-full transition-all" style={{ width: `${recordingProgress}%`, background: '#00c853' }} />
               </div>
             </motion.div>
           )}
@@ -679,7 +679,7 @@ export function RoomPage() {
                     <motion.div
                       initial={{ opacity: 0, y: 8, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8, scale: 0.9 }}
                       className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 flex gap-1 p-2 rounded-2xl"
-                      style={{ background: '#1e1f26', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 10px 40px rgba(0,0,0,0.5)' }}>
+                      style={{ background: '#102a1d', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 10px 40px rgba(0,0,0,0.5)' }}>
                       {REACTION_EMOJIS.map(emoji => (
                         <button key={emoji}
                           onClick={() => { sendReaction(emoji); setShowReactions(false); }}
@@ -777,7 +777,7 @@ export function RoomPage() {
               transition={{ type: 'spring', stiffness: 400, damping: 40 }}
               onClick={e => e.stopPropagation()}
               className="absolute inset-x-0 bottom-0 rounded-t-3xl p-4"
-              style={{ background: '#1e1f26', borderTop: '1px solid rgba(255,255,255,0.1)', paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))' }}>
+              style={{ background: '#102a1d', borderTop: '1px solid rgba(255,255,255,0.1)', paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))' }}>
               <div className="w-10 h-1 rounded-full mx-auto mb-4" style={{ background: 'rgba(255,255,255,0.2)' }} />
               {/* Reactions row */}
               <div className="flex justify-between gap-1 mb-4">
@@ -824,7 +824,7 @@ export function RoomPage() {
               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
               onClick={e => e.stopPropagation()}
               className="rounded-3xl p-7 max-w-sm w-full text-white"
-              style={{ background: '#1e1f26', border: '1px solid rgba(255,255,255,0.1)' }}>
+              style={{ background: '#102a1d', border: '1px solid rgba(255,255,255,0.1)' }}>
               <div className="w-16 h-16 rounded-full flex items-center justify-center text-4xl mx-auto mb-5"
                 style={{ background: 'rgba(239,68,68,0.15)' }}>⚠️</div>
               <h2 className="text-xl font-extrabold text-center mb-2">Завершити для всіх?</h2>

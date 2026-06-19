@@ -58,14 +58,14 @@ export function LoginPage() {
 
       {/* ── Left brand panel ─────────────────────────────── */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden flex-col justify-between p-14"
-        style={{ background: 'linear-gradient(145deg, #5526db 0%, #7350ff 45%, #8d72ff 100%)' }}>
+        style={{ background: 'linear-gradient(150deg, #0a1912 0%, #0b6f43 55%, #00c853 100%)' }}>
 
         {/* grid texture */}
         <div className="absolute inset-0 opacity-[0.07]"
           style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '48px 48px' }} />
         {/* glow blobs */}
-        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-white/15 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 -left-20 w-80 h-80 rounded-full bg-fuchsia-400/20 blur-3xl pointer-events-none" />
+        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-mint-500/20 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 -left-20 w-80 h-80 rounded-full bg-mint-400/20 blur-3xl pointer-events-none" />
 
         {/* Logo */}
         <div className="relative z-10 flex items-center gap-3">
@@ -85,13 +85,13 @@ export function LoginPage() {
           <motion.p
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .2 }}
             className="text-white/60 text-lg mt-5 max-w-xs leading-relaxed">
-            Інтерактивні уроки, AI‑ментор та геймифікація — все в одному місці.
+            Інтерактивні уроки, живі заняття та геймифікація — все в одному місці.
           </motion.p>
 
           <div className="mt-10 flex flex-col gap-3 max-w-xs">
             {[
               { icon: '🎓', text: 'Інтерактивні уроки та тести' },
-              { icon: '🤖', text: 'AI‑ментор доступний 24/7' },
+              { icon: '🎥', text: 'Живі відеозаняття з викладачем' },
               { icon: '🏆', text: 'Бейджі, стріки та рейтинги' },
             ].map((f, i) => (
               <motion.div key={f.text}
@@ -108,7 +108,7 @@ export function LoginPage() {
       </div>
 
       {/* ── Right: form panel ────────────────────────────── */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-white dark:bg-[#0f1018]">
+      <div className="flex-1 flex items-center justify-center p-8 bg-white dark:bg-[#0a1912]">
 
         <motion.div
           initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45, ease: 'easeOut' }}
@@ -117,7 +117,7 @@ export function LoginPage() {
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center gap-2.5 mb-8">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-extrabold"
-              style={{ background: 'linear-gradient(135deg,#7350ff,#5526db)' }}>L</div>
+              style={{ background: 'linear-gradient(135deg,#0c8a51,#0b6f43)' }}>L</div>
             <span className="font-extrabold text-xl text-ink-900 dark:text-white">LTropik</span>
           </div>
 
@@ -216,7 +216,7 @@ export function LoginPage() {
                 <button type="button" onClick={() => setShowPass(!showPass)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 transition-colors"
                   style={{ color: '#9aa2bd' }}
-                  onMouseOver={e => (e.currentTarget.style.color = '#6535f6')}
+                  onMouseOver={e => (e.currentTarget.style.color = '#00c853')}
                   onMouseOut={e => (e.currentTarget.style.color = '#9aa2bd')}>
                   {showPass
                     ? <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
@@ -257,7 +257,7 @@ export function LoginPage() {
             </Link>
           </div>
 
-          <div className="mt-5 pt-6 border-t border-ink-100 dark:border-[#282c44]">
+          <div className="mt-5 pt-6 border-t border-ink-100 dark:border-[#1c3a2a]">
             <p className="text-sm text-center text-ink-400 dark:text-[#6b7394]">
               Немає акаунту?{' '}
               <Link to="/register" className="font-bold text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors">

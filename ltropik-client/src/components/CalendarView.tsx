@@ -87,7 +87,7 @@ export function CalendarView({ entries, currentMonth, onMonthChange, onDayClick,
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
-        <button onClick={prev} className="w-9 h-9 rounded-xl hover:bg-ink-100 dark:hover:bg-[#252840] flex items-center justify-center transition">
+        <button onClick={prev} className="w-9 h-9 rounded-xl hover:bg-ink-100 dark:hover:bg-[#163a28] flex items-center justify-center transition">
           <svg className="w-4 h-4 text-ink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
@@ -95,7 +95,7 @@ export function CalendarView({ entries, currentMonth, onMonthChange, onDayClick,
         <span className="font-bold text-ink-900 dark:text-white text-lg">
           {MONTHS_UA[currentMonth.month]} {currentMonth.year}
         </span>
-        <button onClick={next} className="w-9 h-9 rounded-xl hover:bg-ink-100 dark:hover:bg-[#252840] flex items-center justify-center transition">
+        <button onClick={next} className="w-9 h-9 rounded-xl hover:bg-ink-100 dark:hover:bg-[#163a28] flex items-center justify-center transition">
           <svg className="w-4 h-4 text-ink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
@@ -143,7 +143,7 @@ export function CalendarView({ entries, currentMonth, onMonthChange, onDayClick,
               } : undefined}
               className={cx(
                 'min-h-[84px] rounded-xl p-1.5 border transition select-none flex flex-col justify-between group',
-                day ? 'border-ink-100 dark:border-[#282c44] hover:border-brand-200 hover:bg-brand-50/20 dark:hover:bg-brand-900/10 cursor-pointer' : 'border-transparent',
+                day ? 'border-ink-100 dark:border-[#1c3a2a] hover:border-brand-200 hover:bg-brand-50/20 dark:hover:bg-brand-900/10 cursor-pointer' : 'border-transparent',
                 isToday && 'border-brand-400 bg-brand-50/50 dark:bg-brand-900/20 shadow-sm',
                 dragOverDay === day && 'border-brand-400 bg-brand-100/40 dark:bg-brand-900/20 scale-[1.02]'
               )}
@@ -186,7 +186,7 @@ export function CalendarView({ entries, currentMonth, onMonthChange, onDayClick,
                       );
                     })}
                     {events.length > 2 && (
-                      <div className="text-[9px] text-ink-500 dark:text-[#6b7394] font-bold bg-ink-100/60 dark:bg-[#252840]/60 rounded px-1 py-0.2 self-start">
+                      <div className="text-[9px] text-ink-500 dark:text-[#6b7394] font-bold bg-ink-100/60 dark:bg-[#163a28]/60 rounded px-1 py-0.2 self-start">
                         +{events.length - 2} ще
                       </div>
                     )}

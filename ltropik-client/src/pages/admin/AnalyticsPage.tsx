@@ -18,7 +18,7 @@ interface ChurnRow { id: string; name: string; email: string; lastActivity: stri
 interface RevenueRow { month: string; revenue: number; count: number; }
 
 // ── Styles ────────────────────────────────────────────────────────────────────
-const COLORS = ['#6535f6', '#8d72ff', '#10b981', '#f59e0b', '#f43f5e', '#3b82f6', '#ec4899'];
+const COLORS = ['#00c853', '#12a160', '#10b981', '#f59e0b', '#f43f5e', '#3b82f6', '#ec4899'];
 const tooltipStyle = { background: '#fff', border: '1px solid #e1e4ee', borderRadius: 14, boxShadow: '0 8px 24px rgba(24,27,41,.08)', fontSize: 12, padding: '8px 12px' };
 const tick = { fill: '#9aa2bd', fontSize: 11 };
 
@@ -135,7 +135,7 @@ export function AnalyticsPage() {
       </div>
 
       {/* ── Tabs ──────────────────────────────────────────────────────────── */}
-      <div className="flex gap-1 mb-5 bg-ink-100 dark:bg-[#1e2033] rounded-2xl p-1 w-fit flex-wrap">
+      <div className="flex gap-1 mb-5 bg-ink-100 dark:bg-[#102a1d] rounded-2xl p-1 w-fit flex-wrap">
         {([
           ['overview', '📊 Активність'],
           ['courses',  '📚 Курси'],
@@ -144,7 +144,7 @@ export function AnalyticsPage() {
         ] as const).map(([t, label]) => (
           <button key={t} onClick={() => setTab(t)}
             className={cx('px-4 py-2 rounded-xl text-sm font-semibold transition',
-              tab === t ? 'bg-white dark:bg-[#252840] text-brand-700 dark:text-brand-400 shadow-sm' : 'text-ink-500 dark:text-[#6b7394] hover:text-ink-800 dark:hover:text-[#e8eaf0]')}>
+              tab === t ? 'bg-white dark:bg-[#163a28] text-brand-700 dark:text-brand-400 shadow-sm' : 'text-ink-500 dark:text-[#6b7394] hover:text-ink-800 dark:hover:text-[#e8eaf0]')}>
             {label}
           </button>
         ))}
@@ -172,8 +172,8 @@ export function AnalyticsPage() {
                 <AreaChart data={activity}>
                   <defs>
                     <linearGradient id="colorSubmissions" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#6535f6" stopOpacity={0.18} />
-                      <stop offset="95%" stopColor="#6535f6" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#00c853" stopOpacity={0.18} />
+                      <stop offset="95%" stopColor="#00c853" stopOpacity={0} />
                     </linearGradient>
                     <linearGradient id="colorTests" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#10b981" stopOpacity={0.18} />
@@ -184,7 +184,7 @@ export function AnalyticsPage() {
                   <XAxis dataKey="date" tick={tick} axisLine={false} tickLine={false} interval={4} />
                   <YAxis tick={tick} axisLine={false} tickLine={false} allowDecimals={false} />
                   <Tooltip contentStyle={tooltipStyle} />
-                  <Area type="monotone" dataKey="submissions" stroke="#6535f6" strokeWidth={2.5} fill="url(#colorSubmissions)" name="ДЗ" dot={false} />
+                  <Area type="monotone" dataKey="submissions" stroke="#00c853" strokeWidth={2.5} fill="url(#colorSubmissions)" name="ДЗ" dot={false} />
                   <Area type="monotone" dataKey="tests" stroke="#10b981" strokeWidth={2.5} fill="url(#colorTests)" name="Тести" dot={false} />
                 </AreaChart>
               </ResponsiveContainer>
@@ -200,7 +200,7 @@ export function AnalyticsPage() {
               </div>
               <div className="flex flex-col gap-1.5">
                 {churn.slice(0, 5).map(r => (
-                  <div key={r.id} className="flex items-center justify-between py-1.5 px-3 rounded-xl hover:bg-ink-50 dark:hover:bg-[#1e2033] transition">
+                  <div key={r.id} className="flex items-center justify-between py-1.5 px-3 rounded-xl hover:bg-ink-50 dark:hover:bg-[#102a1d] transition">
                     <div>
                       <p className="text-sm font-medium text-ink-800">{r.name}</p>
                       <p className="text-xs text-ink-400">{r.email}</p>
@@ -272,7 +272,7 @@ export function AnalyticsPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-ink-100 dark:border-[#282c44] bg-ink-50/60 dark:bg-[#151722]/60">
+                      <tr className="border-b border-ink-100 dark:border-[#1c3a2a] bg-ink-50/60 dark:bg-[#0c2118]/60">
                         {['#', 'Курс', 'Студентів', 'Уроків', 'Дохід'].map(h => (
                           <th key={h} className="text-left px-5 py-3 text-[11px] font-bold text-ink-400 uppercase tracking-wider">{h}</th>
                         ))}
@@ -280,7 +280,7 @@ export function AnalyticsPage() {
                     </thead>
                     <tbody>
                       {courses.map((c, i) => (
-                        <tr key={c.id} className="border-b border-ink-50 dark:border-[#1e2033] last:border-0 hover:bg-ink-50/60 dark:hover:bg-[#1e2033]/60 transition">
+                        <tr key={c.id} className="border-b border-ink-50 dark:border-[#102a1d] last:border-0 hover:bg-ink-50/60 dark:hover:bg-[#102a1d]/60 transition">
                           <td className="px-5 py-3.5 text-ink-300 text-xs font-bold">{i + 1}</td>
                           <td className="px-5 py-3.5">
                             <div className="flex items-center gap-2.5">
@@ -302,7 +302,7 @@ export function AnalyticsPage() {
                       ))}
                     </tbody>
                     <tfoot>
-                      <tr className="border-t border-ink-100 dark:border-[#282c44] bg-ink-50/60 dark:bg-[#151722]/60">
+                      <tr className="border-t border-ink-100 dark:border-[#1c3a2a] bg-ink-50/60 dark:bg-[#0c2118]/60">
                         <td className="px-5 py-2.5" colSpan={2}><span className="text-xs font-bold text-ink-400 uppercase">Разом</span></td>
                         <td className="px-5 py-2.5 font-bold text-brand-700">{totalStudents}</td>
                         <td className="px-5 py-2.5 font-bold text-ink-600">{courses.reduce((s, c) => s + c.lessons, 0)}</td>
@@ -339,7 +339,7 @@ export function AnalyticsPage() {
                     name === 'revenue' ? `${Number(v).toLocaleString()} ₴` : `${v} транзакцій`,
                     name === 'revenue' ? 'Дохід' : 'Платежів'
                   ]} />
-                  <Bar dataKey="revenue" fill="#6535f6" radius={[8, 8, 0, 0]} maxBarSize={60} name="revenue" />
+                  <Bar dataKey="revenue" fill="#00c853" radius={[8, 8, 0, 0]} maxBarSize={60} name="revenue" />
                 </BarChart>
               </ResponsiveContainer>
             )}
@@ -353,7 +353,7 @@ export function AnalyticsPage() {
               { label: 'Транзакцій', value: revenue.reduce((s, r) => s + r.count, 0), icon: '💳', color: 'text-amber-600' },
             ].map(s => (
               <Card key={s.label} className="p-5 flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-ink-50 dark:bg-[#1e2033] flex items-center justify-center text-2xl flex-shrink-0">{s.icon}</div>
+                <div className="w-12 h-12 rounded-2xl bg-ink-50 dark:bg-[#102a1d] flex items-center justify-center text-2xl flex-shrink-0">{s.icon}</div>
                 <MiniStat label={s.label} value={s.value} color={s.color} />
               </Card>
             ))}
@@ -382,7 +382,7 @@ export function AnalyticsPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-ink-100 dark:border-[#282c44] bg-ink-50/60 dark:bg-[#151722]/60">
+                  <tr className="border-b border-ink-100 dark:border-[#1c3a2a] bg-ink-50/60 dark:bg-[#0c2118]/60">
                     {['Студент', 'Остання активність', 'ДЗ очікує', 'Ризик'].map(h => (
                       <th key={h} className="text-left px-5 py-3 text-[11px] font-bold text-ink-400 uppercase tracking-wider">{h}</th>
                     ))}

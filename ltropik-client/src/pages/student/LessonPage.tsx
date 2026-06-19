@@ -3,7 +3,6 @@ import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Layout } from '../../components/Layout';
 import { ContentBlockRenderer } from '../../components/ContentBlockRenderer';
-import { AiMentorChat } from '../../components/AiMentorChat';
 import { LessonComments } from '../../components/LessonComments';
 import { LessonNotes } from '../../components/LessonNotes';
 import { FlashcardsPanel } from '../../components/FlashcardsPanel';
@@ -102,7 +101,7 @@ export function LessonPage() {
               className={`flex items-center gap-1.5 px-3 py-2.5 rounded-xl border text-sm font-semibold transition ${
                 bookmarked
                   ? 'bg-amber-50 dark:bg-[#2a1e00] border-amber-300 dark:border-[#5a3e00] text-amber-700 dark:text-amber-300'
-                  : 'bg-white dark:bg-[#1a1c2e] border-ink-200 dark:border-[#282c44] text-ink-500 dark:text-[#9aa2bd] hover:border-amber-300 hover:text-amber-600'
+                  : 'bg-white dark:bg-[#0e2218] border-ink-200 dark:border-[#1c3a2a] text-ink-500 dark:text-[#9aa2bd] hover:border-amber-300 hover:text-amber-600'
               }`}
             >
               <span>{bookmarked ? '🔖' : '🏷️'}</span>
@@ -167,7 +166,7 @@ export function LessonPage() {
               <span className="text-xs font-semibold text-ink-500">Прогрес курсу</span>
               <span className="text-xs font-bold text-brand-600">{progressPct}%</span>
             </div>
-            <div className="h-2 bg-ink-100 dark:bg-[#252840] rounded-full overflow-hidden">
+            <div className="h-2 bg-ink-100 dark:bg-[#163a28] rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-brand-500 to-brand-600 rounded-full transition-all duration-500" style={{ width: `${progressPct}%` }} />
             </div>
           </div>
@@ -194,16 +193,6 @@ export function LessonPage() {
 
         <div className="h-24" />
       </div>
-
-      {courseId && (
-        <AiMentorChat
-          courseId={courseId}
-          maxMessages={20}
-          lessonContext={lesson.contentBlocks
-            ? lesson.contentBlocks.map((b: any) => b.content ?? b.text ?? '').join(' ').slice(0, 800)
-            : lesson.title}
-        />
-      )}
     </Layout>
   );
 }

@@ -64,7 +64,7 @@ export function NotificationsAdminPage() {
       <div className="flex gap-2 mb-6">
         {([['send', '📢 Надіслати'], ['history', '📋 Журнал']] as const).map(([t, label]) => (
           <button key={t} onClick={() => setTab(t)}
-            className={cx('chip transition-all', tab === t ? 'bg-brand-600 text-white' : 'bg-white dark:bg-[#1e2033] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#2d3148]')}>
+            className={cx('chip transition-all', tab === t ? 'bg-brand-600 text-white' : 'bg-white dark:bg-[#102a1d] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#1f4d36]')}>
             {label}
           </button>
         ))}
@@ -119,7 +119,7 @@ export function NotificationsAdminPage() {
                 { title: '⚠️ Технічні роботи', body: 'Сьогодні з 23:00 до 01:00 плануються технічні роботи. Платформа буде недоступна.', role: '' },
               ].map((tmpl, i) => (
                 <button key={i} onClick={() => setForm(f => ({...f, title: tmpl.title, body: tmpl.body, role: tmpl.role}))}
-                  className="text-left px-3 py-2 rounded-xl bg-ink-50 dark:bg-[#1e2033] hover:bg-brand-50 dark:hover:bg-brand-900/20 text-sm transition">
+                  className="text-left px-3 py-2 rounded-xl bg-ink-50 dark:bg-[#102a1d] hover:bg-brand-50 dark:hover:bg-brand-900/20 text-sm transition">
                   <span className="font-semibold text-ink-800 dark:text-[#e8eaf0]">{tmpl.title}</span>
                   <span className="ml-2 text-xs text-ink-400">{tmpl.role || 'Всі'}</span>
                 </button>
@@ -138,7 +138,7 @@ export function NotificationsAdminPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-ink-100 dark:border-[#282c44] bg-ink-50/60 dark:bg-[#151722]/60">
+                    <tr className="border-b border-ink-100 dark:border-[#1c3a2a] bg-ink-50/60 dark:bg-[#0c2118]/60">
                       {['Отримувач', 'Заголовок', 'Текст', 'Статус', 'Дата'].map(h => (
                         <th key={h} className="text-left px-4 py-3 text-xs font-bold text-ink-400 uppercase tracking-wider whitespace-nowrap">{h}</th>
                       ))}
@@ -146,7 +146,7 @@ export function NotificationsAdminPage() {
                   </thead>
                   <tbody>
                     {history.map(n => (
-                      <tr key={n.id} className="border-b border-ink-50 dark:border-[#1e2033] last:border-0 hover:bg-ink-50/40 dark:hover:bg-[#1e2033]/60 transition">
+                      <tr key={n.id} className="border-b border-ink-50 dark:border-[#102a1d] last:border-0 hover:bg-ink-50/40 dark:hover:bg-[#102a1d]/60 transition">
                         <td className="px-4 py-3">
                           <p className="font-semibold text-ink-800 dark:text-[#e8eaf0] text-xs">{n.userName}</p>
                           <p className="text-ink-400 text-[10px]">{n.userEmail}</p>

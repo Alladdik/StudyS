@@ -71,7 +71,7 @@ export function FinancePage() {
       <div className="flex gap-2 mb-6">
         {([['transactions', '💳 Транзакції'], ['export', '📥 Експорт']] as const).map(([t, label]) => (
           <button key={t} onClick={() => setTab(t)}
-            className={cx('chip transition-all', tab === t ? 'bg-brand-600 text-white' : 'bg-white dark:bg-[#1e2033] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#2d3148]')}>
+            className={cx('chip transition-all', tab === t ? 'bg-brand-600 text-white' : 'bg-white dark:bg-[#102a1d] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#1f4d36]')}>
             {label}
           </button>
         ))}
@@ -104,7 +104,7 @@ export function FinancePage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-ink-100 dark:border-[#282c44] bg-ink-50/60 dark:bg-[#151722]/60">
+                      <tr className="border-b border-ink-100 dark:border-[#1c3a2a] bg-ink-50/60 dark:bg-[#0c2118]/60">
                         {['Студент', 'Курс', 'Сума', 'Статус', 'ID транзакції', 'Дата'].map(h => (
                           <th key={h} className="text-left px-4 py-3 text-xs font-bold text-ink-400 uppercase tracking-wider whitespace-nowrap">{h}</th>
                         ))}
@@ -112,7 +112,7 @@ export function FinancePage() {
                     </thead>
                     <tbody>
                       {transactions.map(t => (
-                        <tr key={t.id} className="border-b border-ink-50 dark:border-[#1e2033] last:border-0 hover:bg-ink-50/40 dark:hover:bg-[#1e2033]/60 transition">
+                        <tr key={t.id} className="border-b border-ink-50 dark:border-[#102a1d] last:border-0 hover:bg-ink-50/40 dark:hover:bg-[#102a1d]/60 transition">
                           <td className="px-4 py-3">
                             <p className="font-semibold text-ink-800 dark:text-[#e8eaf0] text-xs">{t.studentName}</p>
                             <p className="text-ink-400 text-[10px]">{t.studentEmail}</p>

@@ -257,7 +257,7 @@ export function AchievementsPage() {
                           <XAxis dataKey="date" stroke="#94a3b8" fontSize={11} />
                           <YAxis stroke="#94a3b8" fontSize={11} domain={[0, 'auto']} />
                           <ChartTooltip content={<CustomChartTooltip />} />
-                          <Line type="monotone" dataKey="score" stroke="#6535f6" strokeWidth={3} dot={{ r: 3, fill: '#6535f6' }} activeDot={{ r: 6 }} />
+                          <Line type="monotone" dataKey="score" stroke="#00c853" strokeWidth={3} dot={{ r: 3, fill: '#00c853' }} activeDot={{ r: 6 }} />
                         </LineChart>
                       </ResponsiveContainer>
                     )}

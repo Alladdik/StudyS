@@ -40,7 +40,7 @@ export function TeacherAnalyticsPage() {
           <Card className="overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-ink-100 dark:border-[#282c44]">
+                <tr className="border-b border-ink-100 dark:border-[#1c3a2a]">
                   {['#', "Ім'я", 'Курсів', 'Студентів', 'Перевірено ДЗ', 'На черзі ДЗ'].map(h => (
                     <th key={h} className="text-left px-5 py-3.5 text-xs font-bold text-ink-400 uppercase tracking-wider">{h}</th>
                   ))}
@@ -48,7 +48,7 @@ export function TeacherAnalyticsPage() {
               </thead>
               <tbody>
                 {stats.map((t, i) => (
-                  <tr key={t.id} className="border-b border-ink-50 dark:border-[#1e2033] last:border-0 hover:bg-ink-50/60 dark:hover:bg-[#1e2033]/60 transition">
+                  <tr key={t.id} className="border-b border-ink-50 dark:border-[#102a1d] last:border-0 hover:bg-ink-50/60 dark:hover:bg-[#102a1d]/60 transition">
                     <td className="px-5 py-3.5 font-bold text-ink-400">{i + 1}</td>
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-3">

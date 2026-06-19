@@ -14,7 +14,7 @@ interface TrendPoint {
 
 interface Props { studentId: string; days?: number; }
 
-const COLORS = ['#6535f6', '#10b981', '#f59e0b', '#ef4444', '#3b82f6', '#8b5cf6'];
+const COLORS = ['#00c853', '#10b981', '#f59e0b', '#ef4444', '#3b82f6', '#8b5cf6'];
 
 // Convert grade string to numeric (A→95, B→80, etc.)
 function gradeToNum(g: string): number | null {

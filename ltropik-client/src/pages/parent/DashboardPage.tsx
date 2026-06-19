@@ -93,7 +93,7 @@ export function ParentDashboardPage() {
               <button key={c.id} onClick={() => setSelected(c)}
                 className={cx('chip', selected?.id === c.id
                   ? 'bg-brand-600 text-white shadow-[var(--shadow-glow)]'
-                  : 'bg-white dark:bg-[#1e2033] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#2d3148] hover:ring-brand-200 dark:hover:ring-brand-700')}>
+                  : 'bg-white dark:bg-[#102a1d] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#1f4d36] hover:ring-brand-200 dark:hover:ring-brand-700')}>
                 {c.firstName} {c.lastName}
               </button>
             ))}
@@ -126,7 +126,7 @@ export function ParentDashboardPage() {
           <div className="flex gap-2 flex-wrap">
             {(['journal', 'homeworks', 'balance', 'upcoming'] as const).map((t) => (
               <button key={t} onClick={() => setTab(t)}
-                className={cx('chip', tab === t ? 'bg-brand-600 text-white' : 'bg-white dark:bg-[#1e2033] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#2d3148]')}>
+                className={cx('chip', tab === t ? 'bg-brand-600 text-white' : 'bg-white dark:bg-[#102a1d] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#1f4d36]')}>
                 {{ journal: 'Журнал', homeworks: 'Домашні завдання', balance: 'Баланс', upcoming: 'Розклад' }[t]}
               </button>
             ))}
@@ -137,7 +137,7 @@ export function ParentDashboardPage() {
               <div className="flex gap-2 mb-4 flex-wrap">
                 {courses.map((c) => (
                   <button key={c.id} onClick={() => setSelectedCourse(c.id)}
-                    className={cx('chip text-sm', selectedCourse === c.id ? 'bg-ink-800 text-white' : 'bg-white dark:bg-[#1e2033] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#2d3148]')}>
+                    className={cx('chip text-sm', selectedCourse === c.id ? 'bg-ink-800 text-white' : 'bg-white dark:bg-[#102a1d] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#1f4d36]')}>
                     {c.title}
                   </button>
                 ))}

@@ -29,14 +29,14 @@ export function VerifyEmailPage() {
   }, [token]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-8 bg-white dark:bg-[#0f1018]">
+    <div className="min-h-screen flex items-center justify-center p-8 bg-white dark:bg-[#0a1912]">
       <motion.div
         initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .4 }}
         className="w-full max-w-sm text-center"
       >
         <div className="mb-6 flex items-center justify-center gap-2.5">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-extrabold"
-            style={{ background: 'linear-gradient(135deg,#7350ff,#5526db)' }}>L</div>
+            style={{ background: 'linear-gradient(135deg,#0c8a51,#0b6f43)' }}>L</div>
           <span className="font-extrabold text-xl text-ink-900 dark:text-white">LTropik</span>
         </div>
 

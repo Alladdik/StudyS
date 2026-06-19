@@ -77,7 +77,7 @@ export function GradebookPage() {
           <button key={c.id} onClick={() => setSelectedCourse(c.id)}
             className={cx('chip transition', selectedCourse === c.id
               ? 'bg-brand-600 text-white shadow-[var(--shadow-glow)]'
-              : 'bg-white dark:bg-[#1e2033] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#2d3148] hover:ring-brand-200 dark:hover:ring-brand-700')}>
+              : 'bg-white dark:bg-[#102a1d] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#1f4d36] hover:ring-brand-200 dark:hover:ring-brand-700')}>
             {c.title}
           </button>
         ))}
@@ -98,14 +98,14 @@ export function GradebookPage() {
             <table className="text-xs border-collapse">
               <thead>
                 {/* Module row */}
-                <tr className="bg-ink-50 dark:bg-[#151722] border-b border-ink-200 dark:border-[#282c44]">
-                  <th className="sticky left-0 bg-ink-50 dark:bg-[#151722] px-4 py-2 text-left font-bold text-ink-700 dark:text-[#e8eaf0] min-w-[180px] z-10">
+                <tr className="bg-ink-50 dark:bg-[#0c2118] border-b border-ink-200 dark:border-[#1c3a2a]">
+                  <th className="sticky left-0 bg-ink-50 dark:bg-[#0c2118] px-4 py-2 text-left font-bold text-ink-700 dark:text-[#e8eaf0] min-w-[180px] z-10">
                     Студент
                   </th>
                   {data.lessons.map((l, i) => {
                     const showModule = i === 0 || data.lessons[i - 1].moduleTitle !== l.moduleTitle;
                     return (
-                      <th key={l.id} className="px-2 py-1 text-center font-semibold text-ink-500 dark:text-[#6b7394] border-l border-ink-100 dark:border-[#282c44] max-w-[80px]"
+                      <th key={l.id} className="px-2 py-1 text-center font-semibold text-ink-500 dark:text-[#6b7394] border-l border-ink-100 dark:border-[#1c3a2a] max-w-[80px]"
                         title={l.title}>
                         {showModule && (
                           <div className="text-[9px] text-brand-500 font-bold truncate mb-0.5">{l.moduleTitle}</div>
@@ -118,18 +118,18 @@ export function GradebookPage() {
               </thead>
               <tbody>
                 {data.students.map((s, si) => (
-                  <tr key={s.id} className={cx('border-b border-ink-50 dark:border-[#1e2033]', si % 2 === 1 && 'bg-ink-50/40 dark:bg-[#151722]/40')}>
-                    <td className="sticky left-0 px-4 py-2 font-semibold text-ink-800 dark:text-[#e8eaf0] border-r border-ink-100 dark:border-[#282c44] z-10"
+                  <tr key={s.id} className={cx('border-b border-ink-50 dark:border-[#102a1d]', si % 2 === 1 && 'bg-ink-50/40 dark:bg-[#0c2118]/40')}>
+                    <td className="sticky left-0 px-4 py-2 font-semibold text-ink-800 dark:text-[#e8eaf0] border-r border-ink-100 dark:border-[#1c3a2a] z-10"
                       style={{ background: 'inherit' }}>
                       <div className="truncate max-w-[175px]">{s.name}</div>
                     </td>
                     {s.cells.map((cell) => (
-                      <td key={cell.lessonId} className="px-2 py-2 text-center border-l border-ink-50 dark:border-[#1e2033]">
+                      <td key={cell.lessonId} className="px-2 py-2 text-center border-l border-ink-50 dark:border-[#102a1d]">
                         {cell.grade ? (
                           <span className={cx('font-bold', gradeColor(cell.grade))}>{cell.grade}</span>
                         ) : cell.attendance ? (
                           <span className={cx('rounded px-1 py-0.5 text-[9px] font-semibold',
-                            ATTENDANCE_COLOR[cell.attendance] ?? 'bg-ink-100 text-ink-500 dark:bg-[#1e2033] dark:text-[#9aa2bd]')}>
+                            ATTENDANCE_COLOR[cell.attendance] ?? 'bg-ink-100 text-ink-500 dark:bg-[#102a1d] dark:text-[#9aa2bd]')}>
                             {{ Present: 'П', Late: 'З', AbsentWithReason: 'НБ+', AbsentWithoutReason: 'НБ' }[cell.attendance] ?? '?'}
                           </span>
                         ) : (

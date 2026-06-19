@@ -100,7 +100,7 @@ export function RoomsListPage() {
             whileTap={{ scale: 0.96 }} whileHover={{ scale: 1.02 }}
             onClick={() => setShowCreate(true)}
             className="flex items-center gap-2.5 px-5 py-2.5 rounded-2xl text-sm font-bold text-white transition"
-            style={{ background: 'linear-gradient(135deg,#6535f6,#8d5cf6)', boxShadow: '0 4px 20px rgba(101,53,246,0.35)' }}>
+            style={{ background: 'linear-gradient(135deg,#00c853,#8d5cf6)', boxShadow: '0 4px 20px rgba(0,230,118,0.35)' }}>
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
               <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
             </svg>
@@ -113,7 +113,7 @@ export function RoomsListPage() {
         <Loader />
       ) : rooms.length === 0 ? (
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center justify-center py-24 gap-5">
-          <div className="w-20 h-20 rounded-3xl flex items-center justify-center text-5xl" style={{ background: 'rgba(101,53,246,0.1)' }}>🎥</div>
+          <div className="w-20 h-20 rounded-3xl flex items-center justify-center text-5xl" style={{ background: 'rgba(0,230,118,0.1)' }}>🎥</div>
           <div className="text-center">
             <p className="text-lg font-bold text-ink-800 mb-1">Немає активних кімнат</p>
             <p className="text-sm text-ink-400 max-w-xs">
@@ -141,22 +141,22 @@ export function RoomsListPage() {
                   <div className="relative rounded-2xl overflow-hidden border transition-all duration-200"
                     style={{
                       background: isLive ? 'linear-gradient(145deg,rgba(26,28,40,1),rgba(30,20,50,1))' : 'rgba(255,255,255,0.97)',
-                      borderColor: isLive ? 'rgba(101,53,246,0.25)' : 'rgba(0,0,0,0.07)',
-                      boxShadow: isLive ? '0 0 0 1px rgba(101,53,246,0.15), 0 4px 24px rgba(0,0,0,0.15)' : '0 2px 12px rgba(0,0,0,0.06)',
+                      borderColor: isLive ? 'rgba(0,230,118,0.25)' : 'rgba(0,0,0,0.07)',
+                      boxShadow: isLive ? '0 0 0 1px rgba(0,230,118,0.15), 0 4px 24px rgba(0,0,0,0.15)' : '0 2px 12px rgba(0,0,0,0.06)',
                     }}>
 
                     {/* Live glow border animation */}
                     {isLive && (
                       <motion.div animate={{ opacity: [0.4, 0.7, 0.4] }} transition={{ repeat: Infinity, duration: 2.5 }}
                         className="absolute inset-0 rounded-2xl pointer-events-none"
-                        style={{ boxShadow: 'inset 0 0 0 1.5px rgba(101,53,246,0.4)' }} />
+                        style={{ boxShadow: 'inset 0 0 0 1.5px rgba(0,230,118,0.4)' }} />
                     )}
 
                     <div className="p-5">
                       {/* Top row: icon + badges */}
                       <div className="flex items-start justify-between mb-4">
                         <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-105"
-                          style={{ background: isLive ? 'linear-gradient(135deg,#6535f6,#8d5cf6)' : 'linear-gradient(135deg,#ede9fe,#ddd6fe)' }}>
+                          style={{ background: isLive ? 'linear-gradient(135deg,#00c853,#8d5cf6)' : 'linear-gradient(135deg,#ede9fe,#ddd6fe)' }}>
                           <svg className={`w-6 h-6 ${isLive ? 'text-white' : 'text-brand-600'}`} fill="currentColor" viewBox="0 0 24 24">
                             <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
                           </svg>
@@ -165,7 +165,7 @@ export function RoomsListPage() {
                           {isLive ? <LiveBadge /> : <EmptyBadge />}
                           {isMyRoom && (
                             <span className="text-[11px] font-bold px-2.5 py-1 rounded-full"
-                              style={{ background: 'rgba(101,53,246,0.12)', color: '#8b5cf6' }}>Моя</span>
+                              style={{ background: 'rgba(0,230,118,0.12)', color: '#8b5cf6' }}>Моя</span>
                           )}
                         </div>
                       </div>
@@ -236,7 +236,7 @@ export function RoomsListPage() {
                     {/* Join button at bottom */}
                     <div className="px-5 pb-4">
                       <div className={`w-full py-2.5 rounded-xl text-xs font-bold text-center transition-all ${isLive ? 'text-white' : 'text-brand-600 group-hover:text-brand-700'}`}
-                        style={{ background: isLive ? 'rgba(101,53,246,0.3)' : 'rgba(101,53,246,0.08)' }}>
+                        style={{ background: isLive ? 'rgba(0,230,118,0.3)' : 'rgba(0,230,118,0.08)' }}>
                         {isLive ? '🔴 Приєднатись до дзвінка' : '🎥 Увійти в кімнату'}
                       </div>
                     </div>
@@ -253,7 +253,7 @@ export function RoomsListPage() {
         <form onSubmit={handleCreate} className="p-7">
           <div className="flex items-center gap-3 mb-5">
             <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0"
-              style={{ background: 'linear-gradient(135deg,#6535f6,#8d5cf6)' }}>🎥</div>
+              style={{ background: 'linear-gradient(135deg,#00c853,#8d5cf6)' }}>🎥</div>
             <div>
               <h3 className="font-extrabold text-ink-900 text-lg leading-tight">Нова кімната</h3>
               <p className="text-ink-400 text-xs">Відеоурок з дошкою та чатом</p>

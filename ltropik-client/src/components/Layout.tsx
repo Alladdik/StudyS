@@ -10,6 +10,7 @@ import { ScrollToTop } from './ScrollToTop';
 import { NetworkStatus } from './NetworkStatus';
 import { KeyboardShortcutsHelp } from './KeyboardShortcutsHelp';
 import { FocusTimer } from './FocusTimer';
+import { AiMentorChat } from './AiMentorChat';
 import { useProfile } from '../hooks/useProfile';
 import { useDarkMode } from '../hooks/useDarkMode';
 
@@ -98,7 +99,7 @@ function ThemeToggle({ dark, toggle }: { dark: boolean; toggle: () => void }) {
       className={cx(
         'relative w-9 h-9 rounded-xl border flex items-center justify-center transition-colors duration-200',
         dark
-          ? 'bg-[#1e2033] border-[#282c44] text-amber-400 hover:bg-[#252840] hover:border-brand-600'
+          ? 'bg-[#102a1d] border-[#1c3a2a] text-amber-400 hover:bg-[#163a28] hover:border-brand-600'
           : 'bg-ink-50 border-ink-200 text-ink-500 hover:bg-brand-50 hover:border-brand-300 hover:text-brand-600'
       )}
     >
@@ -146,12 +147,14 @@ function NavList({ links, pathname, onNavigate }:
         return (
           <Link key={l.href} to={l.href} onClick={onNavigate}
             className={cx('relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors',
-              active ? 'text-brand-700 dark:text-brand-400' : 'text-ink-500 dark:text-[#6b7394] hover:text-ink-800 dark:hover:text-[#e8eaf0] hover:bg-ink-50 dark:hover:bg-[#1e2033]')}>
+              active ? 'text-brand-700 dark:text-brand-400' : 'text-ink-500 dark:text-[#6b7394] hover:text-ink-800 dark:hover:text-[#e8eaf0] hover:bg-ink-50 dark:hover:bg-[#102a1d]')}>
             {active && (
               <motion.span layoutId="nav-active" className="absolute inset-0 bg-brand-50 dark:bg-brand-900/30 rounded-xl ring-1 ring-brand-100 dark:ring-brand-800/40"
-                transition={{ type: 'spring', stiffness: 400, damping: 32 }} />
+                transition={{ type: 'spring', stiffness: 400, damping: 32 }}>
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-full bg-mint-500 shadow-[0_0_8px_rgba(0,230,118,.6)]" />
+              </motion.span>
             )}
-            <span className={cx('relative z-10', active && 'text-brand-600')}>{l.icon}</span>
+            <span className={cx('relative z-10', active && 'text-brand-600 dark:text-mint-400')}>{l.icon}</span>
             <span className="relative z-10">{l.label}</span>
           </Link>
         );
@@ -212,8 +215,8 @@ export function Layout({ children, title, subtitle }: Props) {
 
   const Brand = (
     <div className="flex items-center gap-2.5">
-      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-[var(--shadow-glow)]">
-        <span className="text-white font-extrabold text-lg">L</span>
+      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-mint-500 to-brand-700 flex items-center justify-center shadow-[0_0_16px_rgba(0,230,118,.4)]">
+        <span className="text-forest-950 font-extrabold text-lg">L</span>
       </div>
       <span className="font-extrabold text-ink-900 dark:text-white text-lg tracking-tight">LTropik</span>
     </div>
@@ -224,15 +227,15 @@ export function Layout({ children, title, subtitle }: Props) {
       <div className="px-5 py-5">{Brand}</div>
       <div className="px-3 flex-1 overflow-y-auto">
         {role && (
-          <p className="px-3.5 text-[11px] font-bold uppercase tracking-wider text-ink-300 dark:text-[#3d4460] mb-2">Меню</p>
+          <p className="px-3.5 text-[11px] font-bold uppercase tracking-wider text-ink-300 dark:text-[#3a4a40] mb-2">Меню</p>
         )}
         <NavList links={links} pathname={location.pathname} onNavigate={() => setMobileOpen(false)} />
       </div>
 
       {/* User footer */}
-      <div className="p-3 border-t border-ink-100 dark:border-[#282c44]">
+      <div className="p-3 border-t border-ink-100 dark:border-[#1c3a2a]">
         <Link to="/profile"
-          className="flex items-center gap-3 px-2.5 py-2 rounded-xl hover:bg-ink-50 dark:hover:bg-[#1e2033] transition group">
+          className="flex items-center gap-3 px-2.5 py-2 rounded-xl hover:bg-ink-50 dark:hover:bg-[#102a1d] transition group">
           <div className="w-9 h-9 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
             {profile ? `${profile.firstName[0]}${profile.lastName[0]}` : (role ?? '?')[0]}
           </div>
@@ -264,8 +267,12 @@ export function Layout({ children, title, subtitle }: Props) {
       <ScrollToTop />
       <KeyboardShortcutsHelp />
       {role === 'Student' && <FocusTimer />}
+      {/* AI mentor — staff only (hidden from students) */}
+      {(role === 'Admin' || role === 'Teacher') && (
+        <AiMentorChat courseId="00000000-0000-0000-0000-000000000000" />
+      )}
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex w-64 flex-shrink-0 flex-col bg-white/80 dark:bg-[#131522cc] backdrop-blur-xl border-r border-ink-100 dark:border-[#282c44] sticky top-0 h-screen">
+      <aside className="hidden lg:flex w-64 flex-shrink-0 flex-col bg-white/80 dark:bg-[#0c1f16cc] backdrop-blur-xl border-r border-ink-100 dark:border-[#1c3a2a] sticky top-0 h-screen">
         {SidebarBody}
       </aside>
 
@@ -277,7 +284,7 @@ export function Layout({ children, title, subtitle }: Props) {
               onClick={() => setMobileOpen(false)} className="fixed inset-0 z-40 bg-ink-900/40 backdrop-blur-sm lg:hidden" />
             <motion.aside initial={{ x: -280 }} animate={{ x: 0 }} exit={{ x: -280 }}
               transition={{ type: 'spring', stiffness: 360, damping: 34 }}
-              className="fixed inset-y-0 left-0 z-50 w-64 flex flex-col bg-white dark:bg-[#131522] border-r border-ink-100 dark:border-[#282c44] lg:hidden">
+              className="fixed inset-y-0 left-0 z-50 w-64 flex flex-col bg-white dark:bg-[#0c1f16] border-r border-ink-100 dark:border-[#1c3a2a] lg:hidden">
               {SidebarBody}
             </motion.aside>
           </>
@@ -308,14 +315,14 @@ export function Layout({ children, title, subtitle }: Props) {
           </div>
         )}
         {/* Mobile top bar */}
-        <div className="lg:hidden sticky top-0 z-30 flex items-center gap-3 px-4 py-3 bg-white/80 dark:bg-[#131522cc] backdrop-blur-xl border-b border-ink-100 dark:border-[#282c44]">
+        <div className="lg:hidden sticky top-0 z-30 flex items-center gap-3 px-4 py-3 bg-white/80 dark:bg-[#0c1f16cc] backdrop-blur-xl border-b border-ink-100 dark:border-[#1c3a2a]">
           <button onClick={() => setMobileOpen(true)} className="w-9 h-9 rounded-xl border border-ink-200 flex items-center justify-center text-ink-600">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
           </button>
           {Brand}
           <div className="ml-auto flex items-center gap-1.5">
             <button onClick={() => setSpotlightOpen(true)} title="Пошук"
-              className="w-9 h-9 rounded-xl border border-ink-200 dark:border-[#282c44] flex items-center justify-center text-ink-500 dark:text-[#9aa2bd] hover:text-brand-600 transition">
+              className="w-9 h-9 rounded-xl border border-ink-200 dark:border-[#1c3a2a] flex items-center justify-center text-ink-500 dark:text-[#9aa2bd] hover:text-brand-600 transition">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
@@ -334,12 +341,12 @@ export function Layout({ children, title, subtitle }: Props) {
           <div className="flex items-center gap-2">
             {/* Search */}
             <button onClick={() => setSpotlightOpen(true)}
-              className="flex items-center gap-2 pl-3 pr-4 py-2 text-sm bg-ink-50 dark:bg-[#1e2033] border border-ink-200 dark:border-[#282c44] rounded-xl text-ink-400 dark:text-[#4d5470] hover:border-brand-300 hover:text-ink-600 dark:hover:text-[#9aa2bd] transition">
+              className="flex items-center gap-2 pl-3 pr-4 py-2 text-sm bg-ink-50 dark:bg-[#102a1d] border border-ink-200 dark:border-[#1c3a2a] rounded-xl text-ink-400 dark:text-[#4d5470] hover:border-brand-300 hover:text-ink-600 dark:hover:text-[#9aa2bd] transition">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <span className="w-36 text-left">Пошук…</span>
-              <kbd className="ml-auto flex items-center px-1.5 py-0.5 text-[10px] font-bold bg-white dark:bg-[#252840] border border-ink-200 dark:border-[#2d3148] rounded text-ink-400">
+              <kbd className="ml-auto flex items-center px-1.5 py-0.5 text-[10px] font-bold bg-white dark:bg-[#163a28] border border-ink-200 dark:border-[#1f4d36] rounded text-ink-400">
                 ⌘K
               </kbd>
             </button>

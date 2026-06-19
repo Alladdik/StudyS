@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 
 export function Confetti() {
   const pieces = Array.from({ length: 70 });
-  const colors = ['#6535f6', '#10b981', '#f59e0b', '#ef4444', '#3b82f6', '#ec4899', '#a855f7'];
+  const colors = ['#00c853', '#10b981', '#f59e0b', '#ef4444', '#3b82f6', '#ec4899', '#a855f7'];
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[9999] overflow-hidden">

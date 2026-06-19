@@ -28,7 +28,7 @@ function Select({ label, icon, value, options, onChange, empty }: {
         style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}>
         {options.length === 0 && <option>{empty}</option>}
         {options.map((o) => (
-          <option key={o.deviceId} value={o.deviceId} style={{ background: '#1e1f26' }}>{o.label}</option>
+          <option key={o.deviceId} value={o.deviceId} style={{ background: '#102a1d' }}>{o.label}</option>
         ))}
       </select>
     </label>
@@ -51,7 +51,7 @@ export function RoomSettings({
         transition={{ type: 'spring', stiffness: 400, damping: 30 }}
         onClick={(e) => e.stopPropagation()}
         className="rounded-3xl p-6 max-w-sm w-full text-white"
-        style={{ background: '#1e1f26', border: '1px solid rgba(255,255,255,0.1)' }}>
+        style={{ background: '#102a1d', border: '1px solid rgba(255,255,255,0.1)' }}>
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-lg font-extrabold">⚙️ Пристрої</h2>
           <button onClick={onClose} className="w-7 h-7 rounded-lg flex items-center justify-center text-white/40 hover:text-white" style={{ background: 'rgba(255,255,255,0.06)' }}>✕</button>

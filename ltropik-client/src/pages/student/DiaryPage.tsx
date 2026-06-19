@@ -110,7 +110,7 @@ export function DiaryPage() {
         <div className="lg:col-span-1">
           <DailyQuestsWidget />
         </div>
-        <div className="lg:col-span-2 bg-white dark:bg-[#1a1c2e] rounded-2xl border border-ink-100 dark:border-[#282c44] p-4">
+        <div className="lg:col-span-2 bg-white dark:bg-[#0e2218] rounded-2xl border border-ink-100 dark:border-[#1c3a2a] p-4">
           <p className="text-xs font-bold text-ink-400 uppercase tracking-wide mb-3">Теплова карта відвідуваності</p>
           {userId && <AttendanceHeatmap studentId={userId} />}
         </div>
@@ -121,7 +121,7 @@ export function DiaryPage() {
           <button key={c.id} onClick={() => setSelectedCourse(c.id)}
             className={cx('chip', selectedCourse === c.id
               ? 'bg-brand-600 text-white shadow-[var(--shadow-glow)]'
-              : 'bg-white dark:bg-[#1e2033] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#2d3148] hover:ring-brand-200 hover:text-ink-700')}>
+              : 'bg-white dark:bg-[#102a1d] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#1f4d36] hover:ring-brand-200 hover:text-ink-700')}>
             {c.title}
           </button>
         ))}
@@ -133,7 +133,7 @@ export function DiaryPage() {
         <Card className="overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-ink-100 dark:border-[#282c44]">
+              <tr className="border-b border-ink-100 dark:border-[#1c3a2a]">
                 {['Дата', 'Відвідуваність', 'Оцінка'].map((h) => (
                   <th key={h} className="text-left px-5 py-3.5 text-xs font-bold text-ink-400 uppercase tracking-wider">{h}</th>
                 ))}
@@ -144,7 +144,7 @@ export function DiaryPage() {
                 const att = attendanceCfg[e.attendance];
                 return (
                   <tr key={`${e.studentId}-${e.lessonDate}`} onClick={() => setSelectedEntry(e)}
-                    className="border-b border-ink-50 dark:border-[#1e2033] last:border-0 hover:bg-brand-50/40 dark:hover:bg-brand-900/10 cursor-pointer transition">
+                    className="border-b border-ink-50 dark:border-[#102a1d] last:border-0 hover:bg-brand-50/40 dark:hover:bg-brand-900/10 cursor-pointer transition">
                     <td className="px-5 py-3.5 font-semibold text-ink-800 dark:text-[#e8eaf0]">{new Date(e.lessonDate).toLocaleDateString('uk-UA')}</td>
                     <td className="px-5 py-3.5"><Badge tone={att.tone}>{att.label}</Badge></td>
                     <td className="px-5 py-3.5">{e.gradeValue ? <Badge tone="brand">{e.gradeValue}</Badge> : <span className="text-ink-300">—</span>}</td>

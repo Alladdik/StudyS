@@ -87,7 +87,7 @@ export function ShopAdminPage() {
                 <p className="font-extrabold text-ink-900 dark:text-white">{item.name}</p>
                 <p className="text-sm text-ink-500 dark:text-[#6b7394] mt-0.5">{item.description}</p>
               </div>
-              <div className="flex items-center justify-between mt-auto pt-2 border-t border-ink-100 dark:border-[#282c44]">
+              <div className="flex items-center justify-between mt-auto pt-2 border-t border-ink-100 dark:border-[#1c3a2a]">
                 <span className="font-bold text-amber-600">🪙 {item.coinsPrice}</span>
                 <Badge tone="gray">{item.type}</Badge>
               </div>

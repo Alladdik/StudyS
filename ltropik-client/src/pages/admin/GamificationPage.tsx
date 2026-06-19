@@ -136,7 +136,7 @@ export function GamificationPage() {
       <div className="flex gap-2 mb-6 flex-wrap">
         {([['badges','🏅 Бейджі'],['quests','🎯 Квести'],['leaderboard','🏆 Лідерборд'],['award','🪙 Монети']] as const).map(([t, label]) => (
           <button key={t} onClick={() => setTab(t)}
-            className={cx('chip transition-all', tab === t ? 'bg-brand-600 text-white' : 'bg-white dark:bg-[#1e2033] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#2d3148]')}>
+            className={cx('chip transition-all', tab === t ? 'bg-brand-600 text-white' : 'bg-white dark:bg-[#102a1d] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#1f4d36]')}>
             {label}
           </button>
         ))}
@@ -164,10 +164,10 @@ export function GamificationPage() {
                     <p className="text-xs text-ink-500 dark:text-[#6b7394] mt-0.5">{b.description}</p>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-ink-400 mt-auto">
-                    <span className="bg-ink-50 dark:bg-[#1e2033] px-2 py-0.5 rounded-lg">{b.condition} ≥ {b.conditionValue}</span>
+                    <span className="bg-ink-50 dark:bg-[#102a1d] px-2 py-0.5 rounded-lg">{b.condition} ≥ {b.conditionValue}</span>
                     <span className="text-amber-600 font-bold">🪙 {b.coinsReward}</span>
                   </div>
-                  <div className="flex gap-2 pt-2 border-t border-ink-100 dark:border-[#282c44]">
+                  <div className="flex gap-2 pt-2 border-t border-ink-100 dark:border-[#1c3a2a]">
                     <button onClick={() => openEditBadge(b)} className="btn btn-soft text-xs py-1 px-3 flex-1">✏️ Редагувати</button>
                     <button onClick={() => deleteBadge(b.id)} className="btn text-xs py-1 px-3 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20">🗑</button>
                   </div>
@@ -200,10 +200,10 @@ export function GamificationPage() {
                     <p className="text-xs text-ink-500 dark:text-[#6b7394] mt-0.5">{q.description}</p>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-ink-400 mt-auto">
-                    <span className="bg-ink-50 dark:bg-[#1e2033] px-2 py-0.5 rounded-lg font-mono">{q.type}</span>
+                    <span className="bg-ink-50 dark:bg-[#102a1d] px-2 py-0.5 rounded-lg font-mono">{q.type}</span>
                     <span className="text-amber-600 font-bold">🪙 {q.coinsReward}</span>
                   </div>
-                  <div className="flex gap-2 pt-2 border-t border-ink-100 dark:border-[#282c44]">
+                  <div className="flex gap-2 pt-2 border-t border-ink-100 dark:border-[#1c3a2a]">
                     <button onClick={() => openEditQuest(q)} className="btn btn-soft text-xs py-1 px-3 flex-1">✏️ Редагувати</button>
                     <button onClick={() => deleteQuest(q.id)} className="btn text-xs py-1 px-3 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20">🗑</button>
                   </div>
@@ -219,7 +219,7 @@ export function GamificationPage() {
         <Card className="overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-ink-100 dark:border-[#282c44] bg-ink-50/60 dark:bg-[#151722]/60">
+              <tr className="border-b border-ink-100 dark:border-[#1c3a2a] bg-ink-50/60 dark:bg-[#0c2118]/60">
                 {['#', 'Студент', 'Монети', 'Серія', 'Макс. серія'].map(h => (
                   <th key={h} className="text-left px-5 py-3 text-xs font-bold text-ink-400 uppercase tracking-wider">{h}</th>
                 ))}
@@ -227,7 +227,7 @@ export function GamificationPage() {
             </thead>
             <tbody>
               {leaderboard.map((e, i) => (
-                <tr key={e.studentId} className="border-b border-ink-50 dark:border-[#1e2033] last:border-0 hover:bg-ink-50/40 dark:hover:bg-[#1e2033]/60 transition">
+                <tr key={e.studentId} className="border-b border-ink-50 dark:border-[#102a1d] last:border-0 hover:bg-ink-50/40 dark:hover:bg-[#102a1d]/60 transition">
                   <td className="px-5 py-3 font-bold text-ink-400">
                     {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}
                   </td>

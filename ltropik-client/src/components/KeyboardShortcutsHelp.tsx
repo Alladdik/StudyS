@@ -34,13 +34,13 @@ export function KeyboardShortcutsHelp() {
         {SHORTCUTS.map((s) => (
           <li key={s.keys} className="flex items-center justify-between gap-4">
             <span className="text-sm text-ink-600 dark:text-[#b0b8d0]">{s.desc}</span>
-            <kbd className="flex-shrink-0 px-2 py-1 text-[11px] font-bold bg-ink-50 dark:bg-[#252840] border border-ink-200 dark:border-[#2d3148] rounded text-ink-500 dark:text-[#9aa2bd]">
+            <kbd className="flex-shrink-0 px-2 py-1 text-[11px] font-bold bg-ink-50 dark:bg-[#163a28] border border-ink-200 dark:border-[#1f4d36] rounded text-ink-500 dark:text-[#9aa2bd]">
               {s.keys}
             </kbd>
           </li>
         ))}
       </ul>
-      <p className="text-xs text-ink-400 mt-5">Підказка: натисніть <kbd className="px-1 py-0.5 bg-ink-50 dark:bg-[#252840] border border-ink-200 dark:border-[#2d3148] rounded">?</kbd> ще раз, щоб закрити.</p>
+      <p className="text-xs text-ink-400 mt-5">Підказка: натисніть <kbd className="px-1 py-0.5 bg-ink-50 dark:bg-[#163a28] border border-ink-200 dark:border-[#1f4d36] rounded">?</kbd> ще раз, щоб закрити.</p>
     </Modal>
   );
 }

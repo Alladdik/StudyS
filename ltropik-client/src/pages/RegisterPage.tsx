@@ -62,7 +62,7 @@ export function RegisterPage() {
 
       {/* Left brand panel */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden flex-col justify-between p-14"
-        style={{ background: 'linear-gradient(145deg, #5526db 0%, #7350ff 45%, #8d72ff 100%)' }}>
+        style={{ background: 'linear-gradient(145deg, #0b6f43 0%, #0c8a51 45%, #12a160 100%)' }}>
         <div className="absolute inset-0 opacity-[0.07]"
           style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '48px 48px' }} />
         <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-white/15 blur-3xl pointer-events-none" />
@@ -84,7 +84,7 @@ export function RegisterPage() {
             Зареєструйся та почни свою навчальну подорож просто зараз.
           </motion.p>
           <div className="mt-10 flex flex-col gap-3 max-w-xs">
-            {[{ icon: '📚', text: 'Доступ до всіх курсів' }, { icon: '💬', text: 'AI-ментор та кімнати' }, { icon: '🏆', text: 'Сертифікати та досягнення' }].map((f, i) => (
+            {[{ icon: '📚', text: 'Доступ до всіх курсів' }, { icon: '🎥', text: 'Відеокімнати та чат' }, { icon: '🏆', text: 'Сертифікати та досягнення' }].map((f, i) => (
               <motion.div key={f.text} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: .3 + i * .1 }}
                 className="flex items-center gap-3.5 bg-white/10 border border-white/15 rounded-2xl px-5 py-3.5">
                 <span className="text-2xl">{f.icon}</span>
@@ -98,14 +98,14 @@ export function RegisterPage() {
       </div>
 
       {/* Right form panel */}
-      <div className="flex-1 flex items-center justify-center p-6 bg-white dark:bg-[#0f1018] overflow-y-auto">
+      <div className="flex-1 flex items-center justify-center p-6 bg-white dark:bg-[#0a1912] overflow-y-auto">
         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .4 }}
           className="w-full max-w-sm py-6">
 
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center gap-2.5 mb-6">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-extrabold"
-              style={{ background: 'linear-gradient(135deg,#7350ff,#5526db)' }}>L</div>
+              style={{ background: 'linear-gradient(135deg,#0c8a51,#0b6f43)' }}>L</div>
             <span className="font-extrabold text-xl text-ink-900">LTropik</span>
           </div>
 
@@ -117,13 +117,13 @@ export function RegisterPage() {
             {[1, 2].map((s) => (
               <div key={s} className={cx('flex items-center gap-2', s < 2 && 'flex-1')}>
                 <div className={cx('w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition',
-                  step >= s ? 'bg-brand-600 text-white' : 'bg-ink-100 dark:bg-[#1e2033] text-ink-400 dark:text-[#6b7394]')}>
+                  step >= s ? 'bg-brand-600 text-white' : 'bg-ink-100 dark:bg-[#102a1d] text-ink-400 dark:text-[#6b7394]')}>
                   {step > s ? '✓' : s}
                 </div>
-                <span className={cx('text-xs font-medium', step >= s ? 'text-brand-600 dark:text-brand-400' : 'text-ink-300 dark:text-[#3d4460]')}>
+                <span className={cx('text-xs font-medium', step >= s ? 'text-brand-600 dark:text-brand-400' : 'text-ink-300 dark:text-[#3a4a40]')}>
                   {s === 1 ? 'Хто ви?' : 'Дані'}
                 </span>
-                {s < 2 && <div className={cx('flex-1 h-px', step > s ? 'bg-brand-300 dark:bg-brand-700' : 'bg-ink-100 dark:bg-[#282c44]')} />}
+                {s < 2 && <div className={cx('flex-1 h-px', step > s ? 'bg-brand-300 dark:bg-brand-700' : 'bg-ink-100 dark:bg-[#1c3a2a]')} />}
               </div>
             ))}
           </div>
@@ -138,7 +138,7 @@ export function RegisterPage() {
                       className={cx('flex items-center gap-3.5 p-4 rounded-2xl border-2 text-left transition',
                         role === r.value
                           ? 'border-brand-400 bg-brand-50 dark:bg-brand-900/20 dark:border-brand-600'
-                          : 'border-ink-100 dark:border-[#282c44] hover:border-brand-200 dark:hover:border-brand-700 hover:bg-ink-50 dark:hover:bg-[#1e2033]')}>
+                          : 'border-ink-100 dark:border-[#1c3a2a] hover:border-brand-200 dark:hover:border-brand-700 hover:bg-ink-50 dark:hover:bg-[#102a1d]')}>
                       <span className="text-3xl">{r.icon}</span>
                       <div>
                         <p className={cx('font-bold text-sm', role === r.value ? 'text-brand-700 dark:text-brand-400' : 'text-ink-800 dark:text-[#e8eaf0]')}>{r.label}</p>
@@ -225,7 +225,7 @@ export function RegisterPage() {
             )}
           </AnimatePresence>
 
-          <div className="mt-6 pt-5 border-t border-ink-100 dark:border-[#282c44] text-center">
+          <div className="mt-6 pt-5 border-t border-ink-100 dark:border-[#1c3a2a] text-center">
             <p className="text-sm text-ink-400 dark:text-[#6b7394]">
               Вже є акаунт?{' '}
               <Link to="/login" className="font-bold text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors">Увійти</Link>

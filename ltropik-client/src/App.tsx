@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { UnauthorizedPage } from './pages/UnauthorizedPage';
 import { Toaster } from './components/ui';
 import { Onboarding } from './components/Onboarding';
@@ -29,6 +29,8 @@ import { ProfilePage } from './pages/ProfilePage';
 import { ShopPage } from './pages/student/ShopPage';
 import { MessengerPage } from './pages/MessengerPage';
 import { PublicCoursesPage } from './pages/PublicCoursesPage';
+import { PublicCourseDetailPage } from './pages/PublicCourseDetailPage';
+import { HomePage } from './pages/HomePage';
 import { TeacherAnalyticsPage } from './pages/admin/TeacherAnalyticsPage';
 import { ShopAdminPage } from './pages/admin/ShopAdminPage';
 import { SettingsPage } from './pages/admin/SettingsPage';
@@ -60,7 +62,8 @@ export default function App() {
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/courses" element={<PublicCoursesPage />} />
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/courses/:id" element={<PublicCourseDetailPage />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
         {/* Student */}

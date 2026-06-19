@@ -32,7 +32,7 @@ function CommentItem({ comment, lessonId, currentUserId, onReply, onDelete }: {
           )}
         </div>
         {comment.replies.length > 0 && (
-          <div className="mt-3 flex flex-col gap-3 pl-3 border-l-2 border-ink-100 dark:border-[#282c44]">
+          <div className="mt-3 flex flex-col gap-3 pl-3 border-l-2 border-ink-100 dark:border-[#1c3a2a]">
             {comment.replies.map((r) => (
               <CommentItem key={r.id} comment={r} lessonId={lessonId} currentUserId={currentUserId} onReply={onReply} onDelete={onDelete} />
             ))}
@@ -97,7 +97,7 @@ export function LessonComments({ lessonId }: Props) {
         </AnimatePresence>
       </div>
 
-      <div className={cx('mt-6 p-4 rounded-2xl border', replyTo ? 'border-brand-200 dark:border-brand-700/50 bg-brand-50/40 dark:bg-brand-900/20' : 'border-ink-200 dark:border-[#2d3148] bg-white dark:bg-[#1e2033]')}>
+      <div className={cx('mt-6 p-4 rounded-2xl border', replyTo ? 'border-brand-200 dark:border-brand-700/50 bg-brand-50/40 dark:bg-brand-900/20' : 'border-ink-200 dark:border-[#1f4d36] bg-white dark:bg-[#102a1d]')}>
         {replyTo && (
           <div className="flex items-center gap-2 mb-3">
             <span className="text-xs text-brand-600 font-medium">Відповідь на коментар</span>

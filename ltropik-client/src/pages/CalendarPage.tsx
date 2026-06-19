@@ -409,12 +409,12 @@ export function CalendarPage() {
                 {activeEntry.notes && (
                   <div>
                     <p className="text-xs text-ink-400 font-bold uppercase tracking-wider">Нотатки</p>
-                    <p className="text-sm text-ink-700 dark:text-[#b0b8d0] bg-ink-50 dark:bg-[#1e2033] rounded-lg p-2.5 mt-1 border border-ink-100 dark:border-[#282c44]">{activeEntry.notes}</p>
+                    <p className="text-sm text-ink-700 dark:text-[#b0b8d0] bg-ink-50 dark:bg-[#102a1d] rounded-lg p-2.5 mt-1 border border-ink-100 dark:border-[#1c3a2a]">{activeEntry.notes}</p>
                   </div>
                 )}
 
                 {canCreate && (
-                  <div className="flex gap-2.5 mt-4 pt-4 border-t border-ink-100 dark:border-[#282c44]">
+                  <div className="flex gap-2.5 mt-4 pt-4 border-t border-ink-100 dark:border-[#1c3a2a]">
                     <button onClick={() => setIsEditing(true)} className="btn btn-secondary flex-1">Редагувати</button>
                     <button onClick={handleDeleteConfirm} disabled={deleting} className="btn bg-rose-50 dark:bg-rose-900/20 hover:bg-rose-100 dark:hover:bg-rose-900/30 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-700/50 flex-shrink-0">
                       {deleting ? 'Видалення...' : 'Видалити'}

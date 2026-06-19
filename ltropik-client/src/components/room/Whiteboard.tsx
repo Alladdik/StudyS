@@ -17,7 +17,7 @@ type Tool = 'pen' | 'eraser' | 'line' | 'rect' | 'circle' | 'arrow' | 'text' | '
 
 const COLORS = [
   '#1a1a2e', '#ef4444', '#f97316', '#eab308', '#22c55e',
-  '#3b82f6', '#6535f6', '#ec4899', '#ffffff', '#94a3b8',
+  '#3b82f6', '#00c853', '#ec4899', '#ffffff', '#94a3b8',
 ];
 const STICKY_COLORS = ['#fef08a', '#86efac', '#93c5fd', '#f9a8d4', '#d8b4fe'];
 const WIDTHS = [2, 4, 8, 16];
@@ -139,6 +139,7 @@ interface TextPos { screenX: number; screenY: number; canvasX: number; canvasY: 
 
 export function Whiteboard({ strokes, clearSignal, onStroke, onClear, fullscreen, onToggleFullscreen }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const areaRef   = useRef<HTMLDivElement>(null);
 
   const [tool, setTool]           = useState<Tool>('pen');
   const [color, setColor]         = useState('#1a1a2e');
@@ -165,7 +166,10 @@ export function Whiteboard({ strokes, clearSignal, onStroke, onClear, fullscreen
     list.forEach(s => drawStroke(ctx, s));
   }, []);
 
-  useEffect(() => { redrawAll(strokes); }, [strokes, redrawAll]);
+  // Redraw on stroke changes AND whenever the canvas remounts (fullscreen toggle
+  // swaps a portal for an inline node, recreating the canvas — without this the
+  // board goes blank after toggling fullscreen).
+  useEffect(() => { redrawAll(strokes); }, [strokes, redrawAll, fullscreen]);
   useEffect(() => { redrawAll([]); }, [clearSignal]); // eslint-disable-line
 
   // ── Position helpers ───────────────────────────────────────────────────────
@@ -183,9 +187,12 @@ export function Whiteboard({ strokes, clearSignal, onStroke, onClear, fullscreen
     const c = canvasRef.current!;
     const r = c.getBoundingClientRect();
     const sx = c.width / r.width, sy = c.height / r.height;
+    // Editor is positioned relative to the canvas-area container (which may be
+    // larger than the letter-boxed canvas), so measure the offset from it.
+    const ar = areaRef.current?.getBoundingClientRect() ?? r;
     setTextPos({
-      screenX: e.clientX - r.left,
-      screenY: e.clientY - r.top,
+      screenX: e.clientX - ar.left,
+      screenY: e.clientY - ar.top,
       canvasX: (e.clientX - r.left) * sx,
       canvasY: (e.clientY - r.top) * sy,
     });
@@ -368,13 +375,13 @@ export function Whiteboard({ strokes, clearSignal, onStroke, onClear, fullscreen
     <div className="flex flex-col h-full" style={{ background: '#fff' }}>
       {toolbar}
 
-      <div className="flex-1 relative overflow-hidden" style={{ cursor }}>
+      <div ref={areaRef} className="flex-1 relative overflow-hidden flex items-center justify-center p-2 sm:p-3" style={{ cursor, background: '#e6ede9' }}>
         <canvas
           ref={canvasRef}
           width={2400}
           height={1400}
-          className="w-full h-full"
-          style={{ touchAction: 'none', display: 'block' }}
+          className="max-w-full max-h-full block rounded-xl shadow-lg"
+          style={{ touchAction: 'none', aspectRatio: '12 / 7' }}
           onClick={handleCanvasClick}
           onMouseDown={onDown}
           onMouseMove={onMove}
@@ -394,7 +401,10 @@ export function Whiteboard({ strokes, clearSignal, onStroke, onClear, fullscreen
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               className="absolute z-20 drop-shadow-2xl"
-              style={{ left: Math.min(textPos.screenX, window.innerWidth - 260), top: Math.min(textPos.screenY, window.innerHeight - 220) }}
+              style={{
+                left: Math.max(8, Math.min(textPos.screenX, (areaRef.current?.clientWidth ?? 9999) - 272)),
+                top:  Math.max(8, Math.min(textPos.screenY, (areaRef.current?.clientHeight ?? 9999) - 240)),
+              }}
             >
               {tool === 'text' ? (
                 <div className="bg-white rounded-2xl shadow-2xl border border-brand-200 overflow-hidden w-64">

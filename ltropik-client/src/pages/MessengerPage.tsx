@@ -166,7 +166,7 @@ export function MessengerPage() {
                 ? <p className="px-3 pb-3 text-xs text-ink-400">Нікого не знайдено</p>
                 : contactsFiltered.map(c => (
                   <button key={c.id} onClick={() => selectPartner(c)}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-ink-50 dark:hover:bg-[#1e2033] transition text-left">
+                    className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-ink-50 dark:hover:bg-[#102a1d] transition text-left">
                     <Avatar name={c.name} size="sm" />
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-ink-800 dark:text-white truncate">{c.name}</p>

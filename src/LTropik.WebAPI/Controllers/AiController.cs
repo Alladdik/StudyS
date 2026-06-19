@@ -13,9 +13,9 @@ public class AiController(IAiCoreService ai) : ControllerBase
     private Guid CurrentUserId =>
         Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-    // ── Student: AI tutor ────────────────────────────────────────────────────
+    // ── AI mentor — staff only (hidden from students) ────────────────────────
     [HttpPost("tutor/{courseId:guid}")]
-    [Authorize(Roles = "Student")]
+    [Authorize(Roles = "Teacher,Admin")]
     public async Task<IActionResult> AskTutor(
         Guid courseId,
         [FromBody] TutorRequest req,

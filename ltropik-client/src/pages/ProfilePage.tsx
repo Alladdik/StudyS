@@ -220,7 +220,7 @@ export function ProfilePage() {
               </div>
             </div>
 
-            <hr className="border-ink-100 dark:border-[#282c44]" />
+            <hr className="border-ink-100 dark:border-[#1c3a2a]" />
             <p className="text-xs text-ink-400 font-semibold uppercase tracking-wide">Зміна пароля (необов'язково)</p>
 
             <div>
@@ -269,7 +269,7 @@ export function ProfilePage() {
               <ol className="text-sm text-ink-600 space-y-1.5 list-none">
                 <li className="flex gap-2"><span className="text-brand-500 font-bold">1.</span> Знайдіть бота в Telegram (назва в налаштуваннях школи)</li>
                 <li className="flex gap-2"><span className="text-brand-500 font-bold">2.</span> Натисніть кнопку нижче — отримайте код</li>
-                <li className="flex gap-2"><span className="text-brand-500 font-bold">3.</span> Надішліть боту команду <code className="bg-ink-100 dark:bg-[#252840] px-1.5 py-0.5 rounded text-xs font-mono">/link КОД</code></li>
+                <li className="flex gap-2"><span className="text-brand-500 font-bold">3.</span> Надішліть боту команду <code className="bg-ink-100 dark:bg-[#163a28] px-1.5 py-0.5 rounded text-xs font-mono">/link КОД</code></li>
               </ol>
 
               {linkCode ? (

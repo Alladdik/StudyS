@@ -50,7 +50,7 @@ export function LessonNotes({ lessonId }: Props) {
           'w-full flex items-center justify-between px-5 py-3.5 rounded-2xl border transition font-semibold text-sm',
           open
             ? 'bg-amber-50 dark:bg-[#2a2010] border-amber-200 dark:border-[#4a3820] text-amber-800 dark:text-amber-300'
-            : 'bg-white dark:bg-[#1a1c2e] border-ink-100 dark:border-[#282c44] text-ink-600 dark:text-[#9aa2bd] hover:border-amber-200'
+            : 'bg-white dark:bg-[#0e2218] border-ink-100 dark:border-[#1c3a2a] text-ink-600 dark:text-[#9aa2bd] hover:border-amber-200'
         )}
       >
         <span className="flex items-center gap-2">

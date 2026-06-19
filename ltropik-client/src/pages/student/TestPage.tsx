@@ -203,7 +203,7 @@ export function TestPage() {
               { l: 'Спроб', v: test?.maxAttempts },
               { l: 'Прохідний', v: `${test?.passingPercentage}%` },
             ].map((s) => (
-              <div key={s.l} className="bg-ink-50 dark:bg-[#1e2033] rounded-xl px-4 py-3">
+              <div key={s.l} className="bg-ink-50 dark:bg-[#102a1d] rounded-xl px-4 py-3">
                 <p className="text-xs text-ink-400">{s.l}</p>
                 <p className="font-bold text-ink-800 dark:text-[#e8eaf0]">{s.v}</p>
               </div>
@@ -232,23 +232,23 @@ export function TestPage() {
           <video ref={videoRef} autoPlay muted playsInline
             className={cx('w-28 h-20 rounded-xl object-cover border-2',
               permitted ? 'border-emerald-400' : 'border-rose-400 opacity-30')} />
-          <span className="text-[10px] text-ink-400 bg-white/80 dark:bg-[#1a1c2e]/80 rounded px-1">
+          <span className="text-[10px] text-ink-400 bg-white/80 dark:bg-[#0e2218]/80 rounded px-1">
             {permitted ? '🔴 Прокторинг' : '📵 Камера вимкнена'}
           </span>
         </div>
       )}
 
       {/* Sticky header */}
-      <div className="sticky top-0 z-30 bg-white/90 dark:bg-[#131522]/90 backdrop-blur-xl border-b border-ink-100 dark:border-[#282c44] px-4 sm:px-6 py-3 flex items-center gap-3 sm:gap-4">
+      <div className="sticky top-0 z-30 bg-white/90 dark:bg-[#0c1f16]/90 backdrop-blur-xl border-b border-ink-100 dark:border-[#1c3a2a] px-4 sm:px-6 py-3 flex items-center gap-3 sm:gap-4">
         <span className="font-bold text-ink-800 dark:text-[#e8eaf0] flex-1 truncate text-sm">{test?.title}</span>
         <span className="hidden sm:inline text-sm text-ink-400">{answered}/{total}</span>
         {timeLeft !== null && (
           <span className={cx('font-mono font-bold px-3 py-1.5 rounded-lg text-sm',
-            timeLeft <= 60 ? 'bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 animate-pulse' : timeLeft <= 180 ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400' : 'bg-ink-100 dark:bg-[#252840] text-ink-700 dark:text-[#b0b8d0]')}>
+            timeLeft <= 60 ? 'bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 animate-pulse' : timeLeft <= 180 ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400' : 'bg-ink-100 dark:bg-[#163a28] text-ink-700 dark:text-[#b0b8d0]')}>
             ⏱ {formatTime(timeLeft)}
           </span>
         )}
-        <div className="w-24 sm:w-32 h-2 bg-ink-100 dark:bg-[#252840] rounded-full overflow-hidden">
+        <div className="w-24 sm:w-32 h-2 bg-ink-100 dark:bg-[#163a28] rounded-full overflow-hidden">
           <motion.div className="h-full bg-gradient-to-r from-brand-500 to-brand-600 rounded-full" animate={{ width: `${progress}%` }} transition={{ duration: 0.3 }} />
         </div>
       </div>
@@ -283,7 +283,7 @@ export function TestPage() {
               <div className="flex flex-col gap-2 pl-10">
                 {q.options.map((opt) => (
                   <label key={opt.id} className={cx('flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition',
-                    answers[q.id] === opt.id ? 'border-brand-400 bg-brand-50 dark:bg-brand-900/20' : 'border-ink-200 dark:border-[#2d3148] hover:border-brand-200 hover:bg-ink-50 dark:hover:bg-[#1e2033]')}>
+                    answers[q.id] === opt.id ? 'border-brand-400 bg-brand-50 dark:bg-brand-900/20' : 'border-ink-200 dark:border-[#1f4d36] hover:border-brand-200 hover:bg-ink-50 dark:hover:bg-[#102a1d]')}>
                     <div className={cx('w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center', answers[q.id] === opt.id ? 'border-brand-500' : 'border-ink-300 dark:border-[#4d5470]')}>
                       {answers[q.id] === opt.id && <div className="w-2.5 h-2.5 rounded-full bg-brand-500" />}
                     </div>
@@ -301,7 +301,7 @@ export function TestPage() {
                   const selected = ((answers[q.id] as string[] | undefined) ?? []).includes(opt.id);
                   return (
                     <label key={opt.id} className={cx('flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition',
-                      selected ? 'border-brand-400 bg-brand-50 dark:bg-brand-900/20' : 'border-ink-200 dark:border-[#2d3148] hover:border-brand-200 hover:bg-ink-50 dark:hover:bg-[#1e2033]')}>
+                      selected ? 'border-brand-400 bg-brand-50 dark:bg-brand-900/20' : 'border-ink-200 dark:border-[#1f4d36] hover:border-brand-200 hover:bg-ink-50 dark:hover:bg-[#102a1d]')}>
                       <div className={cx('w-5 h-5 rounded-md border-2 flex-shrink-0 flex items-center justify-center', selected ? 'border-brand-500 bg-brand-500' : 'border-ink-300 dark:border-[#4d5470]')}>
                         {selected && <span className="text-white text-xs">✓</span>}
                       </div>
@@ -323,7 +323,7 @@ export function TestPage() {
       </div>
 
       {/* Fixed submit */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-[#131522]/90 backdrop-blur-xl border-t border-ink-100 dark:border-[#282c44] px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
+      <div className="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-[#0c1f16]/90 backdrop-blur-xl border-t border-ink-100 dark:border-[#1c3a2a] px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
         <span className="text-sm text-ink-400 hidden sm:inline">Відповіли на {answered} з {total} питань</span>
         <button onClick={handleSubmit} disabled={submitting || answered === 0} className="btn btn-primary px-8 py-3 ml-auto">
           {submitting ? <><Spinner className="w-4 h-4" /> Перевірка…</> : <>✅ Здати тест</>}

@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Layout } from '../../components/Layout';
-import { AiMentorChat } from '../../components/AiMentorChat';
 import { submitHomework } from '../../api/homeworks';
 import api from '../../api/client';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Card, Badge, Loader, EmptyState, Spinner, toast } from '../../components/ui';
+import { Card, Badge, Loader, EmptyState, Spinner } from '../../components/ui';
 import { Confetti } from '../../components/Confetti';
 
 interface HomeworkDetail {
@@ -18,8 +17,6 @@ interface HomeworkDetail {
 
 export function HomeworkPage() {
   const { id } = useParams<{ id: string }>();
-  const [params] = useSearchParams();
-  const courseId = params.get('courseId') ?? '';
   const navigate = useNavigate();
 
   const [hw, setHw] = useState<HomeworkDetail | null>(null);
@@ -27,10 +24,6 @@ export function HomeworkPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-
-  // AI Co-pilot states
-  const [aiTutorFeedback, setAiTutorFeedback] = useState('');
-  const [fetchingTutorHint, setFetchingTutorHint] = useState(false);
 
   // Confetti state
   const [showConfetti, setShowConfetti] = useState(false);
@@ -58,25 +51,6 @@ export function HomeworkPage() {
       confettiTimerRef.current = setTimeout(() => setShowConfetti(false), 4500);
     } finally { 
       setSubmitting(false); 
-    }
-  }
-
-  async function handleGetTutorHint() {
-    if (!courseId || !hw) return;
-    setFetchingTutorHint(true);
-    setAiTutorFeedback('');
-    try {
-      const q = `Привіт! Я виконую домашнє завдання з наступною умовою: "${hw.instruction}". Мій поточний варіант відповіді: "${answer || '(порожньо)'}". Будь ласка, надай мені коротку корисну підказку (не більше 2-3 речень), яка допоможе мені покращити мою відповідь, але в жодному разі не пиши готового розв'язку. Відповідай українською мовою.`;
-      const r = await api.post<{ response: string }>(`/ai/tutor/${courseId}`, {
-        question: q,
-        history: []
-      });
-      setAiTutorFeedback(r.data.response);
-    } catch (err) {
-      console.error(err);
-      toast('error', 'Не вдалося отримати підказку від AI-Асистента.');
-    } finally {
-      setFetchingTutorHint(false);
     }
   }
 
@@ -125,18 +99,6 @@ export function HomeworkPage() {
           </Card>
         )}
 
-        {/* Dynamic AI Tutor Hint Card */}
-        {aiTutorFeedback && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-            <Card className="p-5 mb-4 !bg-brand-50/60 !border-brand-100 shadow-sm relative overflow-hidden">
-              <p className="font-bold text-brand-700 mb-2 flex items-center gap-2 text-sm">
-                <span>🤖</span> Підказка AI-Співпілота
-              </p>
-              <p className="text-brand-900 whitespace-pre-wrap text-sm leading-relaxed">{aiTutorFeedback}</p>
-            </Card>
-          </motion.div>
-        )}
-
         <AnimatePresence mode="wait">
           {submitted ? (
             <motion.div key="ok" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}>
@@ -156,19 +118,9 @@ export function HomeworkPage() {
                 <textarea value={answer} onChange={(e) => setAnswer(e.target.value)}
                   placeholder="Введи відповідь, посилання на репозиторій або опис рішення…"
                   disabled={isPassed || isOnReview}
-                  className="input min-h-40 resize-none disabled:opacity-50 disabled:bg-ink-50 dark:disabled:bg-[#1e2033]" />
+                  className="input min-h-40 resize-none disabled:opacity-50 disabled:bg-ink-50 dark:disabled:bg-[#102a1d]" />
                 <div className="flex items-center justify-between mt-4">
-                  <div className="flex items-center gap-3">
-                    <p className="text-xs text-ink-400">{answer.length} символів</p>
-                    {courseId && !isPassed && !isOnReview && (
-                      <button 
-                        onClick={handleGetTutorHint} 
-                        disabled={fetchingTutorHint}
-                        className="btn btn-ghost py-1 px-2.5 text-xs text-brand-600 hover:bg-brand-50 flex items-center gap-1">
-                        {fetchingTutorHint ? <><Spinner className="w-3 h-3 text-brand-600" /> Отримую...</> : <>🤖 Підказка AI</>}
-                      </button>
-                    )}
-                  </div>
+                  <p className="text-xs text-ink-400">{answer.length} символів</p>
                   {!isPassed && !isOnReview && (
                     <button onClick={handleSubmit} disabled={submitting || !answer.trim()} className="btn btn-primary">
                       {submitting ? <><Spinner className="w-4 h-4" /> Надсилаю…</> : <>🚀 Здати завдання</>}
@@ -180,7 +132,6 @@ export function HomeworkPage() {
           )}
         </AnimatePresence>
       </div>
-      {courseId && <AiMentorChat courseId={courseId} maxMessages={20} />}
     </Layout>
   );
 }

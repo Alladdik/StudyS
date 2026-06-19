@@ -168,7 +168,7 @@ export function JournalPage() {
           <button key={c.id} onClick={() => setSelectedCourse(c.id)}
             className={cx('chip', selectedCourse === c.id
               ? 'bg-brand-600 text-white shadow-[var(--shadow-glow)]'
-              : 'bg-white dark:bg-[#1e2033] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#2d3148] hover:ring-brand-200 dark:hover:ring-brand-700')}>
+              : 'bg-white dark:bg-[#102a1d] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#1f4d36] hover:ring-brand-200 dark:hover:ring-brand-700')}>
             {c.title}
           </button>
         ))}
@@ -230,8 +230,8 @@ export function JournalPage() {
         <Card className="overflow-x-auto">
           <table className="w-full text-sm min-w-[600px]">
             <thead>
-              <tr className="border-b border-ink-100 dark:border-[#282c44]">
-                <th className="text-left px-5 py-3.5 text-xs font-bold text-ink-400 dark:text-[#6b7394] uppercase tracking-wider sticky left-0 bg-white dark:bg-[#1a1c2e] z-10">Студент</th>
+              <tr className="border-b border-ink-100 dark:border-[#1c3a2a]">
+                <th className="text-left px-5 py-3.5 text-xs font-bold text-ink-400 dark:text-[#6b7394] uppercase tracking-wider sticky left-0 bg-white dark:bg-[#0e2218] z-10">Студент</th>
                 {dates.map((date) => (
                   <th key={date} className={cx('text-center px-4 py-3.5 text-xs font-bold uppercase tracking-wider',
                     date === today ? 'text-brand-600 bg-brand-50 dark:bg-brand-900/20' : 'text-ink-400')}>
@@ -245,8 +245,8 @@ export function JournalPage() {
               {students.map((stud) => {
                 const sid = stud.studentId;
                 return (
-                  <tr key={sid} className="border-b border-ink-50 dark:border-[#1e2033] last:border-0 hover:bg-ink-50/60 dark:hover:bg-[#1e2033]/60 transition">
-                    <td className="px-5 py-3 font-semibold text-ink-800 dark:text-[#e8eaf0] sticky left-0 bg-white dark:bg-[#1a1c2e] z-10 border-r border-ink-50 dark:border-[#1e2033]">{stud.name}</td>
+                  <tr key={sid} className="border-b border-ink-50 dark:border-[#102a1d] last:border-0 hover:bg-ink-50/60 dark:hover:bg-[#102a1d]/60 transition">
+                    <td className="px-5 py-3 font-semibold text-ink-800 dark:text-[#e8eaf0] sticky left-0 bg-white dark:bg-[#0e2218] z-10 border-r border-ink-50 dark:border-[#102a1d]">{stud.name}</td>
                     {dates.map((date) => {
                       const entry = grouped[date]?.find((e) => e.studentId === sid);
                       const isToday = date === today;
@@ -259,8 +259,8 @@ export function JournalPage() {
                                 value={entry?.attendance ?? 'Present'}
                                 onChange={(e) => handleStatusChange(sid, e.target.value as AttendanceStatus)}
                                 disabled={!selectedLesson}
-                                className={cx('bg-white dark:bg-[#1e2033] dark:text-[#e8eaf0] border rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-brand-200 transition',
-                                  selectedLesson ? 'border-ink-200 dark:border-[#2d3148] cursor-pointer' : 'border-ink-100 dark:border-[#282c44] opacity-50 cursor-not-allowed')}
+                                className={cx('bg-white dark:bg-[#102a1d] dark:text-[#e8eaf0] border rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-brand-200 transition',
+                                  selectedLesson ? 'border-ink-200 dark:border-[#1f4d36] cursor-pointer' : 'border-ink-100 dark:border-[#1c3a2a] opacity-50 cursor-not-allowed')}
                                 title={!selectedLesson ? 'Спочатку оберіть урок вище' : ''}>
                                 {STATUSES.map((s) => <option key={s} value={s}>{statusLabels[s]}</option>)}
                               </select>
@@ -271,8 +271,8 @@ export function JournalPage() {
                                   value={gradeOptions.find((o) => o.valueString === entry?.gradeValue)?.id ?? ''}
                                   onChange={(e) => handleGradeChange(sid, e.target.value)}
                                   disabled={!selectedLesson}
-                                  className={cx('bg-white dark:bg-[#1e2033] border rounded-lg px-2 py-1.5 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-brand-200 transition text-brand-700 dark:text-brand-400',
-                                    selectedLesson ? 'border-brand-200 cursor-pointer' : 'border-ink-100 dark:border-[#282c44] opacity-50 cursor-not-allowed')}
+                                  className={cx('bg-white dark:bg-[#102a1d] border rounded-lg px-2 py-1.5 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-brand-200 transition text-brand-700 dark:text-brand-400',
+                                    selectedLesson ? 'border-brand-200 cursor-pointer' : 'border-ink-100 dark:border-[#1c3a2a] opacity-50 cursor-not-allowed')}
                                   title={!selectedLesson ? 'Спочатку оберіть урок вище' : ''}>
                                   <option value="">— Оцінка —</option>
                                   {gradeOptions.map((v) => (

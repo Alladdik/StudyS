@@ -79,7 +79,7 @@ function InlineField({ label, value, onSave, type = 'text', placeholder }: {
         </div>
       ) : (
         <button onClick={() => setEditing(true)}
-          className="w-full text-left px-3 py-1.5 rounded-xl text-sm text-ink-800 dark:text-[#e8eaf0] bg-ink-50 dark:bg-[#1e2033] hover:bg-brand-50 dark:hover:bg-brand-900/20 hover:text-brand-700 dark:hover:text-brand-400 border border-transparent hover:border-brand-100 dark:hover:border-brand-800/40 transition group flex items-center justify-between">
+          className="w-full text-left px-3 py-1.5 rounded-xl text-sm text-ink-800 dark:text-[#e8eaf0] bg-ink-50 dark:bg-[#102a1d] hover:bg-brand-50 dark:hover:bg-brand-900/20 hover:text-brand-700 dark:hover:text-brand-400 border border-transparent hover:border-brand-100 dark:hover:border-brand-800/40 transition group flex items-center justify-between">
           <span className="truncate">{value || <span className="text-ink-300 dark:text-[#4d5470] italic">{placeholder ?? 'Не вказано'}</span>}</span>
           <span className="opacity-0 group-hover:opacity-100 text-brand-400 text-xs flex-shrink-0 ml-2">✎</span>
         </button>
@@ -284,21 +284,21 @@ function UserDrawer({ user, courses, students, onClose, onRefresh, isManager }: 
       {/* Drawer */}
       <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
         transition={{ type: 'spring', stiffness: 340, damping: 34 }}
-        className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-md flex flex-col bg-white dark:bg-[#1a1c2e] shadow-2xl dark:shadow-black/50 overflow-hidden">
+        className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-md flex flex-col bg-white dark:bg-[#0e2218] shadow-2xl dark:shadow-black/50 overflow-hidden">
 
         {/* Header */}
-        <div className="flex items-center gap-3 px-5 py-4 border-b border-ink-100 dark:border-[#282c44] bg-white dark:bg-[#1a1c2e] flex-shrink-0">
+        <div className="flex items-center gap-3 px-5 py-4 border-b border-ink-100 dark:border-[#1c3a2a] bg-white dark:bg-[#0e2218] flex-shrink-0">
           <Av name={`${data.firstName} ${data.lastName}`} role={data.role} size={44} />
           <div className="flex-1 min-w-0">
             <p className="font-extrabold text-ink-900 truncate">{data.firstName} {data.lastName}</p>
             <p className="text-xs text-ink-400 truncate">{data.email}</p>
           </div>
           <Badge tone={ROLE_TONES[data.role] ?? 'gray'}>{ROLE_EMOJIS[data.role]} {ROLE_LABELS[data.role] ?? data.role}</Badge>
-          <button onClick={onClose} className="w-8 h-8 rounded-xl bg-ink-100 dark:bg-[#252840] hover:bg-ink-200 dark:hover:bg-[#2d3148] flex items-center justify-center text-ink-500 transition ml-1">✕</button>
+          <button onClick={onClose} className="w-8 h-8 rounded-xl bg-ink-100 dark:bg-[#163a28] hover:bg-ink-200 dark:hover:bg-[#1f4d36] flex items-center justify-center text-ink-500 transition ml-1">✕</button>
         </div>
 
         {/* Actions */}
-        <div className="flex gap-2 px-5 py-3 border-b border-ink-50 dark:border-[#282c44] bg-ink-50/50 dark:bg-[#151722]/50 flex-shrink-0 flex-wrap">
+        <div className="flex gap-2 px-5 py-3 border-b border-ink-50 dark:border-[#1c3a2a] bg-ink-50/50 dark:bg-[#0c2118]/50 flex-shrink-0 flex-wrap">
           {!isManager && (
             <button onClick={handleImpersonate}
               className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition">
@@ -306,7 +306,7 @@ function UserDrawer({ user, courses, students, onClose, onRefresh, isManager }: 
             </button>
           )}
           <button onClick={copyEmail}
-            className="py-2 px-3 rounded-xl bg-white dark:bg-[#1e2033] border border-ink-200 dark:border-[#2d3148] hover:bg-ink-50 dark:hover:bg-[#252840] text-ink-600 dark:text-[#9aa2bd] text-xs font-semibold transition">
+            className="py-2 px-3 rounded-xl bg-white dark:bg-[#102a1d] border border-ink-200 dark:border-[#1f4d36] hover:bg-ink-50 dark:hover:bg-[#163a28] text-ink-600 dark:text-[#9aa2bd] text-xs font-semibold transition">
             📋 Email
           </button>
           {!isManager && (
@@ -323,7 +323,7 @@ function UserDrawer({ user, courses, students, onClose, onRefresh, isManager }: 
         <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
 
           {/* Profile fields */}
-          <div className="bg-white dark:bg-[#1e2033] rounded-2xl border border-ink-100 dark:border-[#282c44] p-4 space-y-3">
+          <div className="bg-white dark:bg-[#102a1d] rounded-2xl border border-ink-100 dark:border-[#1c3a2a] p-4 space-y-3">
             <p className="text-xs font-bold text-ink-400 uppercase tracking-wider">Персональні дані</p>
             <div className="grid grid-cols-2 gap-3">
               <InlineField label="Ім'я" value={data.firstName}
@@ -336,7 +336,7 @@ function UserDrawer({ user, courses, students, onClose, onRefresh, isManager }: 
           </div>
 
           {/* Role */}
-          <div className="bg-white dark:bg-[#1e2033] rounded-2xl border border-ink-100 dark:border-[#282c44] p-4">
+          <div className="bg-white dark:bg-[#102a1d] rounded-2xl border border-ink-100 dark:border-[#1c3a2a] p-4">
             <p className="text-[11px] font-bold text-ink-400 uppercase tracking-wider mb-2">Роль</p>
             {isManager ? (
               <Badge tone={ROLE_TONES[data.role] ?? 'gray'}>{ROLE_EMOJIS[data.role]} {ROLE_LABELS[data.role] ?? data.role}</Badge>
@@ -347,7 +347,7 @@ function UserDrawer({ user, courses, students, onClose, onRefresh, isManager }: 
                     className={cx('flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold border transition',
                       data.role === r
                         ? 'border-brand-300 dark:border-brand-600 bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300'
-                        : 'border-ink-200 dark:border-[#2d3148] bg-white dark:bg-[#1e2033] text-ink-500 dark:text-[#9aa2bd] hover:border-brand-200 dark:hover:border-brand-700 hover:bg-brand-50/50 dark:hover:bg-brand-900/20')}>
+                        : 'border-ink-200 dark:border-[#1f4d36] bg-white dark:bg-[#102a1d] text-ink-500 dark:text-[#9aa2bd] hover:border-brand-200 dark:hover:border-brand-700 hover:bg-brand-50/50 dark:hover:bg-brand-900/20')}>
                     {ROLE_EMOJIS[r]} {ROLE_LABELS[r]}
                   </button>
                 ))}
@@ -356,13 +356,13 @@ function UserDrawer({ user, courses, students, onClose, onRefresh, isManager }: 
           </div>
 
           {/* Password */}
-          <div className="bg-white dark:bg-[#1e2033] rounded-2xl border border-ink-100 dark:border-[#282c44] p-4">
+          <div className="bg-white dark:bg-[#102a1d] rounded-2xl border border-ink-100 dark:border-[#1c3a2a] p-4">
             <PasswordBlock userId={data.id} onSaved={onRefresh} />
           </div>
 
           {/* Course enrollment */}
           {(data.role === 'Student' || data.role === 'Teacher') && (
-            <div className="bg-white dark:bg-[#1e2033] rounded-2xl border border-ink-100 dark:border-[#282c44] p-4">
+            <div className="bg-white dark:bg-[#102a1d] rounded-2xl border border-ink-100 dark:border-[#1c3a2a] p-4">
               <p className="text-[11px] font-bold text-ink-400 uppercase tracking-wider mb-2">
                 {data.role === 'Student' ? 'Записати на курс' : 'Призначити на курс'}
               </p>
@@ -381,13 +381,13 @@ function UserDrawer({ user, courses, students, onClose, onRefresh, isManager }: 
 
           {/* Parent linking */}
           {data.role === 'Parent' && (
-            <div className="bg-white dark:bg-[#1e2033] rounded-2xl border border-ink-100 dark:border-[#282c44] p-4">
+            <div className="bg-white dark:bg-[#102a1d] rounded-2xl border border-ink-100 dark:border-[#1c3a2a] p-4">
               <p className="text-[11px] font-bold text-ink-400 uppercase tracking-wider mb-2">Діти</p>
               {children.length === 0
                 ? <p className="text-ink-400 text-xs italic">Не прив'язано жодного учня</p>
                 : <div className="space-y-1.5 mb-3">
                     {children.map(ch => (
-                      <div key={ch.id} className="flex items-center justify-between bg-ink-50 dark:bg-[#252840] rounded-xl px-3 py-1.5">
+                      <div key={ch.id} className="flex items-center justify-between bg-ink-50 dark:bg-[#163a28] rounded-xl px-3 py-1.5">
                         <span className="text-sm font-medium text-ink-700 dark:text-[#e8eaf0]">{ch.firstName} {ch.lastName}</span>
                         <button onClick={() => handleUnlink(ch.id)}
                           className="text-xs text-rose-500 hover:text-rose-700 transition">Відв'язати</button>
@@ -409,7 +409,7 @@ function UserDrawer({ user, courses, students, onClose, onRefresh, isManager }: 
           )}
 
           {/* Meta */}
-          <div className="bg-ink-50 dark:bg-[#151722] rounded-2xl p-4 text-xs text-ink-400 dark:text-[#6b7394] space-y-1">
+          <div className="bg-ink-50 dark:bg-[#0c2118] rounded-2xl p-4 text-xs text-ink-400 dark:text-[#6b7394] space-y-1">
             <div className="flex justify-between">
               <span>ID</span>
               <button onClick={() => { navigator.clipboard.writeText(data.id); toast('success', 'ID скопійовано'); }}
@@ -430,7 +430,7 @@ function UserDrawer({ user, courses, students, onClose, onRefresh, isManager }: 
 
         {/* Footer: danger zone — Admin only */}
         {!isManager && (
-          <div className="px-5 py-3 border-t border-ink-100 dark:border-[#282c44] flex-shrink-0">
+          <div className="px-5 py-3 border-t border-ink-100 dark:border-[#1c3a2a] flex-shrink-0">
             <button onClick={handleDelete}
               className="w-full py-2.5 rounded-2xl text-sm font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-900/20 hover:bg-rose-100 dark:hover:bg-rose-900/30 border border-rose-200 dark:border-rose-700/50 transition">
               🗑 Видалити акаунт назавжди
@@ -470,11 +470,11 @@ function CreateModal({ onClose, onCreated }: { onClose: () => void; onCreated: (
         onClick={onClose} className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm" />
       <motion.div initial={{ opacity: 0, scale: 0.95, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }}
         className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
-        <div className="bg-white dark:bg-[#1a1c2e] dark:border dark:border-[#282c44] rounded-3xl shadow-2xl dark:shadow-black/50 w-full max-w-md pointer-events-auto overflow-hidden">
+        <div className="bg-white dark:bg-[#0e2218] dark:border dark:border-[#1c3a2a] rounded-3xl shadow-2xl dark:shadow-black/50 w-full max-w-md pointer-events-auto overflow-hidden">
 
-          <div className="px-6 py-5 border-b border-ink-100 dark:border-[#282c44] flex items-center justify-between">
+          <div className="px-6 py-5 border-b border-ink-100 dark:border-[#1c3a2a] flex items-center justify-between">
             <h2 className="font-extrabold text-ink-900 dark:text-white text-lg">+ Новий акаунт</h2>
-            <button onClick={onClose} className="w-8 h-8 rounded-xl bg-ink-100 dark:bg-[#252840] hover:bg-ink-200 dark:hover:bg-[#2d3148] flex items-center justify-center text-ink-500 dark:text-[#9aa2bd] transition">✕</button>
+            <button onClick={onClose} className="w-8 h-8 rounded-xl bg-ink-100 dark:bg-[#163a28] hover:bg-ink-200 dark:hover:bg-[#1f4d36] flex items-center justify-center text-ink-500 dark:text-[#9aa2bd] transition">✕</button>
           </div>
 
           {created ? (
@@ -496,7 +496,7 @@ function CreateModal({ onClose, onCreated }: { onClose: () => void; onCreated: (
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-ink-500 dark:text-[#6b7394]">Пароль</span>
                   <div className="flex items-center gap-1.5">
-                    <span className="font-mono text-sm text-ink-800 dark:text-[#e8eaf0] bg-white dark:bg-[#1e2033] px-2 py-0.5 rounded-lg border border-ink-200 dark:border-[#2d3148]">{created.password}</span>
+                    <span className="font-mono text-sm text-ink-800 dark:text-[#e8eaf0] bg-white dark:bg-[#102a1d] px-2 py-0.5 rounded-lg border border-ink-200 dark:border-[#1f4d36]">{created.password}</span>
                     <button onClick={() => { navigator.clipboard.writeText(created.password); toast('success', 'Скопійовано'); }}
                       className="text-emerald-600 hover:text-emerald-800 text-xs">📋</button>
                   </div>
@@ -548,7 +548,7 @@ function CreateModal({ onClose, onCreated }: { onClose: () => void; onCreated: (
                     <button type="button" key={r} onClick={() => setForm(f => ({ ...f, role: r }))}
                       className={cx('flex items-center gap-1 px-3 py-1.5 rounded-xl text-sm border transition',
                         form.role === r ? 'border-brand-300 dark:border-brand-600 bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 font-bold'
-                          : 'border-ink-200 dark:border-[#2d3148] text-ink-500 dark:text-[#9aa2bd] hover:border-brand-200')}>
+                          : 'border-ink-200 dark:border-[#1f4d36] text-ink-500 dark:text-[#9aa2bd] hover:border-brand-200')}>
                       {ROLE_EMOJIS[r]} {ROLE_LABELS[r]}
                     </button>
                   ))}
@@ -622,7 +622,7 @@ export function UsersPage() {
           <button key={r} onClick={() => setRoleFilter(r)}
             className={cx('chip transition-all', roleFilter === r
               ? 'bg-brand-600 text-white shadow-[var(--shadow-glow)]'
-              : 'bg-white dark:bg-[#1e2033] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#2d3148] hover:ring-brand-200')}>
+              : 'bg-white dark:bg-[#102a1d] text-ink-500 dark:text-[#9aa2bd] ring-1 ring-ink-200 dark:ring-[#1f4d36] hover:ring-brand-200')}>
             {r === 'All' ? `Всі (${data?.total ?? '…'})` : `${ROLE_EMOJIS[r]} ${ROLE_LABELS[r]}`}
           </button>
         ))}
@@ -633,11 +633,11 @@ export function UsersPage() {
         <EmptyState icon="👤" title="Нікого не знайдено" hint="Спробуйте змінити фільтр або пошуковий запит"
           action={<button onClick={() => setShowCreate(true)} className="btn btn-primary">+ Новий акаунт</button>} />
       ) : (
-        <div className="bg-white dark:bg-[#1a1c2e] rounded-2xl border border-ink-100 dark:border-[#282c44] overflow-hidden shadow-sm">
+        <div className="bg-white dark:bg-[#0e2218] rounded-2xl border border-ink-100 dark:border-[#1c3a2a] overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-ink-100 dark:border-[#282c44] bg-ink-50/60 dark:bg-[#151722]/60">
+                <tr className="border-b border-ink-100 dark:border-[#1c3a2a] bg-ink-50/60 dark:bg-[#0c2118]/60">
                   {["Користувач", 'Email', 'Роль', 'Статус', 'Реєстрація', ''].map((h, i) => (
                     <th key={i} className="text-left px-5 py-3 text-[11px] font-bold text-ink-400 uppercase tracking-wider whitespace-nowrap">{h}</th>
                   ))}
@@ -646,7 +646,7 @@ export function UsersPage() {
               <tbody>
                 {data?.items.map((user) => (
                   <motion.tr key={user.id} layout
-                    className="border-b border-ink-50 dark:border-[#1e2033] last:border-0 hover:bg-brand-50/30 dark:hover:bg-brand-900/10 transition-colors cursor-pointer group"
+                    className="border-b border-ink-50 dark:border-[#102a1d] last:border-0 hover:bg-brand-50/30 dark:hover:bg-brand-900/10 transition-colors cursor-pointer group"
                     onClick={() => openUser(user)}>
 
                     {/* Name + avatar */}
@@ -709,14 +709,14 @@ export function UsersPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between px-5 py-3 border-t border-ink-100 dark:border-[#282c44] bg-ink-50/50 dark:bg-[#151722]/50">
+            <div className="flex items-center justify-between px-5 py-3 border-t border-ink-100 dark:border-[#1c3a2a] bg-ink-50/50 dark:bg-[#0c2118]/50">
               <span className="text-xs text-ink-400">{data?.total} користувачів</span>
               <div className="flex items-center gap-1">
                 <button disabled={page <= 1} onClick={() => setPage(p => p - 1)}
-                  className="w-8 h-8 rounded-xl border border-ink-200 dark:border-[#2d3148] flex items-center justify-center text-ink-500 dark:text-[#9aa2bd] hover:bg-ink-100 dark:hover:bg-[#252840] disabled:opacity-30 transition text-sm">←</button>
+                  className="w-8 h-8 rounded-xl border border-ink-200 dark:border-[#1f4d36] flex items-center justify-center text-ink-500 dark:text-[#9aa2bd] hover:bg-ink-100 dark:hover:bg-[#163a28] disabled:opacity-30 transition text-sm">←</button>
                 <span className="text-xs text-ink-500 dark:text-[#9aa2bd] px-2">{page} / {totalPages}</span>
                 <button disabled={page >= totalPages} onClick={() => setPage(p => p + 1)}
-                  className="w-8 h-8 rounded-xl border border-ink-200 dark:border-[#2d3148] flex items-center justify-center text-ink-500 dark:text-[#9aa2bd] hover:bg-ink-100 dark:hover:bg-[#252840] disabled:opacity-30 transition text-sm">→</button>
+                  className="w-8 h-8 rounded-xl border border-ink-200 dark:border-[#1f4d36] flex items-center justify-center text-ink-500 dark:text-[#9aa2bd] hover:bg-ink-100 dark:hover:bg-[#163a28] disabled:opacity-30 transition text-sm">→</button>
               </div>
             </div>
           )}

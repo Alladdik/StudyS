@@ -130,7 +130,7 @@ export function GradeScalesPage() {
           <h2 className="font-extrabold text-ink-900 dark:text-white text-lg mb-4">📊 Існуючі шкали</h2>
           <div className="flex flex-col gap-3">
             {scales.map((s) => (
-              <div key={s.id} className="rounded-xl border border-ink-200 dark:border-[#2d3148] p-4 hover:border-brand-300 transition group relative">
+              <div key={s.id} className="rounded-xl border border-ink-200 dark:border-[#1f4d36] p-4 hover:border-brand-300 transition group relative">
                 <div className="flex items-center justify-between mb-2.5">
                   <p className="font-bold text-ink-800 dark:text-[#e8eaf0] text-base">{s.name}</p>
                   <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition duration-150">

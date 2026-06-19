@@ -17,6 +17,9 @@ export function CourseBuilderPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [selected, setSelected] = useState<Course & { modules?: Module[] } | null>(null);
   const [newCourseTitle, setNewCourseTitle] = useState('');
+  const [newCourseDesc, setNewCourseDesc] = useState('');
+  const [showCreate, setShowCreate] = useState(false);
+  const [creating, setCreating] = useState(false);
   const [newModuleTitle, setNewModuleTitle] = useState('');
   const [newLessonTitle, setNewLessonTitle] = useState('');
   const [selectedModuleId, setSelectedModuleId] = useState('');
@@ -175,13 +178,22 @@ export function CourseBuilderPage() {
   }
   async function handleCreateCourse() {
     if (!newCourseTitle.trim()) return;
+    setCreating(true);
     try {
-      const { data } = await createCourse({ title: newCourseTitle });
+      const { data } = await createCourse({
+        title: newCourseTitle.trim(),
+        description: newCourseDesc.trim() || undefined,
+      });
       setCourses((p) => [...p, data]);
       setNewCourseTitle('');
+      setNewCourseDesc('');
+      setShowCreate(false);
+      setSelected({ ...data, modules: [] });
       toast('success', 'Курс успішно створено!');
     } catch (err: any) {
       toast('error', err.response?.data?.error || 'Помилка створення курсу');
+    } finally {
+      setCreating(false);
     }
   }
   async function handleAddModule() {
@@ -251,14 +263,11 @@ export function CourseBuilderPage() {
       <div className="flex flex-col lg:flex-row gap-4 lg:h-[calc(100vh-200px)]">
         {/* Course list */}
         <Card className="lg:w-64 p-4 flex flex-col gap-2 lg:overflow-y-auto flex-shrink-0">
-          <div className="flex gap-2">
-            <input value={newCourseTitle} onChange={(e) => setNewCourseTitle(e.target.value)} placeholder="Новий курс…"
-              className="input py-2 text-sm" onKeyDown={(e) => e.key === 'Enter' && handleCreateCourse()} />
-            <button onClick={handleCreateCourse} className="btn btn-primary w-10 px-0 flex-shrink-0">+</button>
-          </div>
+          <button onClick={() => { setNewCourseTitle(''); setNewCourseDesc(''); setShowCreate(true); }}
+            className="btn btn-primary w-full text-sm">+ Новий курс</button>
           {courses.map((c) => (
             <button key={c.id} onClick={() => selectCourse(c)}
-              className={cx('text-left px-3 py-2.5 rounded-xl text-sm font-medium transition flex flex-col gap-1 w-full', selected?.id === c.id ? 'bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-400 ring-1 ring-brand-100 dark:ring-brand-800/40' : 'text-ink-600 dark:text-[#9aa2bd] hover:bg-ink-50 dark:hover:bg-[#1e2033]')}>
+              className={cx('text-left px-3 py-2.5 rounded-xl text-sm font-medium transition flex flex-col gap-1 w-full', selected?.id === c.id ? 'bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-400 ring-1 ring-brand-100 dark:ring-brand-800/40' : 'text-ink-600 dark:text-[#9aa2bd] hover:bg-ink-50 dark:hover:bg-[#102a1d]')}>
               <span className="truncate w-full font-bold">{c.title}</span>
               <span className="text-[10px] uppercase font-bold tracking-wider">
                 {c.status === 'Draft' && <span className="text-ink-400">Чернетка</span>}
@@ -273,7 +282,7 @@ export function CourseBuilderPage() {
         {/* Tree */}
         {selected ? (
           <Card className="flex-1 p-6 lg:overflow-y-auto">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-4 border-b border-ink-100 dark:border-[#282c44]">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-4 border-b border-ink-100 dark:border-[#1c3a2a]">
               <div className="min-w-0 flex-1">
                 {isEditingTitle ? (
                   <div className="flex items-center gap-2 max-w-md">
@@ -290,7 +299,7 @@ export function CourseBuilderPage() {
                 ) : (
                   <div className="flex items-center gap-2.5 flex-wrap">
                     <h2 className="font-extrabold text-ink-900 dark:text-white text-lg tracking-tight">{selected.title}</h2>
-                    {selected.status === 'Draft' && <span className="text-xs bg-ink-100 dark:bg-[#252840] text-ink-500 dark:text-[#9aa2bd] font-bold px-2 py-0.5 rounded-lg">Чернетка</span>}
+                    {selected.status === 'Draft' && <span className="text-xs bg-ink-100 dark:bg-[#163a28] text-ink-500 dark:text-[#9aa2bd] font-bold px-2 py-0.5 rounded-lg">Чернетка</span>}
                     {selected.status === 'OnReview' && <span className="text-xs bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 ring-1 ring-amber-100 dark:ring-amber-800/40 font-bold px-2 py-0.5 rounded-lg">На розгляді</span>}
                     {selected.status === 'Published' && <span className="text-xs bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 ring-1 ring-emerald-100 dark:ring-emerald-800/40 font-bold px-2 py-0.5 rounded-lg">Опубліковано</span>}
                     {role === 'Admin' && (
@@ -345,7 +354,7 @@ export function CourseBuilderPage() {
 
             <div className="flex flex-col gap-3">
               {(selected.modules ?? []).map((m) => (
-                <div key={m.id} className={cx('rounded-xl border p-4 transition', selectedModuleId === m.id ? 'border-brand-200 dark:border-brand-700/50 bg-brand-50/40 dark:bg-brand-900/20' : 'border-ink-200 dark:border-[#2d3148]')}>
+                <div key={m.id} className={cx('rounded-xl border p-4 transition', selectedModuleId === m.id ? 'border-brand-200 dark:border-brand-700/50 bg-brand-50/40 dark:bg-brand-900/20' : 'border-ink-200 dark:border-[#1f4d36]')}>
                   <button onClick={() => setSelectedModuleId(m.id)} className={cx('font-bold mb-2 flex items-center gap-2 transition', selectedModuleId === m.id ? 'text-brand-700 dark:text-brand-400' : 'text-ink-800 dark:text-[#e8eaf0] hover:text-brand-600')}>
                     <span className="text-ink-300 dark:text-[#4d5470]">▸</span> {m.title}
                   </button>
@@ -362,14 +371,14 @@ export function CourseBuilderPage() {
             </div>
 
             {selectedModuleId && (
-              <div className="mt-5 border-t border-ink-100 dark:border-[#282c44] pt-5">
+              <div className="mt-5 border-t border-ink-100 dark:border-[#1c3a2a] pt-5">
                 <p className="text-sm text-ink-500 dark:text-[#6b7394] mb-3">Додати урок до: <strong className="text-ink-800 dark:text-[#e8eaf0]">{selected.modules?.find((m) => m.id === selectedModuleId)?.title}</strong></p>
                 <input value={newLessonTitle} onChange={(e) => setNewLessonTitle(e.target.value)} placeholder="Назва уроку…" className="input mb-3" />
 
                 {blocks.length > 0 && (
                   <div className="flex flex-col gap-2 mb-3">
                     {blocks.map((b, i) => (
-                      <div key={i} className="flex flex-col gap-2 bg-ink-50 dark:bg-[#1e2033] rounded-xl px-3 py-2.5 text-sm">
+                      <div key={i} className="flex flex-col gap-2 bg-ink-50 dark:bg-[#102a1d] rounded-xl px-3 py-2.5 text-sm">
                         <div className="flex items-center gap-2">
                           <span>{blockIcons[b.type]}</span>
                           <span className="font-medium text-ink-700 dark:text-[#b0b8d0]">{blockLabels[b.type]}</span>
@@ -410,11 +419,11 @@ export function CourseBuilderPage() {
                 )}
 
                 <div className="relative mb-3">
-                  <button onClick={() => setShowBlockPicker((p) => !p)} className="w-full px-3 py-2.5 border-2 border-dashed border-ink-200 dark:border-[#2d3148] rounded-xl text-sm text-ink-400 dark:text-[#4d5470] hover:border-brand-300 hover:text-brand-500 transition">
+                  <button onClick={() => setShowBlockPicker((p) => !p)} className="w-full px-3 py-2.5 border-2 border-dashed border-ink-200 dark:border-[#1f4d36] rounded-xl text-sm text-ink-400 dark:text-[#4d5470] hover:border-brand-300 hover:text-brand-500 transition">
                     + Додати блок контенту
                   </button>
                   {showBlockPicker && (
-                    <div className="absolute left-0 top-12 bg-white dark:bg-[#1a1c2e] border border-ink-200 dark:border-[#282c44] rounded-2xl shadow-xl dark:shadow-black/40 z-10 p-2 flex flex-col gap-0.5 min-w-52">
+                    <div className="absolute left-0 top-12 bg-white dark:bg-[#0e2218] border border-ink-200 dark:border-[#1c3a2a] rounded-2xl shadow-xl dark:shadow-black/40 z-10 p-2 flex flex-col gap-0.5 min-w-52">
                       {BLOCK_TYPES.map((type) => (
                         <button key={type} onClick={() => addBlock(type)} className="text-left px-3 py-2.5 hover:bg-brand-50 dark:hover:bg-brand-900/20 text-ink-700 dark:text-[#e8eaf0] rounded-xl text-sm flex items-center gap-2.5 transition">
                           <span className="text-lg">{blockIcons[type]}</span> {blockLabels[type]}
@@ -447,7 +456,7 @@ export function CourseBuilderPage() {
                 <h3 className="font-bold text-ink-700 dark:text-[#b0b8d0] text-sm mb-3">Викладачі ({members.teachers.length})</h3>
                 
                 {role === 'Admin' && (
-                  <div className="bg-ink-50/60 dark:bg-[#1e2033]/60 p-3.5 rounded-2xl mb-3 flex gap-2 items-center">
+                  <div className="bg-ink-50/60 dark:bg-[#102a1d]/60 p-3.5 rounded-2xl mb-3 flex gap-2 items-center">
                     <select
                       value={selectedTeacherId}
                       onChange={(e) => setSelectedTeacherId(e.target.value)}
@@ -470,7 +479,7 @@ export function CourseBuilderPage() {
 
                 <div className="flex flex-col gap-2 max-h-40 overflow-y-auto pr-1">
                   {members.teachers.map((t) => (
-                    <div key={t.teacherId} className="flex items-center justify-between py-2 border-b border-ink-50 dark:border-[#1e2033] last:border-0 text-sm">
+                    <div key={t.teacherId} className="flex items-center justify-between py-2 border-b border-ink-50 dark:border-[#102a1d] last:border-0 text-sm">
                       <div>
                         <p className="font-semibold text-ink-800 dark:text-[#e8eaf0]">{t.name}</p>
                         <p className="text-xs text-ink-400">{t.email}</p>
@@ -487,7 +496,7 @@ export function CourseBuilderPage() {
                 <h3 className="font-bold text-ink-700 text-sm mb-3">Записані студенти ({members.students.length})</h3>
                 
                 {role === 'Admin' && (
-                  <div className="bg-ink-50/60 dark:bg-[#1e2033]/60 p-3.5 rounded-2xl mb-3 flex gap-2 items-center">
+                  <div className="bg-ink-50/60 dark:bg-[#102a1d]/60 p-3.5 rounded-2xl mb-3 flex gap-2 items-center">
                     <select
                       value={selectedStudentId}
                       onChange={(e) => setSelectedStudentId(e.target.value)}
@@ -510,7 +519,7 @@ export function CourseBuilderPage() {
 
                 <div className="flex flex-col gap-2 max-h-52 overflow-y-auto pr-1">
                   {members.students.map((s) => (
-                    <div key={s.studentId} className="flex items-center justify-between py-2 border-b border-ink-50 dark:border-[#1e2033] last:border-0 text-sm">
+                    <div key={s.studentId} className="flex items-center justify-between py-2 border-b border-ink-50 dark:border-[#102a1d] last:border-0 text-sm">
                       <div>
                         <p className="font-semibold text-ink-800 dark:text-[#e8eaf0]">{s.name}</p>
                         <p className="text-xs text-ink-400">{s.email}</p>
@@ -525,6 +534,36 @@ export function CourseBuilderPage() {
           ) : (
             <p className="text-ink-400 text-sm text-center py-4">Не вдалося завантажити дані</p>
           )}
+        </div>
+      </Modal>
+
+      <Modal open={showCreate} onClose={() => setShowCreate(false)} className="max-w-md">
+        <div className="p-6">
+          <h2 className="font-extrabold text-ink-900 dark:text-white text-lg mb-1">Новий курс</h2>
+          <p className="text-sm text-ink-400 dark:text-[#6b7394] mb-5">
+            {role === 'Admin'
+              ? 'Курс буде одразу опубліковано.'
+              : 'Курс створюється як чернетка — надішліть його на розгляд, коли буде готовий.'}
+          </p>
+          <div className="flex flex-col gap-4">
+            <div>
+              <label className="label">Назва курсу</label>
+              <input value={newCourseTitle} onChange={(e) => setNewCourseTitle(e.target.value)}
+                placeholder="Напр. Основи Python" className="input" autoFocus
+                onKeyDown={(e) => { if (e.key === 'Enter') handleCreateCourse(); }} />
+            </div>
+            <div>
+              <label className="label">Опис <span className="text-ink-300 dark:text-[#4d5470] normal-case font-normal">(показується в каталозі)</span></label>
+              <textarea value={newCourseDesc} onChange={(e) => setNewCourseDesc(e.target.value)} rows={3}
+                placeholder="Коротко про курс — що вивчатимуть студенти…" className="input resize-none" />
+            </div>
+            <div className="flex justify-end gap-2 pt-1">
+              <button onClick={() => setShowCreate(false)} className="btn btn-soft">Скасувати</button>
+              <button onClick={handleCreateCourse} disabled={!newCourseTitle.trim() || creating} className="btn btn-primary">
+                {creating ? 'Створення…' : 'Створити курс'}
+              </button>
+            </div>
+          </div>
         </div>
       </Modal>
     </Layout>

@@ -9,7 +9,7 @@ const STEPS: Record<string, { emoji: string; title: string; text: string; action
   Student: [
     { emoji: '👋', title: 'Ласкаво просимо до LTropik!', text: 'Ти потрапив у найкрутішу онлайн-школу. Давай разом познайомимось з твоїм кабінетом!' },
     { emoji: '📅', title: 'Щоденник', text: 'Тут ти бачиш відвідуваність та оцінки. Записуй нотатки прямо в уроці — вони зберігаються тільки для тебе.', href: '/student/diary' },
-    { emoji: '📚', title: 'Мої курси', text: 'Всі твої курси тут. У кожному уроці є AI-ментор, тести та домашні завдання.', href: '/student/courses' },
+    { emoji: '📚', title: 'Мої курси', text: 'Всі твої курси тут. У кожному уроці є матеріали, тести та домашні завдання.', href: '/student/courses' },
     { emoji: '🏆', title: 'Досягнення', text: 'Виконуй щоденні квести, збирай бейджі та монети. Витрачай монети в магазині!', href: '/student/achievements' },
     { emoji: '🚀', title: 'Все готово!', text: 'Ти можеш починати навчання. Натисни Ctrl+K у будь-який момент щоб швидко знайти курс або урок.' },
   ],
@@ -81,13 +81,13 @@ export function Onboarding() {
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 60, opacity: 0, scale: 0.96 }}
             transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-            className="w-full max-w-sm bg-white dark:bg-[#1a1c2e] rounded-3xl shadow-2xl border border-ink-100 dark:border-[#282c44] p-7"
+            className="w-full max-w-sm bg-white dark:bg-[#0e2218] rounded-3xl shadow-2xl border border-ink-100 dark:border-[#1c3a2a] p-7"
           >
             {/* Progress dots */}
             <div className="flex gap-1.5 justify-center mb-6">
               {steps.map((_, i) => (
                 <span key={i} className={`h-1.5 rounded-full transition-all ${
-                  i === step ? 'w-5 bg-brand-600' : i < step ? 'w-2 bg-brand-300' : 'w-2 bg-ink-200 dark:bg-[#282c44]'
+                  i === step ? 'w-5 bg-brand-600' : i < step ? 'w-2 bg-brand-300' : 'w-2 bg-ink-200 dark:bg-[#1c3a2a]'
                 }`} />
               ))}
             </div>

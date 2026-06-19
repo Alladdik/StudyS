@@ -102,7 +102,7 @@ export function NotificationBell() {
       {/* Bell button */}
       <button onClick={handleOpen}
         title={`Сповіщення — ${connStatus === 'connected' ? 'live' : connStatus === 'connecting' ? 'підключення…' : 'offline'}`}
-        className="relative w-9 h-9 rounded-xl flex items-center justify-center text-ink-500 hover:bg-ink-100 dark:hover:bg-[#252840] transition">
+        className="relative w-9 h-9 rounded-xl flex items-center justify-center text-ink-500 hover:bg-ink-100 dark:hover:bg-[#163a28] transition">
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
             d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -124,10 +124,10 @@ export function NotificationBell() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -8 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 top-12 w-80 bg-white dark:bg-[#1a1c2e] rounded-2xl shadow-2xl dark:shadow-black/50 border border-ink-100 dark:border-[#282c44] z-50 overflow-hidden">
+            className="absolute right-0 top-12 w-80 bg-white dark:bg-[#0e2218] rounded-2xl shadow-2xl dark:shadow-black/50 border border-ink-100 dark:border-[#1c3a2a] z-50 overflow-hidden">
 
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-ink-100 dark:border-[#282c44]">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-ink-100 dark:border-[#1c3a2a]">
               <div className="flex items-center gap-2">
                 <span className="font-bold text-ink-900 dark:text-white text-sm">Сповіщення</span>
                 <span className={cx('text-[10px] px-1.5 py-0.5 rounded-full font-semibold',
@@ -162,7 +162,7 @@ export function NotificationBell() {
               ) : (
                 notifications.map((n) => (
                   <button key={n.id} onClick={() => handleClick(n)}
-                    className={cx('w-full text-left px-4 py-3 border-b border-ink-50 dark:border-[#1e2033] last:border-0 hover:bg-ink-50 dark:hover:bg-[#1e2033] transition',
+                    className={cx('w-full text-left px-4 py-3 border-b border-ink-50 dark:border-[#102a1d] last:border-0 hover:bg-ink-50 dark:hover:bg-[#102a1d] transition',
                       !n.isRead && 'bg-brand-50/50 dark:bg-brand-900/10')}>
                     <div className="flex items-start gap-3">
                       <span className={cx('w-2 h-2 rounded-full mt-1.5 flex-shrink-0',

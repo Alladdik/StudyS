@@ -96,7 +96,7 @@ export function GroupsPage() {
           {groups.length === 0 && <p className="text-ink-400 text-sm text-center py-4">Груп немає</p>}
           {groups.map((g) => (
             <div key={g.id} className={cx('flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer transition',
-              selected?.id === g.id ? 'bg-brand-50 dark:bg-brand-900/20 ring-1 ring-brand-100 dark:ring-brand-800/40' : 'hover:bg-ink-50 dark:hover:bg-[#1e2033]')}
+              selected?.id === g.id ? 'bg-brand-50 dark:bg-brand-900/20 ring-1 ring-brand-100 dark:ring-brand-800/40' : 'hover:bg-ink-50 dark:hover:bg-[#102a1d]')}
               onClick={() => selectGroup(g)}>
               <div className="min-w-0">
                 <p className={cx('text-sm font-semibold truncate', selected?.id === g.id ? 'text-brand-700 dark:text-brand-400' : 'text-ink-800 dark:text-[#e8eaf0]')}>{g.name}</p>
@@ -117,7 +117,7 @@ export function GroupsPage() {
             <h3 className="font-bold text-ink-700 dark:text-[#b0b8d0] mb-3">Учасники ({selected.members?.length ?? 0})</h3>
             <div className="flex flex-col gap-2 mb-6">
               {(selected.members ?? []).map((m) => (
-                <div key={m.studentId} className="flex items-center justify-between py-2 border-b border-ink-50 dark:border-[#1e2033]">
+                <div key={m.studentId} className="flex items-center justify-between py-2 border-b border-ink-50 dark:border-[#102a1d]">
                   <div>
                     <p className="text-sm font-semibold text-ink-800 dark:text-[#e8eaf0]">{m.studentName}</p>
                     <p className="text-xs text-ink-400">{m.email}</p>
@@ -134,7 +134,7 @@ export function GroupsPage() {
                 <div className="flex flex-col gap-1.5 max-h-52 overflow-y-auto">
                   {available.map((s) => (
                     <button key={s.id} onClick={() => handleAddMember(s.id)}
-                      className="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-ink-50 dark:hover:bg-[#1e2033] transition text-left">
+                      className="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-ink-50 dark:hover:bg-[#102a1d] transition text-left">
                       <div>
                         <p className="text-sm font-medium text-ink-800 dark:text-[#e8eaf0]">{s.firstName} {s.lastName}</p>
                         <p className="text-xs text-ink-400">{s.email}</p>

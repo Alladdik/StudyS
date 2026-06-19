@@ -145,11 +145,11 @@ export function AdminDashboardPage() {
           <p className="text-sm text-ink-400 mb-4">Зведення за поточний місяць</p>
           {summary ? (
             <div className="flex flex-col gap-3">
-              <div className="flex items-center justify-between py-3 border-b border-ink-50 dark:border-[#1e2033]">
+              <div className="flex items-center justify-between py-3 border-b border-ink-50 dark:border-[#102a1d]">
                 <span className="text-sm text-ink-500 dark:text-[#6b7394]">Дохід цього місяця</span>
                 <span className="font-bold text-emerald-600 dark:text-emerald-400 text-lg">{summary.thisMonthRevenue.toLocaleString()} ₴</span>
               </div>
-              <div className="flex items-center justify-between py-3 border-b border-ink-50 dark:border-[#1e2033]">
+              <div className="flex items-center justify-between py-3 border-b border-ink-50 dark:border-[#102a1d]">
                 <span className="text-sm text-ink-500 dark:text-[#6b7394]">Загальний дохід</span>
                 <span className="font-bold text-ink-800 dark:text-[#e8eaf0] text-lg">{summary.totalRevenue.toLocaleString()} ₴</span>
               </div>

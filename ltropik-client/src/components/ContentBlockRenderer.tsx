@@ -27,7 +27,7 @@ function TextBlockView({ data }: { data: Record<string, unknown> }) {
 function VideoBlockView({ data }: { data: Record<string, unknown> }) {
   const url = String(data.url ?? data.src ?? '');
   const embedUrl = getEmbedUrl(url);
-  if (!url) return <div className="bg-ink-50 dark:bg-[#1e2033] rounded-xl p-6 text-center text-ink-400 dark:text-[#6b7394]">Відео не завантажено</div>;
+  if (!url) return <div className="bg-ink-50 dark:bg-[#102a1d] rounded-xl p-6 text-center text-ink-400 dark:text-[#6b7394]">Відео не завантажено</div>;
   return embedUrl ? (
     <div className="relative w-full overflow-hidden rounded-xl" style={{ paddingBottom: '56.25%' }}>
       <iframe src={embedUrl} className="absolute inset-0 w-full h-full"
@@ -95,8 +95,8 @@ function FileBlockView({ data }: { data: Record<string, unknown> }) {
   const url = String(data.url ?? data.src ?? '');
   const name = String(data.name ?? data.fileName ?? 'Файл');
   return (
-    <div className="flex items-center gap-3 bg-ink-50 dark:bg-[#1e2033] border border-ink-200 dark:border-[#2d3148] rounded-xl p-4">
-      <div className="w-11 h-11 rounded-xl bg-white dark:bg-[#252840] border border-ink-200 dark:border-[#2d3148] flex items-center justify-center text-2xl flex-shrink-0">📎</div>
+    <div className="flex items-center gap-3 bg-ink-50 dark:bg-[#102a1d] border border-ink-200 dark:border-[#1f4d36] rounded-xl p-4">
+      <div className="w-11 h-11 rounded-xl bg-white dark:bg-[#163a28] border border-ink-200 dark:border-[#1f4d36] flex items-center justify-center text-2xl flex-shrink-0">📎</div>
       <div className="flex-1 min-w-0">
         <p className="font-semibold text-sm text-ink-800 dark:text-[#e8eaf0] truncate">{name}</p>
         {data.size !== undefined && <p className="text-xs text-ink-400 dark:text-[#6b7394]">{String(data.size)}</p>}

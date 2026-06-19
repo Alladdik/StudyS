@@ -149,15 +149,15 @@ export function TestBuilderChat({ open, onClose, onSave }: Props) {
         style={{ maxHeight: '100vh' }}
       >
         {/* ── LEFT: Chat ─────────────────────────────────────────────────── */}
-        <div className="flex flex-col w-full sm:w-[46%] border-r border-ink-100 dark:border-[#282c44] min-h-0">
+        <div className="flex flex-col w-full sm:w-[46%] border-r border-ink-100 dark:border-[#1c3a2a] min-h-0">
           {/* Header */}
-          <div className="flex items-center gap-3 px-5 py-4 border-b border-ink-100 dark:border-[#282c44] flex-shrink-0">
+          <div className="flex items-center gap-3 px-5 py-4 border-b border-ink-100 dark:border-[#1c3a2a] flex-shrink-0">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-brand-600 flex items-center justify-center text-white text-xl flex-shrink-0">🤖</div>
             <div className="flex-1 min-w-0">
               <p className="font-extrabold text-ink-900 dark:text-white text-sm leading-tight">AI-Конструктор тестів</p>
               <p className="text-xs text-ink-400">Gemini · розмова зберігається</p>
             </div>
-            <button onClick={onClose} className="w-8 h-8 rounded-xl bg-ink-100 dark:bg-[#252840] hover:bg-ink-200 dark:hover:bg-[#2d3148] flex items-center justify-center text-ink-500 transition flex-shrink-0">✕</button>
+            <button onClick={onClose} className="w-8 h-8 rounded-xl bg-ink-100 dark:bg-[#163a28] hover:bg-ink-200 dark:hover:bg-[#1f4d36] flex items-center justify-center text-ink-500 transition flex-shrink-0">✕</button>
           </div>
 
           {/* Messages */}
@@ -175,7 +175,7 @@ export function TestBuilderChat({ open, onClose, onSave }: Props) {
                     'max-w-[82%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap',
                     msg.role === 'user'
                       ? 'bg-brand-600 text-white rounded-br-sm'
-                      : 'bg-ink-50 dark:bg-[#1e2033] text-ink-800 dark:text-[#e8eaf0] rounded-bl-sm'
+                      : 'bg-ink-50 dark:bg-[#102a1d] text-ink-800 dark:text-[#e8eaf0] rounded-bl-sm'
                   )}>
                     {msg.content}
                   </div>
@@ -185,7 +185,7 @@ export function TestBuilderChat({ open, onClose, onSave }: Props) {
             {loading && (
               <div className="flex justify-start">
                 <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-brand-600 flex items-center justify-center text-white text-sm flex-shrink-0 mt-0.5 mr-2">🤖</div>
-                <div className="bg-ink-50 dark:bg-[#1e2033] rounded-2xl rounded-bl-sm px-4 py-3 flex gap-1.5">
+                <div className="bg-ink-50 dark:bg-[#102a1d] rounded-2xl rounded-bl-sm px-4 py-3 flex gap-1.5">
                   {[0, 1, 2].map(i => (
                     <motion.span key={i} className="w-2 h-2 bg-brand-400 rounded-full"
                       animate={{ y: [0, -5, 0] }} transition={{ repeat: Infinity, duration: 0.7, delay: i * 0.15 }} />
@@ -197,7 +197,7 @@ export function TestBuilderChat({ open, onClose, onSave }: Props) {
           </div>
 
           {/* Input */}
-          <div className="border-t border-ink-100 dark:border-[#282c44] p-3 flex gap-2 flex-shrink-0">
+          <div className="border-t border-ink-100 dark:border-[#1c3a2a] p-3 flex gap-2 flex-shrink-0">
             <textarea
               ref={inputRef}
               value={input}
@@ -222,7 +222,7 @@ export function TestBuilderChat({ open, onClose, onSave }: Props) {
         {/* ── RIGHT: Questions preview ────────────────────────────────────── */}
         <div className="flex flex-col flex-1 min-h-0 min-w-0">
           {/* Header */}
-          <div className="flex items-center gap-3 px-5 py-4 border-b border-ink-100 dark:border-[#282c44] flex-shrink-0">
+          <div className="flex items-center gap-3 px-5 py-4 border-b border-ink-100 dark:border-[#1c3a2a] flex-shrink-0">
             <div className="flex-1 min-w-0">
               <p className="text-xs text-ink-400 mb-1">Назва тесту</p>
               <input
@@ -248,7 +248,7 @@ export function TestBuilderChat({ open, onClose, onSave }: Props) {
           <div className="flex-1 overflow-y-auto p-4">
             {questions.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center py-16 gap-4">
-                <div className="w-20 h-20 rounded-3xl bg-ink-50 dark:bg-[#1e2033] flex items-center justify-center text-5xl">📝</div>
+                <div className="w-20 h-20 rounded-3xl bg-ink-50 dark:bg-[#102a1d] flex items-center justify-center text-5xl">📝</div>
                 <div>
                   <p className="font-bold text-ink-700 dark:text-[#b0b8d0] mb-1">Питань ще немає</p>
                   <p className="text-sm text-ink-400 max-w-xs">Попросіть AI згенерувати тест у чаті зліва — питання з'являться тут автоматично</p>
@@ -272,7 +272,7 @@ export function TestBuilderChat({ open, onClose, onSave }: Props) {
                   <motion.div key={q.id ?? idx}
                     layout
                     initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                    className="rounded-2xl border border-ink-100 dark:border-[#282c44] bg-white dark:bg-[#1a1c2e] p-4"
+                    className="rounded-2xl border border-ink-100 dark:border-[#1c3a2a] bg-white dark:bg-[#0e2218] p-4"
                   >
                     {/* Question header */}
                     <div className="flex items-start gap-2 mb-3">
@@ -312,7 +312,7 @@ export function TestBuilderChat({ open, onClose, onSave }: Props) {
                               'flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs transition',
                               isCorrect
                                 ? 'bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700/50 text-emerald-700 dark:text-emerald-400 font-semibold'
-                                : 'bg-ink-50 dark:bg-[#1e2033] text-ink-600 dark:text-[#9aa2bd]'
+                                : 'bg-ink-50 dark:bg-[#102a1d] text-ink-600 dark:text-[#9aa2bd]'
                             )}>
                               <span className="font-bold text-[10px] opacity-50 uppercase flex-shrink-0">{opt.id}</span>
                               <span>{opt.text}</span>

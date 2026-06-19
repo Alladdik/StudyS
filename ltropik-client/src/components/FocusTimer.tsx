@@ -56,7 +56,7 @@ export function FocusTimer() {
       <button
         onClick={() => setOpen(true)}
         title="Таймер фокусування"
-        className="fixed bottom-5 left-5 z-40 h-11 px-4 rounded-full bg-white dark:bg-[#1a1c2e] border border-ink-200 dark:border-[#282c44] shadow-lg hover:border-brand-300 transition flex items-center gap-2 text-sm font-semibold text-ink-700 dark:text-[#e8eaf0]">
+        className="fixed bottom-5 left-5 z-40 h-11 px-4 rounded-full bg-white dark:bg-[#0e2218] border border-ink-200 dark:border-[#1c3a2a] shadow-lg hover:border-brand-300 transition flex items-center gap-2 text-sm font-semibold text-ink-700 dark:text-[#e8eaf0]">
         <span>🍅</span>
         <span className="tabular-nums">{fmt(left)}</span>
       </button>
@@ -64,7 +64,7 @@ export function FocusTimer() {
   }
 
   return (
-    <div className="fixed bottom-5 left-5 z-40 w-64 bg-white dark:bg-[#1a1c2e] border border-ink-200 dark:border-[#282c44] rounded-2xl shadow-2xl p-4">
+    <div className="fixed bottom-5 left-5 z-40 w-64 bg-white dark:bg-[#0e2218] border border-ink-200 dark:border-[#1c3a2a] rounded-2xl shadow-2xl p-4">
       <div className="flex items-center justify-between mb-3">
         <span className="font-bold text-ink-900 dark:text-white text-sm flex items-center gap-1.5">
           🍅 Фокус
@@ -83,7 +83,7 @@ export function FocusTimer() {
       </div>
 
       {/* Progress bar */}
-      <div className="h-1.5 rounded-full bg-ink-100 dark:bg-[#252840] overflow-hidden mb-3">
+      <div className="h-1.5 rounded-full bg-ink-100 dark:bg-[#163a28] overflow-hidden mb-3">
         <div className={cx('h-full transition-all', mode === 'focus' ? 'bg-brand-500' : 'bg-emerald-500')}
           style={{ width: `${pct}%` }} />
       </div>
